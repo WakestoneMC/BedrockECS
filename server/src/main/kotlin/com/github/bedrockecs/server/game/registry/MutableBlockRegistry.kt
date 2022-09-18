@@ -13,12 +13,12 @@ interface MutableBlockRegistry : BlockRegistry {
     /**
      * set a runtime id for this block of this type
      */
-    fun setRuntimeIDFor(typeState: BlockTypeComponent, rid: Int)
+    fun setRuntimeIDFor(type: BlockTypeComponent, rid: Short)
 
     /**
      * try to allocate a runtime id for this block of this type
      */
-    fun allocateRuntimeIDFor(typeState: BlockTypeComponent): Int
+    fun allocateRuntimeIDFor(type: BlockTypeComponent): Short
 
     // Default BlockComponents //
 
@@ -35,17 +35,10 @@ interface MutableBlockRegistry : BlockRegistry {
     /**
      * add an override at type level, null for removing that component
      */
-    fun addTypeDefaultOverride(
-        typeState: BlockTypeComponent,
-        clazz: Class<out BlockComponent>,
-        component: BlockComponent?
-    )
+    fun addTypeDefaultOverride(type: BlockTypeComponent, clazz: Class<out BlockComponent>, component: BlockComponent?)
 
     /**
      * remove a default component at type level
      */
-    fun removeTypeDefaultOverride(
-        typeState: BlockTypeComponent,
-        clazz: Class<out BlockComponent>
-    )
+    fun removeTypeDefaultOverride(type: BlockTypeComponent, clazz: Class<out BlockComponent>)
 }

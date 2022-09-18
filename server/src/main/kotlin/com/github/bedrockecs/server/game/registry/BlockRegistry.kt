@@ -19,12 +19,12 @@ interface BlockRegistry {
     /**
      * get [BlockTypeComponent] associated with this runtimeId
      */
-    fun typeFor(rid: Int): BlockTypeComponent?
+    fun typeFor(rid: Short): BlockTypeComponent?
 
     /**
      * the runtime id of block of this type, used in serialization etc......
      */
-    fun runtimeIDFor(type: BlockTypeComponent): Int
+    fun runtimeIDFor(type: BlockTypeComponent): Short?
 
     // Default BlockComponents //
 
@@ -36,9 +36,7 @@ interface BlockRegistry {
     /**
      * returns the overrides at type level
      */
-    fun typeDefaultOverrideFor(
-        type: BlockTypeComponent
-    ): ComponentMap<BlockComponent?>
+    fun typeDefaultOverrideFor(type: BlockTypeComponent): ComponentMap<BlockComponent?>
 
     /**
      * query default block component for type
