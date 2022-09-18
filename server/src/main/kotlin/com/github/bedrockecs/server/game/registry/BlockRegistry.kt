@@ -24,7 +24,7 @@ interface BlockRegistry {
     /**
      * the runtime id of block of this type, used in serialization etc......
      */
-    fun runtimeIDFor(type: BlockTypeComponent): Int
+    fun runtimeIDFor(type: BlockTypeComponent): Int?
 
     // Default BlockComponents //
 
