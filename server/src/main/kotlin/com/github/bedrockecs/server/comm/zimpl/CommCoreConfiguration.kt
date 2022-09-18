@@ -16,8 +16,8 @@ import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 
 @Configuration
-@ComponentScan(basePackageClasses = [CommConfiguration::class])
-class CommConfiguration {
+@ComponentScan(basePackageClasses = [CommCoreConfiguration::class])
+class CommCoreConfiguration {
     @Bean
     fun codec(): BedrockPacketCodec {
         return Bedrock_v486.V486_CODEC
