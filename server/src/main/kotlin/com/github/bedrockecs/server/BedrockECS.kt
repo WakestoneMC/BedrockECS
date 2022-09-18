@@ -1,5 +1,6 @@
 package com.github.bedrockecs.server
 
+import com.github.bedrockecs.server.zimpl.ChassisConfiguration
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.runApplication
@@ -14,7 +15,9 @@ import org.springframework.web.reactive.config.EnableWebFlux
 class BedrockECS {
     companion object {
         @JvmStatic
-        val DEFAULT_INTRINSIC_CONFIGS: List<Class<*>> = listOf()
+        val DEFAULT_INTRINSIC_CONFIGS: List<Class<*>> = listOf(
+            ChassisConfiguration::class.java
+        )
 
         @JvmStatic
         fun run(args: Array<String>) {
