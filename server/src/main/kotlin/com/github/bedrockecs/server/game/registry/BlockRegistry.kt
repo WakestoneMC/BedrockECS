@@ -36,9 +36,7 @@ interface BlockRegistry {
     /**
      * returns the overrides at type level
      */
-    fun typeDefaultOverrideFor(
-        type: BlockTypeComponent
-    ): ComponentMap<BlockComponent?>
+    fun typeDefaultOverrideFor(type: BlockTypeComponent): ComponentMap<BlockComponent?>
 
     /**
      * query default block component for type

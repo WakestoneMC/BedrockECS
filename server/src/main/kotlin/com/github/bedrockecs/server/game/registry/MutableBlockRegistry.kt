@@ -35,17 +35,10 @@ interface MutableBlockRegistry : BlockRegistry {
     /**
      * add an override at type level, null for removing that component
      */
-    fun addTypeDefaultOverride(
-        type: BlockTypeComponent,
-        clazz: Class<out BlockComponent>,
-        component: BlockComponent?
-    )
+    fun addTypeDefaultOverride(type: BlockTypeComponent, clazz: Class<out BlockComponent>, component: BlockComponent?)
 
     /**
      * remove a default component at type level
      */
-    fun removeTypeDefaultOverride(
-        type: BlockTypeComponent,
-        clazz: Class<out BlockComponent>
-    )
+    fun removeTypeDefaultOverride(type: BlockTypeComponent, clazz: Class<out BlockComponent>)
 }
