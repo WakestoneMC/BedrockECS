@@ -42,6 +42,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
+    // ECS library
+    implementation("com.badlogicgames.ashley:ashley:1.7.4")
+
     // protocols & network
     implementation("com.nukkitx.protocol:bedrock-v486:2.9.5-SNAPSHOT")
 
