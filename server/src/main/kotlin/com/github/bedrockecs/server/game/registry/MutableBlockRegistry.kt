@@ -13,12 +13,12 @@ interface MutableBlockRegistry : BlockRegistry {
     /**
      * set a runtime id for this block of this type
      */
-    fun setRuntimeIDFor(type: BlockTypeComponent, rid: Int)
+    fun setRuntimeIDFor(type: BlockTypeComponent, rid: Short)
 
     /**
      * try to allocate a runtime id for this block of this type
      */
-    fun allocateRuntimeIDFor(type: BlockTypeComponent): Int
+    fun allocateRuntimeIDFor(type: BlockTypeComponent): Short
 
     // Default BlockComponents //
 

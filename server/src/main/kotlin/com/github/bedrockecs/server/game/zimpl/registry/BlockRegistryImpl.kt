@@ -16,21 +16,21 @@ class BlockRegistryImpl : MutableBlockRegistry {
 
     // RIDs //
 
-    override fun setRuntimeIDFor(type: BlockTypeComponent, rid: Int) {
-        typeRID[type] = rid.toShort()
+    override fun setRuntimeIDFor(type: BlockTypeComponent, rid: Short) {
+        typeRID[type] = rid
     }
 
-    override fun typeFor(rid: Int): BlockTypeComponent? {
-        val filtered = typeRID.filter { it.value == rid.toShort() }
+    override fun typeFor(rid: Short): BlockTypeComponent? {
+        val filtered = typeRID.filter { it.value == rid }
         assert(filtered.size == 1 || filtered.isEmpty())
         return filtered.map { it.key }.firstOrNull()
     }
 
-    override fun runtimeIDFor(type: BlockTypeComponent): Int? {
-        return typeRID[type]?.toInt()
+    override fun runtimeIDFor(type: BlockTypeComponent): Short? {
+        return typeRID[type]
     }
 
-    override fun allocateRuntimeIDFor(type: BlockTypeComponent): Int {
+    override fun allocateRuntimeIDFor(type: BlockTypeComponent): Short {
         TODO("Not yet implemented")
     }
 

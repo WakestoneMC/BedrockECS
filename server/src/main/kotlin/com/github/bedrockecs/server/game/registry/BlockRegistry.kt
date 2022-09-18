@@ -19,12 +19,12 @@ interface BlockRegistry {
     /**
      * get [BlockTypeComponent] associated with this runtimeId
      */
-    fun typeFor(rid: Int): BlockTypeComponent?
+    fun typeFor(rid: Short): BlockTypeComponent?
 
     /**
      * the runtime id of block of this type, used in serialization etc......
      */
-    fun runtimeIDFor(type: BlockTypeComponent): Int?
+    fun runtimeIDFor(type: BlockTypeComponent): Short?
 
     // Default BlockComponents //
 
