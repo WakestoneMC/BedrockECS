@@ -18,7 +18,7 @@ import java.util.concurrent.ScheduledExecutorService
  * @implNote we are basically leeching off webflux for IO, roll our own logic
  */
 @Configuration
-class ThreadingConfiguration {
+class ThreadingCoreConfiguration {
     @Bean(initMethod = "", destroyMethod = "")
     @BossEventLoopGroup
     fun bossEventLoopGroup(factory: ReactorResourceFactory): EventLoopGroup {

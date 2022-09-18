@@ -1,7 +1,7 @@
 package com.github.bedrockecs.server
 
-import com.github.bedrockecs.server.comm.zimpl.CommConfiguration
-import com.github.bedrockecs.server.threading.zimpl.ThreadingConfiguration
+import com.github.bedrockecs.server.comm.zimpl.CommCoreConfiguration
+import com.github.bedrockecs.server.threading.zimpl.ThreadingCoreConfiguration
 import com.github.bedrockecs.server.zimpl.ChassisConfiguration
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -19,8 +19,8 @@ class BedrockECS {
         @JvmStatic
         val DEFAULT_INTRINSIC_CONFIGS: List<Class<*>> = listOf(
             ChassisConfiguration::class.java,
-            ThreadingConfiguration::class.java,
-            CommConfiguration::class.java
+            ThreadingCoreConfiguration::class.java,
+            CommCoreConfiguration::class.java
         )
 
         @JvmStatic
