@@ -10,8 +10,8 @@ import com.github.bedrockecs.server.game.eventbus.EventBus
 import com.github.bedrockecs.server.game.registry.BlockRegistry
 import com.github.bedrockecs.server.game.zimpl.db.entity.NaiveEntityDB
 import com.github.bedrockecs.server.game.zimpl.db.world.NaiveWorldDB
+import java.util.Collections.synchronizedSet
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ConcurrentSkipListSet
 
 class NaiveGameDB(
     private val eventBus: EventBus,
@@ -28,7 +28,7 @@ class NaiveGameDB(
     override val invitems: InvitemDB
         get() = TODO("Not yet implemented")
 
-    private val loadedChunk = ConcurrentSkipListSet<ChunkPosition>()
+    private val loadedChunk = synchronizedSet(HashSet<ChunkPosition>())
 
     override fun isLoaded(pos: ChunkPosition): Boolean {
         return loadedChunk.contains(pos)
@@ -48,7 +48,8 @@ class NaiveGameDB(
 
         val future: CompletableFuture<Void> = CompletableFuture.allOf(invEntities, chunks)
             .thenApply {
-                chunks.get()
+                val chunks = chunks.get()
+                world.load(pos, chunks)
                 invEntities.get().forEach { entities.load(it.entity.id, it.entity.components.values.toSet()) }
                 null
             }
