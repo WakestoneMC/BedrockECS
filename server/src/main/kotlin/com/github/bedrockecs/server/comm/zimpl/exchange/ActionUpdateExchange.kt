@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 @Component
-class GameActionUpdateExchange {
+class ActionUpdateExchange {
 
     private val actionsLock = ReentrantLock()
 
