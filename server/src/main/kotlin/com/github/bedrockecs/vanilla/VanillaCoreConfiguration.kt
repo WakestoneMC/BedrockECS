@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class VanillaCoreConfiguration {
     @Bean
-    fun gameConfiguration(): VanillaGameConfiguration {
+    fun vanillaGameConfiguration(): VanillaGameConfiguration {
         return VanillaGameConfiguration()
     }
 }

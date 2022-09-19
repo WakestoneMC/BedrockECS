@@ -5,6 +5,7 @@ import com.github.bedrockecs.server.comm.game.action.PlayerConnectedAction
 import com.github.bedrockecs.server.comm.game.action.PlayerDisconnectedAction
 import com.github.bedrockecs.server.game.chunkloading.entity.EntityChunkLoadingComponent
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
+import com.github.bedrockecs.server.game.data.FloatRotation
 import com.github.bedrockecs.server.game.db.GameDB
 import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.github.bedrockecs.server.game.db.entity.data.EntityPositionComponent
@@ -21,6 +22,7 @@ class PlayerConnectDisconnectSystem(
 ) : System {
 
     private val UNIVERSAL_SPAWN = FloatBlockPosition(100.0f, 64.0f, 100.0f, 0)
+    private val UNIVERSAL_ROT = FloatRotation(0.0f, 0.0f)
 
     private val players = mutableMapOf<UUID, EntityID>()
 
@@ -38,7 +40,7 @@ class PlayerConnectDisconnectSystem(
                             displayName = it.identifiers.displayName!!,
                             uuid = it.identifiers.playerUUID!!
                         ),
-                        EntityPositionComponent(UNIVERSAL_SPAWN), // TODO: get proper spawn logic
+                        EntityPositionComponent(UNIVERSAL_SPAWN, UNIVERSAL_ROT), // TODO: get proper spawn logic
                         EntityChunkLoadingComponent(radius = 4) // TODO: move this to chunk loading?
                     )
                 )
