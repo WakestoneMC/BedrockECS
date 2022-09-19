@@ -184,6 +184,10 @@ class NaiveWorldDB(
             deserialized.forEach { (subChunkPos, layers) ->
                 db[subChunkPos] = layers
             }
+            chunkDB[pos] = serials.components.toMutableMap()
+            serials.subChunks.forEachIndexed { index, serialSubChunk ->
+                subchunkDB.put(SubChunkPosition(pos.x, index, pos.z, pos.dim), serialSubChunk.components.toMutableMap())
+            }
         }
         loadingEvent.publish(null, ChunkLoadingEvent(pos, LoadType.LOAD))
     }
