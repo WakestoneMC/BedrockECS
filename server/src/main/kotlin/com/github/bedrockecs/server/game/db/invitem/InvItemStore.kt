@@ -36,11 +36,11 @@ interface InvItemStore {
      * @throws UnsupportedOperationException if the implementation does not support it
      * @apiNote user is not expected to mutate the provided components, use [MutableInvItemStore.mutatingScan] for that!
      */
-    fun <T> scan(
+    fun scan(
         config: ItemScanConfig,
         components: Array<Class<out ItemComponent>>,
         callback: (InvSlotRef, Array<ItemComponent>) -> Unit
-    ): Collection<T> {
+    ) {
         throw UnsupportedOperationException()
     }
 }

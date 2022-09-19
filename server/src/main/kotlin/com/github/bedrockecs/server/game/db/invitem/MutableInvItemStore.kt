@@ -55,11 +55,11 @@ interface MutableInvItemStore : InvItemStore {
      * @param callback mutation callback, takes components & returns modified array of components
      * @throws UnsupportedOperationException if the implementation does not support it
      */
-    fun <T> mutatingScan(
+    fun mutatingScan(
         config: ItemScanConfig,
         components: Array<Class<out ItemComponent>>,
         callback: (slot: Int, components: Array<ItemComponent>) -> Array<ItemComponent?>
-    ): Collection<T> {
+    ) {
         throw UnsupportedOperationException()
     }
 }

@@ -39,11 +39,11 @@ interface MutableEntityStore : EntityStore {
      * @param callback mutation callback, takes components & returns modified array of components
      * @throws UnsupportedOperationException if the implementation does not support it
      */
-    fun <T> mutatingScan(
+    fun mutatingScan(
         config: EntityScanConfig,
         components: Array<Class<out EntityComponent>>,
         callback: (BlockPosition, Array<BlockComponent>) -> Array<BlockComponent?>
-    ): Collection<T> {
+    ) {
         throw UnsupportedOperationException()
     }
 }
