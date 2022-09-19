@@ -1,13 +1,15 @@
-package com.github.bedrockecs.server.game.db.entity.data
+package com.github.bedrockecs.server.game.chunkloading.entity
+
+import com.github.bedrockecs.server.game.db.entity.data.EntityComponent
 
 /**
  * chunk loading component, used to keep chunks around the entity loaded
  */
 data class EntityChunkLoadingComponent(
     /**
-     * range of chunks to load, 0=>1*1, 1=>3*3, 2=>5*5, etc......
+     * radius of chunks to load, 0=>1*1, 1=>3*3, 2=>5*5, etc......
      */
-    var range: Int
+    var radius: Int
 ) : EntityComponent {
     override val type: String
         get() = "becs:chunk_loading"
