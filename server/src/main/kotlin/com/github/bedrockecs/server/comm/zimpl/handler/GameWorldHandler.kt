@@ -2,7 +2,7 @@ package com.github.bedrockecs.server.comm.zimpl.handler
 
 import com.github.bedrockecs.server.comm.game.action.PlayerMoveAction
 import com.github.bedrockecs.server.comm.server.NetworkConnection
-import com.github.bedrockecs.server.comm.zimpl.exchange.GameActionUpdateExchange
+import com.github.bedrockecs.server.comm.zimpl.exchange.ActionUpdateExchange
 import com.github.bedrockecs.server.comm.zimpl.exchange.PlayerConnectionExchange
 import com.github.bedrockecs.server.game.data.ChunkPosition
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
@@ -21,7 +21,7 @@ import kotlin.math.ceil
 
 @Component
 class GameWorldHandler(
-    private val actionUpdateExchange: GameActionUpdateExchange
+    private val actionUpdateExchange: ActionUpdateExchange
 ) {
     private val sessions = ConcurrentHashMap<UUID, Session>()
 

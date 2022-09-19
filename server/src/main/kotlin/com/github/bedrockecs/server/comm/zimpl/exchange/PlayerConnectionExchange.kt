@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @Component
 class PlayerConnectionExchange(
-    private val exchange: GameActionUpdateExchange
+    private val exchange: ActionUpdateExchange
 ) {
     data class SpawnedPlayer(
         val eid: EntityID,

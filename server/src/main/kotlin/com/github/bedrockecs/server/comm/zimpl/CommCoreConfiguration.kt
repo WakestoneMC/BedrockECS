@@ -3,7 +3,7 @@ package com.github.bedrockecs.server.comm.zimpl
 import com.github.bedrockecs.server.GlobalExceptionHook
 import com.github.bedrockecs.server.comm.config.NetworkConfig
 import com.github.bedrockecs.server.comm.server.policy.NewConnectionPolicy
-import com.github.bedrockecs.server.comm.zimpl.exchange.GameActionUpdateExchange
+import com.github.bedrockecs.server.comm.zimpl.exchange.ActionUpdateExchange
 import com.github.bedrockecs.server.comm.zimpl.handler.PingHandler
 import com.github.bedrockecs.server.comm.zimpl.server.NetworkServerImpl
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec
@@ -22,7 +22,7 @@ import org.springframework.core.annotation.Order
     basePackageClasses = [
         NetworkServerImpl::class,
         PingHandler::class,
-        GameActionUpdateExchange::class
+        ActionUpdateExchange::class
     ]
 )
 class CommCoreConfiguration {
