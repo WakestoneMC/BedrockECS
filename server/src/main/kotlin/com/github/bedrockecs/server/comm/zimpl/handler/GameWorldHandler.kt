@@ -2,6 +2,7 @@ package com.github.bedrockecs.server.comm.zimpl.handler
 
 import com.github.bedrockecs.server.comm.game.action.PlayerConnectedAction
 import com.github.bedrockecs.server.comm.game.action.PlayerDisconnectedAction
+import com.github.bedrockecs.server.comm.game.action.PlayerMoveAction
 import com.github.bedrockecs.server.comm.server.NetworkConnection
 import com.github.bedrockecs.server.comm.zimpl.exchange.GameActionUpdateExchange
 import com.github.bedrockecs.server.game.data.ChunkPosition
@@ -10,6 +11,7 @@ import com.github.bedrockecs.server.game.db.GameDB
 import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.github.bedrockecs.server.game.db.entity.data.EntityPositionComponent
 import com.nukkitx.math.vector.Vector3i
+import com.nukkitx.protocol.bedrock.packet.MovePlayerPacket
 import com.nukkitx.protocol.bedrock.packet.NetworkChunkPublisherUpdatePacket
 import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket
 import kotlinx.coroutines.Job
@@ -100,9 +102,22 @@ class GameWorldHandler(
             connection.sendPacket(PlayStatusPacket().apply { status = PlayStatusPacket.Status.PLAYER_SPAWN })
 
             while (true) {
-                connection.receivePacket()
+                val packet = connection.receivePacket()
+                when (packet) {
+                    is MovePlayerPacket -> handleMovePlayer(connection, packet)
+                }
             }
         }
+    }
+
+    private suspend fun handleMovePlayer(connection: NetworkConnection, packet: MovePlayerPacket) {
+        exchange.addAction(
+            PlayerMoveAction(
+                playerUUID = connection.identifiers.playerUUID!!,
+                packet.position,
+                packet.rotation
+            )
+        )
     }
 
     private suspend fun appearInSessions(
@@ -153,6 +168,9 @@ class GameWorldHandler(
                         it.value.sentChunks.add(chunk)
                         val connection = it.value.networkConnection
                         val position = chunk
+                        if (!db.isLoaded(position)) {
+                            db.loadChunk(position)
+                        }
                         val serial = db.world.serialize(position)
                         val packet = GameChunkSerializer.serializeChunk(position, serial)
                         connection.sendPacket(packet)
