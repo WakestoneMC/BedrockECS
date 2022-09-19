@@ -28,13 +28,11 @@ import org.springframework.stereotype.Component
 @Component
 class GameHandler {
     suspend fun handle(conn: NetworkConnection) {
-        runPlayerSpawnSequence(conn)
-        while (true) {
-            conn.receivePacket()
-        }
+        serveInitializationPackets(conn)
+        serveGame(conn)
     }
 
-    private suspend fun runPlayerSpawnSequence(connection: NetworkConnection) {
+    private suspend fun serveInitializationPackets(connection: NetworkConnection) {
         // network setting & client cache
         connection.sendPacket(NetworkSettingsPacket().apply { compressionThreshold = 1 })
         // receive ClientCacheStatusPacket TODO: deals with ClientCacheStatusPacket
@@ -49,7 +47,9 @@ class GameHandler {
         connection.sendPacket(computeAvailableEntityIdentifiersPacket())
         // CreativeContentPacket TODO: send creative content
         // CraftingDataPacket TODO: send crafting data content
+    }
 
+    private suspend fun serveGame(connection: NetworkConnection) {
         // game state //
         // PlayerListPacket TODO: send player list
         // SetTimePacket TODO: send time
@@ -85,8 +85,11 @@ class GameHandler {
 
         // done //
         connection.sendPacket(PlayStatusPacket().apply { status = PlayStatusPacket.Status.PLAYER_SPAWN })
-    }
 
+        while (true) {
+            connection.receivePacket()
+        }
+    }
     private suspend fun computeStartGamePacket(): StartGamePacket {
         val lists = listOf(
             GameRuleData("commandblocksenabled", true),
