@@ -149,7 +149,7 @@ class NaiveWorldDB(
             loadingEvent.publish(null, ChunkLoadingEvent(pos, LoadType.UNLOAD))
 
             val tablets = subchunks.map {
-                Triple(it, db.remove(it)!!, subchunkDB.remove(it)!!)
+                Triple(it, db.get(it)!!, subchunkDB.get(it)!!)
             }
             chunkDB.get(pos)!! to tablets
         }
