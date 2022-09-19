@@ -3,6 +3,8 @@ package com.github.bedrockecs.server.comm.zimpl
 import com.github.bedrockecs.server.GlobalExceptionHook
 import com.github.bedrockecs.server.comm.config.NetworkConfig
 import com.github.bedrockecs.server.comm.server.policy.NewConnectionPolicy
+import com.github.bedrockecs.server.comm.zimpl.exchange.GameActionUpdateExchange
+import com.github.bedrockecs.server.comm.zimpl.handler.PingHandler
 import com.github.bedrockecs.server.comm.zimpl.server.NetworkServerImpl
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec
 import com.nukkitx.protocol.bedrock.v486.Bedrock_v486
@@ -16,7 +18,13 @@ import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 
 @Configuration
-@ComponentScan(basePackageClasses = [CommCoreConfiguration::class])
+@ComponentScan(
+    basePackageClasses = [
+        NetworkServerImpl::class,
+        PingHandler::class,
+        GameActionUpdateExchange::class
+    ]
+)
 class CommCoreConfiguration {
     @Bean
     fun codec(): BedrockPacketCodec {
@@ -26,6 +34,11 @@ class CommCoreConfiguration {
     @Bean
     fun mockConfig(): NetworkConfig {
         return NetworkConfig()
+    }
+
+    @Bean
+    fun gameConfig(): CommGameConfiguration {
+        return CommGameConfiguration()
     }
 
     @Bean
