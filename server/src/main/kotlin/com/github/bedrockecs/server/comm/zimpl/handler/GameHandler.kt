@@ -1,6 +1,7 @@
 package com.github.bedrockecs.server.comm.zimpl.handler
 
 import com.github.bedrockecs.server.comm.server.NetworkConnection
+import com.github.bedrockecs.server.comm.zimpl.exchange.GameWorldExchange
 import com.github.bedrockecs.server.comm.zimpl.exchange.PlayerConnectionExchange
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.entity.EntityID
@@ -20,6 +21,7 @@ import com.nukkitx.protocol.bedrock.data.SyncedPlayerMovementSettings
 import com.nukkitx.protocol.bedrock.packet.AvailableEntityIdentifiersPacket
 import com.nukkitx.protocol.bedrock.packet.BiomeDefinitionListPacket
 import com.nukkitx.protocol.bedrock.packet.NetworkSettingsPacket
+import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket
 import com.nukkitx.protocol.bedrock.packet.SetCommandsEnabledPacket
 import com.nukkitx.protocol.bedrock.packet.StartGamePacket
 import org.springframework.stereotype.Component
@@ -29,7 +31,7 @@ import org.springframework.stereotype.Component
  */
 @Component
 class GameHandler(
-    private val worldHandler: GameWorldHandler,
+    private val worldExchange: GameWorldExchange,
     private val connectionExchange: PlayerConnectionExchange
 ) {
     suspend fun handle(conn: NetworkConnection) {
@@ -39,7 +41,13 @@ class GameHandler(
             // receive ClientCacheStatusPacket TODO: deals with ClientCacheStatusPacket
 
             // metadata initialization //
-            conn.sendPacket(computeStartGamePacket(spawnedPlayer.eid, spawnedPlayer.pos.pos, spawnedPlayer.pos.direction))
+            conn.sendPacket(
+                computeStartGamePacket(
+                    spawnedPlayer.eid,
+                    spawnedPlayer.pos.pos,
+                    spawnedPlayer.pos.direction
+                )
+            )
             // connection.sendPacket(computeItemComponentPacket()) TODO: send item component constants
             conn.sendPacket(SetCommandsEnabledPacket().apply { isCommandsEnabled = true })
             // AvailableCommandsPacket TODO: send available commands
@@ -48,7 +56,51 @@ class GameHandler(
             conn.sendPacket(computeAvailableEntityIdentifiersPacket()) // CreativeContentPacket TODO: send creative content
             // CraftingDataPacket TODO: send crafting data content
 
-            worldHandler.serveGame(conn, spawnedPlayer)
+            // game state //
+            // PlayerListPacket TODO: send player list
+            // SetTimePacket TODO: send time
+            // PlayerFogPacket TODO: specify player fog
+
+            // player state //
+            // InventoryContentPacket
+            // InventoryContentPacket
+            // InventoryContentPacket
+            // InventoryContentPacket
+            // PlayerHotbarPacket
+
+            // UpdateAttributesPacket
+            // UpdateAttributesPacket
+            // SetEntityDataPacket
+            // SetEntityDataPacket
+            // SetHealthPacket
+
+            // execute respawn //
+            // RespawnPacket
+            // RespawnPacket
+            // RespawnPacket
+
+            // world state //
+            worldExchange.onConnection(conn)
+            try {
+                // NetworkChunkPublisherUpdatePacket, TODO: sends location of player & radius=64, range updated by chunk radius updated packet
+                // TODO: update sequence REQUEST_CHUNK_RADIUS -> CHUNK_RADIUS_UPDATED NETWORK_CHUNK_PUBLISHER_UPDATE are updated as follow-up
+
+                // LEVEL_CHUNK for initial chunk content TODO: impl this out
+
+                // BLOCK_UPDATE for block updates, UPDATE_SUBCHUNK_BLOCKS for batched update? TODO: figure this out
+
+                // TickSyncPacket
+
+                // done //
+                conn.sendPacket(PlayStatusPacket().apply { status = PlayStatusPacket.Status.PLAYER_SPAWN })
+
+                while (true) {
+                    val packet = conn.receivePacket()
+                    worldExchange.onPacket(conn, packet)
+                }
+            } finally {
+                worldExchange.onDisconnected(conn)
+            }
         }
     }
 

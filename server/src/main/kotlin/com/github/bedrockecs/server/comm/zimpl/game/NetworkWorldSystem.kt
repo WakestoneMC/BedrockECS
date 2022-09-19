@@ -1,6 +1,6 @@
 package com.github.bedrockecs.server.comm.zimpl.game
 
-import com.github.bedrockecs.server.comm.zimpl.handler.GameWorldHandler
+import com.github.bedrockecs.server.comm.zimpl.exchange.GameWorldExchange
 import com.github.bedrockecs.server.game.data.ChunkPosition
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.GameDB
@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentSkipListSet
 class NetworkWorldSystem(
     private val db: GameDB,
     private val eventBus: EventBus,
-    private val handler: GameWorldHandler
+    private val exchange: GameWorldExchange
 ) : System {
 
     override val tickOrder: Int
@@ -67,6 +67,6 @@ class NetworkWorldSystem(
 
         val changes = chunkChanges.toSet()
         chunkChanges.clear()
-        handler.checkWorldUpdate(db, changes, playerPositions)
+        exchange.checkWorldUpdate(db, changes, playerPositions)
     }
 }
