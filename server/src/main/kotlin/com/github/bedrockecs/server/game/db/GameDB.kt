@@ -26,6 +26,16 @@ interface GameDB {
     // loading & unloading //
 
     /**
+     * check is the chunk loaded
+     */
+    fun isLoaded(pos: ChunkPosition): Boolean
+
+    /**
+     * list all loaded chunks in the database
+     */
+    fun listLoadedChunks(): Collection<ChunkPosition>
+
+    /**
      * try to load a chunk(and associated entity/inventories) from storage
      */
     fun loadChunk(pos: ChunkPosition): CompletableFuture<Void>

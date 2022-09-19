@@ -5,6 +5,7 @@ import com.github.bedrockecs.server.game.zimpl.GameCoreConfiguration
 import com.github.bedrockecs.server.storegen.zimpl.StoreGenCoreConfiguration
 import com.github.bedrockecs.server.threading.zimpl.ThreadingCoreConfiguration
 import com.github.bedrockecs.server.zimpl.ChassisConfiguration
+import com.github.bedrockecs.vanilla.VanillaCoreConfiguration
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.runApplication
@@ -24,7 +25,8 @@ class BedrockECS {
             ThreadingCoreConfiguration::class.java,
             CommCoreConfiguration::class.java,
             GameCoreConfiguration::class.java,
-            StoreGenCoreConfiguration::class.java
+            StoreGenCoreConfiguration::class.java,
+            VanillaCoreConfiguration::class.java
         )
 
         @JvmStatic

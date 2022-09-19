@@ -67,6 +67,9 @@
     },
     "common": {
       "description": "changes to the common subproject, used to place common stuff from nukkit that are shared by datacompiler & server project"
+    },
+    "vanilla": {
+      "description": "vanilla game logic"
     }
   },
   "footerTypes": [

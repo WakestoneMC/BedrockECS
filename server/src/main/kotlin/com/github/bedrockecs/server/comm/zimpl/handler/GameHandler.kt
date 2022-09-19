@@ -1,6 +1,8 @@
 package com.github.bedrockecs.server.comm.zimpl.handler
 
 import com.github.bedrockecs.server.comm.server.NetworkConnection
+import com.github.bedrockecs.server.game.data.FloatBlockPosition
+import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.nukkitx.math.vector.Vector2f
 import com.nukkitx.math.vector.Vector3f
 import com.nukkitx.math.vector.Vector3i
@@ -17,7 +19,6 @@ import com.nukkitx.protocol.bedrock.data.SyncedPlayerMovementSettings
 import com.nukkitx.protocol.bedrock.packet.AvailableEntityIdentifiersPacket
 import com.nukkitx.protocol.bedrock.packet.BiomeDefinitionListPacket
 import com.nukkitx.protocol.bedrock.packet.NetworkSettingsPacket
-import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket
 import com.nukkitx.protocol.bedrock.packet.SetCommandsEnabledPacket
 import com.nukkitx.protocol.bedrock.packet.StartGamePacket
 import org.springframework.stereotype.Component
@@ -26,68 +27,34 @@ import org.springframework.stereotype.Component
  * deals with everything about game protocol, spawning, interaction, world update......
  */
 @Component
-class GameHandler {
+class GameHandler(
+    private val worldHandler: GameWorldHandler
+) {
     suspend fun handle(conn: NetworkConnection) {
-        runPlayerSpawnSequence(conn)
-        while (true) {
-            conn.receivePacket()
-        }
-    }
+        val spawnedPlayer = worldHandler.waitInPendingPlayer(conn)
 
-    private suspend fun runPlayerSpawnSequence(connection: NetworkConnection) {
         // network setting & client cache
-        connection.sendPacket(NetworkSettingsPacket().apply { compressionThreshold = 1 })
+        conn.sendPacket(NetworkSettingsPacket().apply { compressionThreshold = 1 })
         // receive ClientCacheStatusPacket TODO: deals with ClientCacheStatusPacket
 
         // metadata initialization //
-        connection.sendPacket(computeStartGamePacket())
+        conn.sendPacket(computeStartGamePacket(spawnedPlayer.eid, spawnedPlayer.pos.pos, spawnedPlayer.pos.direction))
         // connection.sendPacket(computeItemComponentPacket()) TODO: send item component constants
-        connection.sendPacket(SetCommandsEnabledPacket().apply { isCommandsEnabled = true })
+        conn.sendPacket(SetCommandsEnabledPacket().apply { isCommandsEnabled = true })
         // AvailableCommandsPacket TODO: send available commands
         // AdventureSettingsPacket TODO: specify adventure settings
-        connection.sendPacket(computeBiomeDefinitionListPacket())
-        connection.sendPacket(computeAvailableEntityIdentifiersPacket())
-        // CreativeContentPacket TODO: send creative content
+        conn.sendPacket(computeBiomeDefinitionListPacket())
+        conn.sendPacket(computeAvailableEntityIdentifiersPacket()) // CreativeContentPacket TODO: send creative content
         // CraftingDataPacket TODO: send crafting data content
 
-        // game state //
-        // PlayerListPacket TODO: send player list
-        // SetTimePacket TODO: send time
-        // PlayerFogPacket TODO: specify player fog
-
-        // player state //
-        // InventoryContentPacket
-        // InventoryContentPacket
-        // InventoryContentPacket
-        // InventoryContentPacket
-        // PlayerHotbarPacket
-
-        // UpdateAttributesPacket
-        // UpdateAttributesPacket
-        // SetEntityDataPacket
-        // SetEntityDataPacket
-        // SetHealthPacket
-
-        // execute respawn //
-        // RespawnPacket
-        // RespawnPacket
-        // RespawnPacket
-
-        // world state //
-        // NetworkChunkPublisherUpdatePacket, TODO: sends location of player & radius=64, range updated by chunk radius updated packet
-        // TODO: update sequence REQUEST_CHUNK_RADIUS -> CHUNK_RADIUS_UPDATED NETWORK_CHUNK_PUBLISHER_UPDATE are updated as follow-up
-
-        // LEVEL_CHUNK for initial chunk content TODO: impl this out
-
-        // BLOCK_UPDATE for block updates, UPDATE_SUBCHUNK_BLOCKS for batched update? TODO: figure this out
-
-        // TickSyncPacket
-
-        // done //
-        connection.sendPacket(PlayStatusPacket().apply { status = PlayStatusPacket.Status.PLAYER_SPAWN })
+        worldHandler.serveGame(conn, spawnedPlayer)
     }
 
-    private suspend fun computeStartGamePacket(): StartGamePacket {
+    private suspend fun computeStartGamePacket(
+        playerEntityID: EntityID,
+        playerPosition: FloatBlockPosition,
+        playerRotation: Vector3f
+    ): StartGamePacket {
         val lists = listOf(
             GameRuleData("commandblocksenabled", true),
             GameRuleData("commandblockoutput", true),
@@ -122,15 +89,16 @@ class GameHandler {
 
         val p1 = StartGamePacket()
         p1.gamerules.addAll(lists)
-        p1.uniqueEntityId = 1
-        p1.runtimeEntityId = 1
+        p1.uniqueEntityId = playerEntityID.value.toLong()
+        p1.runtimeEntityId = playerEntityID.value.toLong()
         p1.playerGameType = GameType.CREATIVE
-        p1.playerPosition = Vector3f.from(116.7401f, 81.0f, 158.457f)
-        p1.rotation = Vector2f.from(303.10815, 45.318115)
+
+        p1.playerPosition = Vector3f.from(playerPosition.x, playerPosition.y, playerPosition.z)
+        p1.rotation = Vector2f.from(playerRotation.x, playerRotation.z)
         p1.seed = -1
         p1.spawnBiomeType = SpawnBiomeType.DEFAULT
         p1.customBiomeName = "plains"
-        p1.dimensionId = 0
+        p1.dimensionId = playerPosition.dim.toInt()
         p1.generatorId = 1
         p1.levelGameType = GameType.CREATIVE
         p1.difficulty = 1

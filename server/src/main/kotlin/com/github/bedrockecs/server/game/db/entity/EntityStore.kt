@@ -25,11 +25,11 @@ interface EntityStore {
      * @throws UnsupportedOperationException if the implementation does not support it
      * @apiNote user is not expected to mutate the provided components, use [MutableEntityStore.mutatingScan] for that!
      */
-    fun <T> scan(
+    fun scan(
         config: EntityScanConfig,
         components: Array<Class<out EntityComponent>>,
-        callback: (EntityID, Array<EntityComponent>) -> T
-    ): Collection<T> {
+        callback: (EntityID, Array<EntityComponent>) -> Unit
+    ) {
         throw UnsupportedOperationException()
     }
 }

@@ -9,6 +9,8 @@ import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.github.bedrockecs.server.game.db.world.serial.SerialChunk
 import com.github.bedrockecs.server.game.db.world.serial.SerialSubChunk
 import com.github.bedrockecs.server.game.db.world.serial.SerialSubChunkLayer
+import com.github.bedrockecs.vanilla.blocks.world.AirBlockType
+import com.github.bedrockecs.vanilla.blocks.world.DirtBlockType
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.locks.ReentrantLock
@@ -40,26 +42,33 @@ class MockGameStorageContext : GameStorageContextInternal {
     }
 
     override fun readChunk(pos: ChunkPosition): CompletableFuture<SerialChunk> {
-        val airIdx = 134
-        val dirtIdx = 4484
+        val airIdx = AirBlockType.allInstances[0].runtimeID
+        val dirtIdx = DirtBlockType.allInstances[0].runtimeID
         val arr = ShortArray(4096)
-        for (idx in (0..4096)) {
+        val airArr = ShortArray(4096)
+        airArr.fill(airIdx)
+        for (idx in (0..4095)) {
             val x = idx % SUBCHUNK_SIZE
             val y = idx / SUBCHUNK_SIZE % SUBCHUNK_SIZE
             val z = idx / (SUBCHUNK_SIZE * SUBCHUNK_SIZE) % SUBCHUNK_SIZE
-            if (x == 0 && z == 0) {
-                arr[idx] = dirtIdx.toShort()
+            if (y == 0) {
+                arr[idx] = dirtIdx
             } else {
-                arr[idx] = airIdx.toShort()
+                arr[idx] = airIdx
             }
         }
 
         fun buildSubChunk(idx: Int): SerialSubChunk {
+            val layer = if (idx == 7) {
+                arr
+            } else {
+                airArr
+            }
             return SerialSubChunk(
                 components = emptyMap(),
                 layers = listOf(
                     SerialSubChunkLayer.UnPalettedShort(
-                        ids = arr,
+                        ids = layer,
                         overrides = emptyMap()
                     )
                 )
@@ -68,7 +77,7 @@ class MockGameStorageContext : GameStorageContextInternal {
 
         val ret = SerialChunk(
             components = emptyMap(),
-            subChunks = (0..15).map { buildSubChunk(it) }
+            subChunks = (0..11).map { buildSubChunk(it) }
         )
         return CompletableFuture.completedFuture(ret)
     }

@@ -1,5 +1,6 @@
 package com.github.bedrockecs.server.game.db.world.serial
 
+import com.github.bedrockecs.server.game.data.BlockConstants.SUBCHUNK_SIZE
 import com.github.bedrockecs.server.game.data.LayeredBlockPosition
 import com.github.bedrockecs.server.game.db.world.data.BlockComponent
 
@@ -18,5 +19,10 @@ sealed class SerialSubChunkLayer {
     data class UnPalettedShort(
         val ids: ShortArray,
         override val overrides: Map<LayeredBlockPosition, Map<Class<out BlockComponent>, BlockComponent?>>
-    ) : SerialSubChunkLayer()
+    ) : SerialSubChunkLayer() {
+        fun idAtOffset(x: Int, y: Int, z: Int): Short {
+            val idx = x + (y * SUBCHUNK_SIZE) + (z * SUBCHUNK_SIZE * SUBCHUNK_SIZE)
+            return ids[idx]
+        }
+    }
 }

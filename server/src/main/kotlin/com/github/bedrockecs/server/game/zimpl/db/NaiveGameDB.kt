@@ -10,6 +10,7 @@ import com.github.bedrockecs.server.game.eventbus.EventBus
 import com.github.bedrockecs.server.game.registry.BlockRegistry
 import com.github.bedrockecs.server.game.zimpl.db.entity.NaiveEntityDB
 import com.github.bedrockecs.server.game.zimpl.db.world.NaiveWorldDB
+import java.util.Collections.synchronizedSet
 import java.util.concurrent.CompletableFuture
 
 class NaiveGameDB(
@@ -20,15 +21,21 @@ class NaiveGameDB(
     override val dimensions: DimensionDB
         get() = TODO("Not yet implemented")
 
-    override val world: NaiveWorldDB
-        get() = NaiveWorldDB(eventBus, blockRegistry)
+    override val world: NaiveWorldDB = NaiveWorldDB(eventBus, blockRegistry)
 
-    override val entities: NaiveEntityDB
-        get() = NaiveEntityDB(eventBus)
+    override val entities: NaiveEntityDB = NaiveEntityDB(eventBus)
 
     override val invitems: InvitemDB
         get() = TODO("Not yet implemented")
 
+    private val loadedChunk = synchronizedSet(HashSet<ChunkPosition>())
+
+    override fun isLoaded(pos: ChunkPosition): Boolean {
+        return loadedChunk.contains(pos)
+    }
+    override fun listLoadedChunks(): Collection<ChunkPosition> {
+        return loadedChunk.toSet()
+    }
     override fun loadChunk(pos: ChunkPosition): CompletableFuture<Void> {
         val invEntities = storage.readEntitiesInChunk(pos)
             .thenCompose { eids ->
@@ -41,15 +48,18 @@ class NaiveGameDB(
 
         val future: CompletableFuture<Void> = CompletableFuture.allOf(invEntities, chunks)
             .thenApply {
-                chunks.get()
+                val chunks = chunks.get()
+                world.load(pos, chunks)
                 invEntities.get().forEach { entities.load(it.entity.id, it.entity.components.values.toSet()) }
                 null
             }
+            .thenRun { loadedChunk.add(pos) }
 
         return future
     }
 
     override fun unloadChunk(pos: ChunkPosition): CompletableFuture<Void> {
+        loadedChunk.remove(pos)
         TODO("Not yet implemented")
     }
 

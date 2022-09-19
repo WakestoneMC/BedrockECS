@@ -1,20 +1,18 @@
 package com.github.bedrockecs.server.game.db.entity
 
-import com.github.bedrockecs.server.game.data.BlockPosition
 import com.github.bedrockecs.server.game.db.entity.data.EntityComponent
 import com.github.bedrockecs.server.game.db.entity.data.EntityTypeComponent
-import com.github.bedrockecs.server.game.db.world.data.BlockComponent
 
 interface MutableEntityStore : EntityStore {
     /**
      * creates a new entity
      * @param type: type of the entity, cannot be changed once the entity is created
-     * @param extras: extra initial components to add to entity, as instance.getClass() -> instance map
+     * @param extras: extra initial components to add to entity
      * @return id of new entity
      */
     fun create(
         type: EntityTypeComponent,
-        extras: MutableSet<EntityComponent>
+        extras: Set<EntityComponent>
     ): EntityID
 
     /**
@@ -39,11 +37,11 @@ interface MutableEntityStore : EntityStore {
      * @param callback mutation callback, takes components & returns modified array of components
      * @throws UnsupportedOperationException if the implementation does not support it
      */
-    fun <T> mutatingScan(
+    fun mutatingScan(
         config: EntityScanConfig,
         components: Array<Class<out EntityComponent>>,
-        callback: (BlockPosition, Array<BlockComponent>) -> Array<BlockComponent?>
-    ): Collection<T> {
+        callback: (EntityID, Array<EntityComponent>) -> Array<EntityComponent?>
+    ) {
         throw UnsupportedOperationException()
     }
 }
