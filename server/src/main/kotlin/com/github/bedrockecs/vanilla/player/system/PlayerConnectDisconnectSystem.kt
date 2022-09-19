@@ -5,26 +5,23 @@ import com.github.bedrockecs.server.comm.game.action.PlayerConnectedAction
 import com.github.bedrockecs.server.comm.game.action.PlayerDisconnectedAction
 import com.github.bedrockecs.server.game.chunkloading.entity.EntityChunkLoadingComponent
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
-import com.github.bedrockecs.server.game.data.FloatRotation
 import com.github.bedrockecs.server.game.db.GameDB
-import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.github.bedrockecs.server.game.db.entity.data.EntityPositionComponent
 import com.github.bedrockecs.server.game.system.System
 import com.github.bedrockecs.vanilla.player.entity.PlayerEntityType
 import com.github.bedrockecs.vanilla.player.entity.PlayerIdentifierComponent
+import com.nukkitx.math.vector.Vector3f
 import org.springframework.stereotype.Component
-import java.util.UUID
 
 @Component
 class PlayerConnectDisconnectSystem(
     private val db: GameDB,
-    private val mailbox: ActionUpdateMailbox
+    private val mailbox: ActionUpdateMailbox,
+    private val mapContext: PlayerMapContext
 ) : System {
 
     private val UNIVERSAL_SPAWN = FloatBlockPosition(100.0f, 64.0f, 100.0f, 0)
-    private val UNIVERSAL_ROT = FloatRotation(0.0f, 0.0f)
-
-    private val players = mutableMapOf<UUID, EntityID>()
+    private val UNIVERSAL_ROT = Vector3f.from(1.0f, 0.0f, 0.0f)
 
     override val tickOrder: Int
         get() = Int.MIN_VALUE + 5_000
@@ -44,11 +41,15 @@ class PlayerConnectDisconnectSystem(
                         EntityChunkLoadingComponent(radius = 4) // TODO: move this to chunk loading?
                     )
                 )
-                players[it.identifiers.playerUUID] = eid
+                mapContext.onPlayerConnected(it.identifiers, eid)
             }
         mailbox.listActions()
             .filterIsInstance<PlayerDisconnectedAction>()
-            .mapNotNull { players[it.identifiers.playerUUID!!] }
+            .mapNotNull {
+                val eid = mapContext.findPlayerByUUID(it.identifiers.playerUUID!!)
+                mapContext.onPlayerDisconnected(it.identifiers)
+                eid
+            }
             .forEach { db.entities.destroy(it) }
     }
 }
