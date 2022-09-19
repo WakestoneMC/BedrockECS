@@ -7,7 +7,7 @@ import com.github.bedrockecs.server.game.eventbus.Subscription
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-class EventBusImpl : EventBus {
+class NaiveEventBusImpl : EventBus {
     data class Listener(
         val config: EventBus.ListenConfig<*>,
         val listener: (Event) -> Unit

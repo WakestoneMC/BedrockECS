@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class EventBusGameConfiguration {
     @Bean
-    fun eventBusImpl(): EventBusImpl {
-        return EventBusImpl()
+    fun eventBusImpl(): NaiveEventBusImpl {
+        return NaiveEventBusImpl()
     }
 }
