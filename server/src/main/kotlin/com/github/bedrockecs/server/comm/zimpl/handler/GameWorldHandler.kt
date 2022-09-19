@@ -1,41 +1,28 @@
 package com.github.bedrockecs.server.comm.zimpl.handler
 
-import com.github.bedrockecs.server.comm.game.action.PlayerConnectedAction
-import com.github.bedrockecs.server.comm.game.action.PlayerDisconnectedAction
 import com.github.bedrockecs.server.comm.game.action.PlayerMoveAction
 import com.github.bedrockecs.server.comm.server.NetworkConnection
 import com.github.bedrockecs.server.comm.zimpl.exchange.GameActionUpdateExchange
+import com.github.bedrockecs.server.comm.zimpl.exchange.PlayerConnectionExchange
 import com.github.bedrockecs.server.game.data.ChunkPosition
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.GameDB
-import com.github.bedrockecs.server.game.db.entity.EntityID
-import com.github.bedrockecs.server.game.db.entity.data.EntityPositionComponent
 import com.nukkitx.math.vector.Vector3i
 import com.nukkitx.protocol.bedrock.packet.MovePlayerPacket
 import com.nukkitx.protocol.bedrock.packet.NetworkChunkPublisherUpdatePacket
 import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.future.await
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.util.UUID
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.ceil
 
 @Component
 class GameWorldHandler(
-    private val exchange: GameActionUpdateExchange
+    private val actionUpdateExchange: GameActionUpdateExchange
 ) {
-
-    data class SpawnedPlayer(
-        val eid: EntityID,
-        val pos: EntityPositionComponent
-    )
-
-    private val pendingPlayer = ConcurrentHashMap<UUID, CompletableFuture<SpawnedPlayer>>()
-
     private val sessions = ConcurrentHashMap<UUID, Session>()
 
     data class Session(
@@ -48,22 +35,7 @@ class GameWorldHandler(
 
     // WorldHandler side //
 
-    suspend fun waitInPendingPlayer(connection: NetworkConnection): SpawnedPlayer {
-        val job = CompletableFuture<SpawnedPlayer>()
-        val uuid = connection.identifiers.playerUUID!!
-        try {
-            pendingPlayer[uuid] = job
-            exchange.addAction(PlayerConnectedAction(connection.identifiers))
-            return job.await()
-        } finally {
-            pendingPlayer.remove(uuid)
-        }
-    }
-
-    suspend fun serveGame(
-        connection: NetworkConnection,
-        spawnedPlayer: SpawnedPlayer
-    ) {
+    suspend fun serveGame(connection: NetworkConnection, spawnedPlayer: PlayerConnectionExchange.SpawnedPlayer) {
         appearInSessions(connection) {
             // game state //
             // PlayerListPacket TODO: send player list
@@ -111,7 +83,7 @@ class GameWorldHandler(
     }
 
     private suspend fun handleMovePlayer(connection: NetworkConnection, packet: MovePlayerPacket) {
-        exchange.addAction(
+        actionUpdateExchange.addAction(
             PlayerMoveAction(
                 playerUUID = connection.identifiers.playerUUID!!,
                 packet.position,
@@ -132,7 +104,6 @@ class GameWorldHandler(
             try {
                 job.join()
             } finally {
-                exchange.addAction(PlayerDisconnectedAction(connection.identifiers))
                 sessions.remove(uuid)
             }
         }
@@ -177,12 +148,6 @@ class GameWorldHandler(
                     }
                 }
             }
-        }
-    }
-
-    fun resolvePendingPlayers(resolved: Map<UUID, SpawnedPlayer>) {
-        resolved.forEach {
-            pendingPlayer[it.key]!!.complete(it.value)
         }
     }
 }

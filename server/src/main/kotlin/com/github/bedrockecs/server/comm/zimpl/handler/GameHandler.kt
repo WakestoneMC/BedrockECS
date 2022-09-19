@@ -1,6 +1,7 @@
 package com.github.bedrockecs.server.comm.zimpl.handler
 
 import com.github.bedrockecs.server.comm.server.NetworkConnection
+import com.github.bedrockecs.server.comm.zimpl.exchange.PlayerConnectionExchange
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.nukkitx.math.vector.Vector2f
@@ -28,26 +29,27 @@ import org.springframework.stereotype.Component
  */
 @Component
 class GameHandler(
-    private val worldHandler: GameWorldHandler
+    private val worldHandler: GameWorldHandler,
+    private val connectionExchange: PlayerConnectionExchange
 ) {
     suspend fun handle(conn: NetworkConnection) {
-        val spawnedPlayer = worldHandler.waitInPendingPlayer(conn)
+        connectionExchange.handleConnection(conn) { spawnedPlayer ->
+            // network setting & client cache
+            conn.sendPacket(NetworkSettingsPacket().apply { compressionThreshold = 1 })
+            // receive ClientCacheStatusPacket TODO: deals with ClientCacheStatusPacket
 
-        // network setting & client cache
-        conn.sendPacket(NetworkSettingsPacket().apply { compressionThreshold = 1 })
-        // receive ClientCacheStatusPacket TODO: deals with ClientCacheStatusPacket
+            // metadata initialization //
+            conn.sendPacket(computeStartGamePacket(spawnedPlayer.eid, spawnedPlayer.pos.pos, spawnedPlayer.pos.direction))
+            // connection.sendPacket(computeItemComponentPacket()) TODO: send item component constants
+            conn.sendPacket(SetCommandsEnabledPacket().apply { isCommandsEnabled = true })
+            // AvailableCommandsPacket TODO: send available commands
+            // AdventureSettingsPacket TODO: specify adventure settings
+            conn.sendPacket(computeBiomeDefinitionListPacket())
+            conn.sendPacket(computeAvailableEntityIdentifiersPacket()) // CreativeContentPacket TODO: send creative content
+            // CraftingDataPacket TODO: send crafting data content
 
-        // metadata initialization //
-        conn.sendPacket(computeStartGamePacket(spawnedPlayer.eid, spawnedPlayer.pos.pos, spawnedPlayer.pos.direction))
-        // connection.sendPacket(computeItemComponentPacket()) TODO: send item component constants
-        conn.sendPacket(SetCommandsEnabledPacket().apply { isCommandsEnabled = true })
-        // AvailableCommandsPacket TODO: send available commands
-        // AdventureSettingsPacket TODO: specify adventure settings
-        conn.sendPacket(computeBiomeDefinitionListPacket())
-        conn.sendPacket(computeAvailableEntityIdentifiersPacket()) // CreativeContentPacket TODO: send creative content
-        // CraftingDataPacket TODO: send crafting data content
-
-        worldHandler.serveGame(conn, spawnedPlayer)
+            worldHandler.serveGame(conn, spawnedPlayer)
+        }
     }
 
     private suspend fun computeStartGamePacket(
