@@ -64,6 +64,7 @@ class NaiveEntityDB(
         creatingEvent.publish(type.entityType, EntityCreatingEvent(entityID, type, extras.toMutableSet()))
 
         val entity = engine.createEntity()
+        engine.addEntity(entity)
         entity.add(type)
         extras.forEach { entity.add(it) }
 
