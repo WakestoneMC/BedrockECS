@@ -48,7 +48,7 @@ interface EventBus {
          * the order is determined among all listeners that respond to the currently sending event.
          * conceptually: listenersThatAccepts(event.getClass(), dispatchToken).sortBy{ it.config.order }.map({it(event)})
          */
-        val order: Int
+        val order: Int = 0
     )
 
     fun <T : Event> listensFor(config: ListenConfig<T>, listener: (T) -> Unit): Subscription

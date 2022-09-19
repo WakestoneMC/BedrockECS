@@ -4,66 +4,52 @@ import com.github.bedrockecs.server.game.eventbus.Event
 import com.github.bedrockecs.server.game.eventbus.EventBus
 import com.github.bedrockecs.server.game.eventbus.Publisher
 import com.github.bedrockecs.server.game.eventbus.Subscription
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
+import com.github.bedrockecs.server.game.zimpl.eventbus.ListenerChainManager.Listener
+import com.github.bedrockecs.server.game.zimpl.eventbus.ListenerChainManager.ListenerChain
+import java.util.concurrent.atomic.AtomicReference
 
+/**
+ * implementation of [EventBus]
+ */
 class EventBusImpl : EventBus {
-    data class Listener(
-        val config: EventBus.ListenConfig<*>,
-        val listener: (Event) -> Unit
-    )
+    class PublisherImpl<T : Event>(
+        chain: ListenerChain<T>,
+        private val manager: ListenerChainManager
+    ) : Publisher<T> {
 
-    private val listenerMapLock: ReentrantLock = ReentrantLock()
-    private val listenerMap: MutableMap<Class<out Event>, MutableMap<Any?, MutableList<Listener>>> = mutableMapOf()
+        @Volatile private var chain: AtomicReference<ListenerChain<T>> = AtomicReference(chain)
 
-    override fun <T : Event> publishFor(config: EventBus.PublishConfig<T>): Publisher<T> {
-        return object : Publisher<T> {
-            override val dispatchTokens: Set<Any?>
-                get() {
-                    return listenerMapLock.withLock {
-                        listenerMap
-                            .filterKeys { it.isAssignableFrom(config.eventType) }
-                            .flatMap { it.value.keys }
-                            .toSet()
-                    }
-                }
-
-            override fun close() {
-                // no-op
+        override val dispatchTokens: Set<Any?>
+            get() {
+                val chain = this.chain.updateAndGet { manager.updateChain(it) }
+                return chain.tokenListenerMap.keys
             }
 
-            override fun publish(dispatchToken: Any?, event: T) {
-                val listeners: List<Listener>
-                listenerMapLock.withLock {
-                    listeners = listenerMap
-                        .filterKeys { it.isAssignableFrom(config.eventType) }
-                        .flatMap { it.value.filter { it.key == null || it.key == dispatchToken }.values }
-                        .flatten()
-                        .sortedBy { it.config.order }
-                }
-                listeners.forEach { it.listener(event) }
-            }
+        override fun publish(dispatchToken: Any?, event: T) {
+            val chain = this.chain.updateAndGet { manager.updateChain(it) }
+            return chain.invoke(dispatchToken, event)
+        }
+
+        override fun close() {
+            // no-op, just discard
         }
     }
 
-    override fun <T : Event> listensFor(config: EventBus.ListenConfig<T>, listener: (T) -> Unit): Subscription {
-        val internalListener = Listener(config) { listener(it as T) }
+    private val manager: ListenerChainManager = ListenerChainManager()
 
-        val subscription = object : Subscription {
+    override fun <T : Event> publishFor(config: EventBus.PublishConfig<T>): Publisher<T> {
+        return PublisherImpl(manager.buildChain(config.eventType), manager)
+    }
+
+    override fun <T : Event> listensFor(config: EventBus.ListenConfig<T>, listener: (T) -> Unit): Subscription {
+        val managerClose = manager.addListener(
+            config.eventType,
+            Listener(config.dispatchToken, config.order, listener)
+        )
+        return object : Subscription {
             override fun close() {
-                listenerMapLock.withLock {
-                    listenerMap[config.eventType]?.get(config.dispatchToken)?.remove(internalListener)
-                }
+                managerClose.close()
             }
         }
-
-        listenerMapLock.withLock {
-            val list = listenerMap
-                .getOrPut(config.eventType, ::mutableMapOf)
-                .getOrPut(config.dispatchToken, ::mutableListOf)
-            list.add(internalListener)
-        }
-
-        return subscription
     }
 }
