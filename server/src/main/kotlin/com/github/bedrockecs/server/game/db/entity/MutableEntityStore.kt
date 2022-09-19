@@ -7,12 +7,12 @@ interface MutableEntityStore : EntityStore {
     /**
      * creates a new entity
      * @param type: type of the entity, cannot be changed once the entity is created
-     * @param extras: extra initial components to add to entity, as instance.getClass() -> instance map
+     * @param extras: extra initial components to add to entity
      * @return id of new entity
      */
     fun create(
         type: EntityTypeComponent,
-        extras: MutableSet<EntityComponent>
+        extras: Set<EntityComponent>
     ): EntityID
 
     /**

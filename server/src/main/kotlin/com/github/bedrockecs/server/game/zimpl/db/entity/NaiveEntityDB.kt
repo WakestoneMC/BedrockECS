@@ -54,14 +54,14 @@ class NaiveEntityDB(
 
     override fun create(
         type: EntityTypeComponent,
-        extras: MutableSet<EntityComponent>
+        extras: Set<EntityComponent>
     ): EntityID {
         val aid = idMapLock.withLock {
             id++
         }
         val entityID = EntityID(aid)
 
-        creatingEvent.publish(type.entityType, EntityCreatingEvent(entityID, type, extras))
+        creatingEvent.publish(type.entityType, EntityCreatingEvent(entityID, type, extras.toMutableSet()))
 
         val entity = engine.createEntity()
         entity.add(type)
