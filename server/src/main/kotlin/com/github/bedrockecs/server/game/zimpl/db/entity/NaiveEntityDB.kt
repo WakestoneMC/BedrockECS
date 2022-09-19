@@ -2,10 +2,12 @@ package com.github.bedrockecs.server.game.zimpl.db.entity
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
+import com.badlogic.ashley.core.Family
 import com.github.bedrockecs.server.game.db.common.LoadType
 import com.github.bedrockecs.server.game.db.common.MutateType
 import com.github.bedrockecs.server.game.db.entity.EntityDB
 import com.github.bedrockecs.server.game.db.entity.EntityID
+import com.github.bedrockecs.server.game.db.entity.EntityScanConfig
 import com.github.bedrockecs.server.game.db.entity.data.EntityComponent
 import com.github.bedrockecs.server.game.db.entity.data.EntityTypeComponent
 import com.github.bedrockecs.server.game.db.entity.event.EntityCreatingEvent
@@ -46,6 +48,8 @@ class NaiveEntityDB(
 
     private val idMap: MutableMap<Int, Entity> = mutableMapOf()
 
+    private val idReverseMap: MutableMap<Entity, Int> = mutableMapOf()
+
     private val engine: Engine = Engine()
 
     override fun create(
@@ -65,6 +69,7 @@ class NaiveEntityDB(
 
         idMapLock.withLock {
             idMap[aid] = entity
+            idReverseMap[entity] = aid
         }
 
         entity.components.forEach {
@@ -83,6 +88,10 @@ class NaiveEntityDB(
             entity.components.forEach {
                 val c = it as EntityComponent
                 mutationEvent.publish(c.type, EntityMutationEvent(id, MutateType.REMOVE))
+            }
+            idMapLock.withLock {
+                idMap.remove(id.value)
+                idReverseMap.remove(entity)
             }
             engine.removeEntity(entity)
         }
@@ -118,6 +127,37 @@ class NaiveEntityDB(
         return entity.components.toArray() as Collection<EntityComponent>
     }
 
+    override fun scan(
+        config: EntityScanConfig,
+        components: Array<Class<out EntityComponent>>,
+        callback: (EntityID, Array<EntityComponent>) -> Unit
+    ) {
+        return mutatingScan(config, components) { eid, arr ->
+            callback(eid, arr)
+            arr as Array<EntityComponent?>
+        }
+    }
+
+    override fun mutatingScan(
+        config: EntityScanConfig,
+        components: Array<Class<out EntityComponent>>,
+        callback: (EntityID, Array<EntityComponent>) -> Array<EntityComponent?>
+    ) {
+        val entities = engine.getEntitiesFor(Family.all(*components).get())
+        entities.forEach { entity ->
+            val eid = idReverseMap[entity]!!
+            val arr = components.map { entity.getComponent(it) }.toTypedArray()
+            val ret = callback(EntityID(eid), arr)
+            components.zip(ret).forEach { (type, ret) ->
+                if (ret != null) {
+                    entity.add(ret)
+                } else {
+                    entity.remove(type)
+                }
+            }
+        }
+    }
+
     fun load(id: EntityID, components: Set<EntityComponent>) {
         val entity = engine.createEntity()
         components.forEach { entity.add(it) }
@@ -127,6 +167,7 @@ class NaiveEntityDB(
                 this.id++
             }
             idMap[id.value] = entity
+            idReverseMap[entity] = id.value
         }
         val type = entity.getComponent(EntityTypeComponent::class.java)
         loadingEvent.publish(type.entityType, EntityLoadingEvent(id, LoadType.LOAD))
@@ -141,7 +182,8 @@ class NaiveEntityDB(
         loadingEvent.publish(type.entityType, EntityLoadingEvent(id, LoadType.UNLOAD))
 
         idMapLock.withLock {
-            idMap.remove(id.value)
+            val entity = idMap.remove(id.value)
+            idReverseMap.remove(entity)
         }
         return id to (entity.components.toSet() as Set<EntityComponent>)
     }
