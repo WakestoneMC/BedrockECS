@@ -1,6 +1,7 @@
 package com.github.bedrockecs.server.comm.zimpl.handler
 
 import com.github.bedrockecs.server.comm.server.NetworkConnection
+import com.github.bedrockecs.server.common.zimpl.palette.PaletteStorage
 import com.nukkitx.math.vector.Vector2f
 import com.nukkitx.math.vector.Vector3f
 import com.nukkitx.math.vector.Vector3i
@@ -16,10 +17,13 @@ import com.nukkitx.protocol.bedrock.data.SpawnBiomeType
 import com.nukkitx.protocol.bedrock.data.SyncedPlayerMovementSettings
 import com.nukkitx.protocol.bedrock.packet.AvailableEntityIdentifiersPacket
 import com.nukkitx.protocol.bedrock.packet.BiomeDefinitionListPacket
+import com.nukkitx.protocol.bedrock.packet.LevelChunkPacket
+import com.nukkitx.protocol.bedrock.packet.NetworkChunkPublisherUpdatePacket
 import com.nukkitx.protocol.bedrock.packet.NetworkSettingsPacket
 import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket
 import com.nukkitx.protocol.bedrock.packet.SetCommandsEnabledPacket
 import com.nukkitx.protocol.bedrock.packet.StartGamePacket
+import io.netty.buffer.Unpooled
 import org.springframework.stereotype.Component
 
 /**
@@ -33,12 +37,16 @@ class GameHandler {
     }
 
     private suspend fun serveInitializationPackets(connection: NetworkConnection) {
+        val playerEntityID = 1L
+        val playerPosition = Vector3f.from(100.0f, 64.0f, 100.0f)
+        val playerPosition3i = Vector3i.from(100, 64, 100)
+        val playerRotation = Vector2f.from(0.0, 0.0)
         // network setting & client cache
         connection.sendPacket(NetworkSettingsPacket().apply { compressionThreshold = 1 })
         // receive ClientCacheStatusPacket TODO: deals with ClientCacheStatusPacket
 
         // metadata initialization //
-        connection.sendPacket(computeStartGamePacket())
+        connection.sendPacket(computeStartGamePacket(playerEntityID, playerPosition, playerRotation))
         // connection.sendPacket(computeItemComponentPacket()) TODO: send item component constants
         connection.sendPacket(SetCommandsEnabledPacket().apply { isCommandsEnabled = true })
         // AvailableCommandsPacket TODO: send available commands
@@ -74,10 +82,22 @@ class GameHandler {
         // RespawnPacket
 
         // world state //
-        // NetworkChunkPublisherUpdatePacket, TODO: sends location of player & radius=64, range updated by chunk radius updated packet
+
+        // TODO: sends location of player & radius=64, range updated by chunk radius updated packet
+        connection.sendPacket(
+            NetworkChunkPublisherUpdatePacket().apply {
+                position = playerPosition3i
+                radius = 64
+            }
+        )
         // TODO: update sequence REQUEST_CHUNK_RADIUS -> CHUNK_RADIUS_UPDATED NETWORK_CHUNK_PUBLISHER_UPDATE are updated as follow-up
 
         // LEVEL_CHUNK for initial chunk content TODO: impl this out
+        listChunksInRadius(playerPosition, 64)
+            .forEach { (x, z) ->
+                val packet = computeLevelChuckPacket(x, z)
+                connection.sendPacket(packet, NetworkConnection.Latency.IMMEDIATELY)
+            }
 
         // BLOCK_UPDATE for block updates, UPDATE_SUBCHUNK_BLOCKS for batched update? TODO: figure this out
 
@@ -85,12 +105,100 @@ class GameHandler {
 
         // done //
         connection.sendPacket(PlayStatusPacket().apply { status = PlayStatusPacket.Status.PLAYER_SPAWN })
-
-        while (true) {
-            connection.receivePacket()
-        }
     }
-    private suspend fun computeStartGamePacket(): StartGamePacket {
+
+    private fun listChunksInRadius(player: Vector3f, radius: Int): List<Pair<Int, Int>> {
+        val x = player.x
+        val z = player.z
+        val minX = ((x - radius) / 16).toInt()
+        val minZ = ((z - radius) / 16).toInt()
+        val maxX = ((x + radius) / 16).toInt()
+        val maxZ = ((z + radius) / 16).toInt()
+
+        val ret = mutableListOf<Pair<Int, Int>>()
+        for (x in minX..maxX) {
+            for (z in minZ..maxZ) {
+                ret.add(x to z)
+            }
+        }
+
+        return ret
+    }
+
+    private fun computeLevelChuckPacket(chunkX: Int, chunkZ: Int): LevelChunkPacket {
+        val dirtLayer = computeBlockPalette()
+        val pureAir = computeAirBlockPalette()
+        val biome = computeBiomePalette()
+
+        val packet = LevelChunkPacket()
+        packet.isCachingEnabled = false
+        packet.blobIds.clear()
+
+        packet.subChunkLimit = 0
+        packet.isRequestSubChunks = false
+
+        packet.subChunksLength = 12
+        packet.chunkX = chunkX
+        packet.chunkZ = chunkZ
+
+        val buf = Unpooled.buffer()
+        for (x in 0..6) {
+            buf.writeByte(8)
+            buf.writeByte(1)
+            pureAir.writeTo(buf)
+        }
+        buf.writeByte(8)
+        buf.writeByte(1)
+        dirtLayer.writeTo(buf)
+        for (x in 0..3) {
+            buf.writeByte(8)
+            buf.writeByte(1)
+            pureAir.writeTo(buf)
+        }
+
+        for (x in 0..24) {
+            biome.writeTo(buf)
+        }
+
+        buf.writeByte(0)
+
+        // no-nbt
+
+        packet.data = buf.array()
+
+        return packet
+    }
+
+    private fun computeBiomePalette(): PaletteStorage {
+        val airRID = 0
+        val storage = PaletteStorage.createWithDefaultState(airRID)
+        return storage
+    }
+
+    private fun computeBlockPalette(): PaletteStorage {
+        val grassRID = 4484
+        val airRID = 134
+        val storage = PaletteStorage.createWithDefaultState(airRID)
+        for (x in 0..15) {
+            for (z in 0..15) {
+                storage.setBlock(x, 0, z, grassRID)
+            }
+        }
+        return storage
+    }
+
+    private fun computeAirBlockPalette(): PaletteStorage {
+        val grassRID = 4484
+        val airRID = 134
+        val storage = PaletteStorage.createWithDefaultState(airRID)
+        return storage
+    }
+
+    private suspend fun computeStartGamePacket(
+        playerEntityID: Long,
+        playerPosition: Vector3f,
+        playerRotation: Vector2f
+    ): StartGamePacket {
         val lists = listOf(
             GameRuleData("commandblocksenabled", true),
             GameRuleData("commandblockoutput", true),
@@ -125,11 +233,12 @@ class GameHandler {
 
         val p1 = StartGamePacket()
         p1.gamerules.addAll(lists)
-        p1.uniqueEntityId = 1
-        p1.runtimeEntityId = 1
+        p1.uniqueEntityId = playerEntityID
+        p1.runtimeEntityId = playerEntityID
         p1.playerGameType = GameType.CREATIVE
-        p1.playerPosition = Vector3f.from(116.7401f, 81.0f, 158.457f)
-        p1.rotation = Vector2f.from(303.10815, 45.318115)
+
+        p1.playerPosition = playerPosition
+        p1.rotation = playerRotation
         p1.seed = -1
         p1.spawnBiomeType = SpawnBiomeType.DEFAULT
         p1.customBiomeName = "plains"
