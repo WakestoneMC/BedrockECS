@@ -2,7 +2,6 @@ package com.github.bedrockecs.server.comm.zimpl.handler
 
 import com.github.bedrockecs.server.comm.server.NetworkConnection
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
-import com.github.bedrockecs.server.game.data.FloatRotation
 import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.nukkitx.math.vector.Vector2f
 import com.nukkitx.math.vector.Vector3f
@@ -39,7 +38,7 @@ class GameHandler(
         // receive ClientCacheStatusPacket TODO: deals with ClientCacheStatusPacket
 
         // metadata initialization //
-        conn.sendPacket(computeStartGamePacket(spawnedPlayer.eid, spawnedPlayer.pos.pos, spawnedPlayer.pos.rot))
+        conn.sendPacket(computeStartGamePacket(spawnedPlayer.eid, spawnedPlayer.pos.pos, spawnedPlayer.pos.direction))
         // connection.sendPacket(computeItemComponentPacket()) TODO: send item component constants
         conn.sendPacket(SetCommandsEnabledPacket().apply { isCommandsEnabled = true })
         // AvailableCommandsPacket TODO: send available commands
@@ -54,7 +53,7 @@ class GameHandler(
     private suspend fun computeStartGamePacket(
         playerEntityID: EntityID,
         playerPosition: FloatBlockPosition,
-        playerRotation: FloatRotation
+        playerRotation: Vector3f
     ): StartGamePacket {
         val lists = listOf(
             GameRuleData("commandblocksenabled", true),

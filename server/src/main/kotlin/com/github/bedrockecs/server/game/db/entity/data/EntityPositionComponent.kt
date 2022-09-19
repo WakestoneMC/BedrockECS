@@ -1,7 +1,7 @@
 package com.github.bedrockecs.server.game.db.entity.data
 
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
-import com.github.bedrockecs.server.game.data.FloatRotation
+import com.nukkitx.math.vector.Vector3f
 
 /**
  * represents an entity with position
@@ -9,7 +9,7 @@ import com.github.bedrockecs.server.game.data.FloatRotation
  */
 data class EntityPositionComponent(
     var pos: FloatBlockPosition,
-    var rot: FloatRotation
+    var direction: Vector3f
 ) : EntityComponent {
     override val type: String
         get() = "becs:position"
