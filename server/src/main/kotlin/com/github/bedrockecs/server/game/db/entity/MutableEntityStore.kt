@@ -1,9 +1,7 @@
 package com.github.bedrockecs.server.game.db.entity
 
-import com.github.bedrockecs.server.game.data.BlockPosition
 import com.github.bedrockecs.server.game.db.entity.data.EntityComponent
 import com.github.bedrockecs.server.game.db.entity.data.EntityTypeComponent
-import com.github.bedrockecs.server.game.db.world.data.BlockComponent
 
 interface MutableEntityStore : EntityStore {
     /**
@@ -42,7 +40,7 @@ interface MutableEntityStore : EntityStore {
     fun mutatingScan(
         config: EntityScanConfig,
         components: Array<Class<out EntityComponent>>,
-        callback: (BlockPosition, Array<BlockComponent>) -> Array<BlockComponent?>
+        callback: (EntityID, Array<EntityComponent>) -> Array<EntityComponent?>
     ) {
         throw UnsupportedOperationException()
     }
