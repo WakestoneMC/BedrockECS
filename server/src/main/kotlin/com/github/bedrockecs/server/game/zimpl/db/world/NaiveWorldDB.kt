@@ -140,16 +140,31 @@ class NaiveWorldDB(
         }
     }
 
-    override fun serialize(pos: SubChunkPosition): SerialSubChunk {
-        dbLock.withLock {
-            val subchunk = subchunkDB[pos] ?: throw ChunkNotLoadedException(pos.toChunk())
-            val chunk = db[pos] ?: throw ChunkNotLoadedException(pos.toChunk())
-            return SerialSubChunk(subchunk, chunk.map { it.serialize() })
+    override fun serialize(pos: ChunkPosition): SerialChunk {
+        val (chunk, tablets) = dbLock.withLock {
+            val subchunks = db.keys.filter { it.toChunk() == pos }.toSet()
+            if (subchunks.isEmpty()) {
+                throw IllegalStateException("chunk $pos is not loaded!")
+            }
+            loadingEvent.publish(null, ChunkLoadingEvent(pos, LoadType.UNLOAD))
+
+            val tablets = subchunks.map {
+                Triple(it, db.remove(it)!!, subchunkDB.remove(it)!!)
+            }
+            chunkDB.get(pos)!! to tablets
         }
+        val serials = tablets
+            .map {
+                it.first to SerialSubChunk(it.third, it.second.map { it.serialize() })
+            }
+            .sortedBy { it.first.y }
+            .map { it.second }
+            .toList()
+        return SerialChunk(chunk, serials)
     }
 
-    fun load(pos: ChunkPosition, serials: List<SerialSubChunk>) {
-        val deserialized = serials.mapIndexed { index, subChunk ->
+    fun load(pos: ChunkPosition, serials: SerialChunk) {
+        val deserialized = serials.subChunks.mapIndexed { index, subChunk ->
             val subChunkPos = SubChunkPosition(pos.x, index, pos.z, pos.dim)
             val tablets = subChunk
                 .layers.mapIndexed { index, layer ->
