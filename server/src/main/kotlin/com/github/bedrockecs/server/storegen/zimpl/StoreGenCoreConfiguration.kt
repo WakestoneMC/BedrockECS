@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class StoreGenCoreConfiguration {
     @Bean
-    fun gameConfiguration(): StoreGenGameConfiguration {
+    fun storeGenGameConfiguration(): StoreGenGameConfiguration {
         return StoreGenGameConfiguration()
     }
 }
