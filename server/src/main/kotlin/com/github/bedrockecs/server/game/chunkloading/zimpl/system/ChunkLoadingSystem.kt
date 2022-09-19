@@ -7,7 +7,7 @@ import com.github.bedrockecs.server.game.db.entity.EntityScanConfig
 import com.github.bedrockecs.server.game.db.entity.data.EntityPositionComponent
 import com.github.bedrockecs.server.game.system.System
 import org.springframework.stereotype.Component
-import java.util.concurrent.ConcurrentSkipListSet
+import java.util.Collections.synchronizedSet
 
 @Component
 class ChunkLoadingSystem(
@@ -17,7 +17,7 @@ class ChunkLoadingSystem(
         get() = Int.MIN_VALUE + 10_000
 
     override fun tick() {
-        val shouldLoadChunks = ConcurrentSkipListSet<ChunkPosition>()
+        val shouldLoadChunks = synchronizedSet(HashSet<ChunkPosition>())
         db.entities.scan(
             EntityScanConfig(),
             arrayOf(EntityChunkLoadingComponent::class.java, EntityPositionComponent::class.java)

@@ -21,11 +21,9 @@ class NaiveGameDB(
     override val dimensions: DimensionDB
         get() = TODO("Not yet implemented")
 
-    override val world: NaiveWorldDB
-        get() = NaiveWorldDB(eventBus, blockRegistry)
+    override val world: NaiveWorldDB = NaiveWorldDB(eventBus, blockRegistry)
 
-    override val entities: NaiveEntityDB
-        get() = NaiveEntityDB(eventBus)
+    override val entities: NaiveEntityDB = NaiveEntityDB(eventBus)
 
     override val invitems: InvitemDB
         get() = TODO("Not yet implemented")
