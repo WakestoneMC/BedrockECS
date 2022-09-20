@@ -120,7 +120,7 @@ class DimensionDBImplMutateTest {
                 assertThat(event.pos).isEqualTo(eid)
                 assertThat(event.type).isEqualTo(MutateType.REMOVE)
                 // post-update
-                assertThat(db.list(event.pos)).isEmpty()
+                assertThat(db.list(event.pos)).containsExactly(TestComponentA())
             },
             func = { evb, db, eid ->
                 db.mutate(eid, TestComponentA::class.java) { null }

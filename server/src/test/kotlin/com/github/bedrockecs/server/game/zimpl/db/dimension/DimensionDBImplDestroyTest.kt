@@ -1,7 +1,9 @@
 package com.github.bedrockecs.server.game.zimpl.db.dimension
 
 import com.github.bedrockecs.server.game.db.common.LifecycleType
+import com.github.bedrockecs.server.game.db.common.MutateType
 import com.github.bedrockecs.server.game.zimpl.db.dimension.DimensionDBTestUtil.lifecycleEventTest
+import com.github.bedrockecs.server.game.zimpl.db.dimension.DimensionDBTestUtil.mutationEventTest
 import com.github.bedrockecs.server.game.zimpl.db.dimension.DimensionDBTestUtil.postDestroyCallbackTest
 import com.github.bedrockecs.server.game.zimpl.db.dimension.DimensionDBTestUtil.withTestDB
 import org.assertj.core.api.Assertions.assertThat
@@ -24,7 +26,7 @@ class DimensionDBImplDestroyTest {
     }
 
     @Test
-    fun destroyEmitsEvents() {
+    fun destroyEmitsLifecycleEvents() {
         lifecycleEventTest(
             null,
             listener = { db, eid, event ->
@@ -35,6 +37,23 @@ class DimensionDBImplDestroyTest {
                 assertThrows<IllegalArgumentException> {
                     db.list(eid)
                 }
+            },
+            func = { evb, db, eid ->
+                db.destroy(eid)
+            }
+        )
+    }
+
+    @Test
+    fun destroyEmitsMutationEvents() {
+        mutationEventTest(
+            TestComponentA.TYPE,
+            listener = { db, eid, event ->
+                // arguments
+                assertThat(event.pos).isEqualTo(eid)
+                assertThat(event.type).isEqualTo(MutateType.REMOVE)
+                // pre-destroy
+                assertThat(db.list(eid)).containsExactly(TestComponentA())
             },
             func = { evb, db, eid ->
                 db.destroy(eid)

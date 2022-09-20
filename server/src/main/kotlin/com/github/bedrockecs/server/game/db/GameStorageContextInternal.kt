@@ -25,9 +25,9 @@ interface GameStorageContextInternal : GameStorageContext {
 
     fun onCreatingDimension(id: Short, components: Set<DimensionComponent>)
 
-    fun onDimensionComponentUpdated(id: Short, from: DimensionComponent?, to: DimensionComponent?)
+    fun onUpdatingDimensionComponent(id: Short, from: DimensionComponent?, to: DimensionComponent?)
 
-    fun onDimensionDestroyed(id: Short, components: Set<DimensionComponent>)
+    fun onDestroyedDimension(id: Short, components: Set<DimensionComponent>)
 
     // entity ID Allocator //
 

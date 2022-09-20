@@ -105,6 +105,11 @@ class DimensionDBImpl(
 
                 preUpdate(pos, oldValue, newValue)
 
+                // TODO: move this out of the lock as this could be very slow
+                if (oldValue != null && newValue == null) {
+                    mutatePub.publish(oldValue.type, DimensionMutationEvent(pos, MutateType.REMOVE))
+                }
+
                 if (newValue == null) {
                     entry.map.remove(clazz)
                 } else {
@@ -116,20 +121,31 @@ class DimensionDBImpl(
             mutatePub.publish(newValue.type, DimensionMutationEvent(pos, MutateType.ADD))
         } else if (oldValue != null && newValue != null) {
             mutatePub.publish(newValue.type, DimensionMutationEvent(pos, MutateType.UPDATE))
-        } else if (oldValue != null && newValue == null) {
-            mutatePub.publish(oldValue.type, DimensionMutationEvent(pos, MutateType.REMOVE))
         }
     }
 
     override fun destroy(pos: Short) {
         var executed = false
+        val components: Set<DimensionComponent>
         dimensionsLock.write {
             if (0 <= pos && pos < dimensions.size) {
                 val entry = dimensions[pos.toInt()]
                 if (entry != null) {
                     executed = true
+                    components = entry.map.values.toSet()
+
+                    // TODO: move this out of the lock as this could be very slow
+                    components.forEach {
+                        mutatePub.publish(it.type, DimensionMutationEvent(pos, MutateType.REMOVE))
+                    }
+
                     dimensions[pos.toInt()] = null
-                    postDestroy(pos, entry.map.values.toSet())
+                    try {
+                        postDestroy(pos, components)
+                    } catch (ex: Throwable) {
+                        dimensions[pos.toInt()] = entry
+                        throw ex
+                    }
                 }
             }
         }
