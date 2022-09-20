@@ -13,7 +13,7 @@ import com.github.bedrockecs.server.game.eventbus.Event
  * * [LifecycleType.CREATE] are called after created,
  * * [LifecycleType.DESTROY] are called before destroyed
  */
-class DimensionLifecycleEvent(
+data class DimensionLifecycleEvent(
     val pos: Short,
     val type: LifecycleType
 ) : Event

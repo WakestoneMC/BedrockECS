@@ -33,11 +33,11 @@ class MockGameStorageContext : GameStorageContextInternal {
         TODO("Not yet implemented")
     }
 
-    override fun onDimensionComponentUpdated(id: Short, from: DimensionComponent?, to: DimensionComponent?) {
+    override fun onUpdatingDimensionComponent(id: Short, from: DimensionComponent?, to: DimensionComponent?) {
         // no-op
     }
 
-    override fun onDimensionDestroyed(id: Short, components: Set<DimensionComponent>) {
+    override fun onDestroyedDimension(id: Short, components: Set<DimensionComponent>) {
         TODO("Not yet implemented")
     }
 
