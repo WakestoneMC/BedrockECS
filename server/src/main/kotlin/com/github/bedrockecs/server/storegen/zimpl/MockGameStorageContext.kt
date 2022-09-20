@@ -3,8 +3,6 @@ package com.github.bedrockecs.server.storegen.zimpl
 import com.github.bedrockecs.server.game.data.BlockConstants.SUBCHUNK_SIZE
 import com.github.bedrockecs.server.game.data.ChunkPosition
 import com.github.bedrockecs.server.game.db.GameStorageContext
-import com.github.bedrockecs.server.game.db.GameStorageContextInternal
-import com.github.bedrockecs.server.game.db.dimension.data.DimensionComponent
 import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.github.bedrockecs.server.game.db.world.serial.SerialChunk
 import com.github.bedrockecs.server.game.db.world.serial.SerialSubChunk
@@ -13,33 +11,8 @@ import com.github.bedrockecs.vanilla.blocks.world.AirBlockType
 import com.github.bedrockecs.vanilla.blocks.world.DirtBlockType
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
-class MockGameStorageContext : GameStorageContextInternal {
-
-    private val lock = ReentrantLock()
-
-    private var counter: Int = 0
-
-    override fun initialLoad(): GameStorageContextInternal.InitialLoad {
-        return GameStorageContextInternal.InitialLoad(
-            dimensions = mapOf((0.toShort()) to emptySet()),
-            globalEntity = emptySet()
-        )
-    }
-
-    override fun onCreatingDimension(id: Short, components: Set<DimensionComponent>) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onUpdatingDimensionComponent(id: Short, from: DimensionComponent?, to: DimensionComponent?) {
-        // no-op
-    }
-
-    override fun onDestroyedDimension(id: Short, components: Set<DimensionComponent>) {
-        TODO("Not yet implemented")
-    }
+class MockGameStorageContext : GameStorageContext {
 
     override fun readChunk(pos: ChunkPosition): CompletableFuture<SerialChunk> {
         val airIdx = AirBlockType.allInstances[0].runtimeID
@@ -88,18 +61,6 @@ class MockGameStorageContext : GameStorageContextInternal {
 
     override fun writeChunk(pos: ChunkPosition, chunk: SerialChunk): CompletableFuture<Void> {
         return CompletableFuture.completedFuture(null)
-    }
-
-    override fun allocateID(): List<EntityID> {
-        lock.withLock {
-            val value = counter
-            counter += 1024
-            return (value..value + 1024).map { EntityID(it) }
-        }
-    }
-
-    override fun releaseID(ids: List<EntityID>) {
-        // no-op
     }
 
     override fun readEntity(id: EntityID): CompletableFuture<GameStorageContext.SerialInvEntity> {

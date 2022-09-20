@@ -1,6 +1,6 @@
 package com.github.bedrockecs.server.game.zimpl.db
 
-import com.github.bedrockecs.server.game.db.GameStorageContextInternal
+import com.github.bedrockecs.server.game.db.GameStorageProvider
 import com.github.bedrockecs.server.game.eventbus.EventBus
 import com.github.bedrockecs.server.game.ext.GameConfiguration
 import com.github.bedrockecs.server.game.registry.BlockRegistry
@@ -12,8 +12,8 @@ class DBGameConfiguration {
     fun gameDB(
         eventBus: EventBus,
         blockRegistry: BlockRegistry,
-        storageContextInternal: GameStorageContextInternal
+        provider: GameStorageProvider
     ): NaiveGameDB {
-        return NaiveGameDB(eventBus, blockRegistry, storageContextInternal)
+        return NaiveGameDB(eventBus, blockRegistry, provider.context)
     }
 }
