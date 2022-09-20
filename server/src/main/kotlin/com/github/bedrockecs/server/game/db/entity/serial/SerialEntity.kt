@@ -1,5 +1,6 @@
 package com.github.bedrockecs.server.game.db.entity.serial
 
+import com.github.bedrockecs.server.game.db.common.ComponentMap
 import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.github.bedrockecs.server.game.db.entity.data.EntityComponent
 
@@ -8,5 +9,5 @@ import com.github.bedrockecs.server.game.db.entity.data.EntityComponent
  */
 data class SerialEntity(
     val id: EntityID,
-    val components: Map<Class<in EntityComponent>, EntityComponent>
+    val components: ComponentMap<EntityComponent>
 )

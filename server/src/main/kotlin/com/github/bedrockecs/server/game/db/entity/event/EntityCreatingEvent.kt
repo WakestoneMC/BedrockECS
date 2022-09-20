@@ -18,5 +18,5 @@ import com.github.bedrockecs.server.game.eventbus.Event
 data class EntityCreatingEvent(
     val eid: EntityID,
     val type: EntityTypeComponent,
-    val extra: MutableSet<EntityComponent>
+    val extras: MutableSet<EntityComponent>
 ) : Event
