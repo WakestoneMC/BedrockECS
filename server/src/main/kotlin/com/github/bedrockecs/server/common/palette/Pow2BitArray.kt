@@ -1,4 +1,4 @@
-package com.github.bedrockecs.server.common.zimpl.palette
+package com.github.bedrockecs.server.common.palette
 
 import com.nukkitx.math.GenericMath
 import com.nukkitx.network.util.Preconditions

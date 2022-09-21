@@ -1,5 +1,6 @@
 package com.github.bedrockecs.server.game.zimpl.db.world
 
+import com.github.bedrockecs.server.common.palette.PalettedStorage
 import com.github.bedrockecs.server.game.data.BlockConstants.SUBCHUNK_SIZE
 import com.github.bedrockecs.server.game.data.LayeredBlockPosition
 import com.github.bedrockecs.server.game.data.LayeredSubChunkPosition
@@ -12,6 +13,7 @@ import com.github.bedrockecs.server.game.db.world.event.BlockMutationEvent
 import com.github.bedrockecs.server.game.db.world.serial.SerialSubChunkLayer
 import com.github.bedrockecs.server.game.eventbus.Publisher
 import com.github.bedrockecs.server.game.registry.BlockRegistry
+import com.github.bedrockecs.vanilla.blocks.world.AirBlockType
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -32,9 +34,7 @@ class NaiveSubChunkTablet(
         }
 
         fun positionOf(pos: LayeredSubChunkPosition, idx: Int): LayeredBlockPosition {
-            val x = idx % SUBCHUNK_SIZE
-            val y = idx / SUBCHUNK_SIZE % SUBCHUNK_SIZE
-            val z = idx / (SUBCHUNK_SIZE * SUBCHUNK_SIZE) % SUBCHUNK_SIZE
+            val (x, y, z) = offsetOf(idx)
             return LayeredBlockPosition(
                 pos.x * SUBCHUNK_SIZE + x,
                 pos.y * SUBCHUNK_SIZE + y,
@@ -44,33 +44,42 @@ class NaiveSubChunkTablet(
             )
         }
 
+        fun offsetOf(idx: Int): Triple<Int, Int, Int> {
+            val x = idx % SUBCHUNK_SIZE
+            val y = idx / SUBCHUNK_SIZE % SUBCHUNK_SIZE
+            val z = idx / (SUBCHUNK_SIZE * SUBCHUNK_SIZE) % SUBCHUNK_SIZE
+            return Triple(x, y, z)
+        }
+
+        fun fromOffset(t3: Triple<Int, Int, Int>): Int {
+            val (x, y, z) = t3
+            return x + (y * SUBCHUNK_SIZE) + (z * SUBCHUNK_SIZE * SUBCHUNK_SIZE)
+        }
+
         fun deserialize(
             registry: BlockRegistry,
             mutationEvent: Publisher<BlockMutationEvent.Single>,
             pos: LayeredSubChunkPosition,
             serial: SerialSubChunkLayer
         ): NaiveSubChunkTablet {
-            when (serial) {
-                is SerialSubChunkLayer.UnPalettedShort -> {
-                    val idSet = serial.ids.toSet()
-                    val idToTypeState = idSet.map { it to registry.typeFor(it) }.associateBy({ it.first }, { it.second })
+            val typeStates = Array<BlockTypeComponent>(4096) { AirBlockType.allInstances[0] }
+            typeStates.mapIndexed { index, _ ->
+                val idx = serial.storage.getBlock(index)
+                registry.typeFor(idx.toShort())
+            }
 
-                    val typeStates = serial.ids.map { idToTypeState[it]!! }.toTypedArray()
-
-                    val overrides = buildList {
-                        for (idx in 0 until SUBCHUNK_BLOCK_COUNT) {
-                            val ord = serial.overrides[positionOf(pos, idx)]
-                            if (ord == null) {
-                                add(mutableMapOf())
-                            } else {
-                                add(ord.toMutableMap())
-                            }
-                        }
+            val overrides = buildList {
+                for (idx in 0 until SUBCHUNK_BLOCK_COUNT) {
+                    val ord = serial.overrides[positionOf(pos, idx)]
+                    if (ord == null) {
+                        add(mutableMapOf())
+                    } else {
+                        add(ord.toMutableMap())
                     }
-
-                    return NaiveSubChunkTablet(pos, registry, mutationEvent, typeStates, overrides.toTypedArray())
                 }
             }
+
+            return NaiveSubChunkTablet(pos, registry, mutationEvent, typeStates, overrides.toTypedArray())
         }
     }
 
@@ -156,9 +165,11 @@ class NaiveSubChunkTablet(
 
     fun serialize(): SerialSubChunkLayer {
         lock.withLock {
-            val array = typeState.map {
-                registry.runtimeIDFor(it)!!.toShort()
-            }.toShortArray()
+            val storage = PalettedStorage.createWithDefaultState(AirBlockType.allInstances[0].runtimeID.toInt())
+            typeState.forEachIndexed { index, component ->
+                val (x, y, z) = offsetOf(index)
+                storage.setBlock(x, y, z, registry.runtimeIDFor(component)!!.toInt())
+            }
             val serialOverrides = overrides
                 .mapIndexedNotNull { idx, map ->
                     if (map.isEmpty()) {
@@ -167,10 +178,7 @@ class NaiveSubChunkTablet(
                         Pair(positionOf(this.pos, idx), map.toMutableMap())
                     }
                 }.toMap()
-            return SerialSubChunkLayer.UnPalettedShort(
-                array,
-                serialOverrides
-            )
+            return SerialSubChunkLayer(storage, serialOverrides)
         }
     }
 

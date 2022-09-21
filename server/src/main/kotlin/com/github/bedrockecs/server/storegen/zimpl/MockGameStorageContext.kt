@@ -1,5 +1,6 @@
 package com.github.bedrockecs.server.storegen.zimpl
 
+import com.github.bedrockecs.server.common.palette.PalettedStorage
 import com.github.bedrockecs.server.game.data.BlockConstants.SUBCHUNK_SIZE
 import com.github.bedrockecs.server.game.data.ChunkPosition
 import com.github.bedrockecs.server.game.db.GameStorageContext
@@ -17,17 +18,14 @@ class MockGameStorageContext : GameStorageContext {
     override fun readChunk(pos: ChunkPosition): CompletableFuture<SerialChunk> {
         val airIdx = AirBlockType.allInstances[0].runtimeID
         val dirtIdx = DirtBlockType.allInstances[0].runtimeID
-        val arr = ShortArray(4096)
-        val airArr = ShortArray(4096)
-        airArr.fill(airIdx)
+        val arr = PalettedStorage.createWithDefaultState(airIdx.toInt())
+        val airArr = PalettedStorage.createWithDefaultState(airIdx.toInt())
         for (idx in (0..4095)) {
-            val x = idx % SUBCHUNK_SIZE
             val y = idx / SUBCHUNK_SIZE % SUBCHUNK_SIZE
-            val z = idx / (SUBCHUNK_SIZE * SUBCHUNK_SIZE) % SUBCHUNK_SIZE
             if (y == 0) {
-                arr[idx] = dirtIdx
+                arr.setBlock(idx, dirtIdx.toInt())
             } else {
-                arr[idx] = airIdx
+                arr.setBlock(idx, airIdx.toInt())
             }
         }
 
@@ -40,8 +38,8 @@ class MockGameStorageContext : GameStorageContext {
             return SerialSubChunk(
                 components = emptyMap(),
                 layers = listOf(
-                    SerialSubChunkLayer.UnPalettedShort(
-                        ids = layer,
+                    SerialSubChunkLayer(
+                        storage = layer,
                         overrides = emptyMap()
                     )
                 )

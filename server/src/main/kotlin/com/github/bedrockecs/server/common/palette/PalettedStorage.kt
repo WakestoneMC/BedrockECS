@@ -1,6 +1,6 @@
-package com.github.bedrockecs.server.common.zimpl.palette
+package com.github.bedrockecs.server.common.palette
 
-import com.github.bedrockecs.server.common.zimpl.serial.writeZigZagVarInt
+import com.github.bedrockecs.server.common.serial.writeZigZagVarInt
 import io.netty.buffer.ByteBuf
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import it.unimi.dsi.fastutil.ints.IntList
@@ -8,7 +8,7 @@ import it.unimi.dsi.fastutil.ints.IntList
 /**
  * PalettedBlockStorage, a (16*16*16)? storage of runtimeId, using local id internally
  */
-class PaletteStorage {
+class PalettedStorage {
     /**
      * palette local id - runtimeId look up table, content is runtimeId, index is palette local id, local id = 0 is the default state
      */
@@ -68,6 +68,15 @@ class PaletteStorage {
         }
     }
 
+    fun getBlock(x: Int, y: Int, z: Int): Int {
+        return this.getBlock(getIndex(x, y, z))
+    }
+
+    fun getBlock(index: Int): Int {
+        val localID = bitArray!![index]
+        return palette.getInt(localID)
+    }
+
     private fun idFor(runtimeId: Int): Int {
         // lookup runtimeId in the palette, get index and use it as id if exists
         var index = palette.indexOf(runtimeId)
@@ -120,19 +129,19 @@ class PaletteStorage {
             return true
         }
 
-    fun copy(): PaletteStorage {
-        return PaletteStorage(bitArray!!.copy(), IntArrayList(palette))
+    fun copy(): PalettedStorage {
+        return PalettedStorage(bitArray!!.copy(), IntArrayList(palette))
     }
 
     companion object {
         private const val SIZE = 4096
 
-        fun createWithDefaultState(defaultState: Int): PaletteStorage {
+        fun createWithDefaultState(defaultState: Int): PalettedStorage {
             return createWithDefaultState(BitArrayVersion.V2, defaultState)
         }
 
-        fun createWithDefaultState(version: BitArrayVersion, defaultState: Int): PaletteStorage {
-            return PaletteStorage(version, defaultState)
+        fun createWithDefaultState(version: BitArrayVersion, defaultState: Int): PalettedStorage {
+            return PalettedStorage(version, defaultState)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.github.bedrockecs.server.common.zimpl.serial
+package com.github.bedrockecs.server.common.serial
 
 import io.netty.buffer.ByteBuf
 import kotlin.experimental.or

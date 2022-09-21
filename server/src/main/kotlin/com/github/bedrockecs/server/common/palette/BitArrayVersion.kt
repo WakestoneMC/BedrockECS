@@ -1,4 +1,4 @@
-package com.github.bedrockecs.server.common.zimpl.palette
+package com.github.bedrockecs.server.common.palette
 
 enum class BitArrayVersion(val bits: Int, entriesPerWord: Int, next: BitArrayVersion?) {
     V16(16, 2, null), V8(8, 4, V16), V6(6, 5, V8), // 2 bit padding

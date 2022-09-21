@@ -1,4 +1,4 @@
-package com.github.bedrockecs.server.common.zimpl.palette
+package com.github.bedrockecs.server.common.palette
 
 interface BitArray {
     operator fun set(index: Int, value: Int)
