@@ -7,4 +7,4 @@ import java.util.UUID
  */
 data class DisconnectPlayerUpdate(
     val uuid: UUID
-)
+) : Update
