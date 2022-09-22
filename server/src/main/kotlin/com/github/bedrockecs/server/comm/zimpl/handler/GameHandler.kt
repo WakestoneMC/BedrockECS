@@ -1,8 +1,10 @@
 package com.github.bedrockecs.server.comm.zimpl.handler
 
 import com.github.bedrockecs.server.comm.server.NetworkConnection
+import com.github.bedrockecs.server.comm.zimpl.exchange.ActionUpdateExchange
 import com.github.bedrockecs.server.comm.zimpl.exchange.GameWorldExchange
 import com.github.bedrockecs.server.comm.zimpl.exchange.PlayerConnectionExchange
+import com.github.bedrockecs.server.comm.zimpl.exchange.ProcessResult
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.nukkitx.math.vector.Vector2f
@@ -32,7 +34,8 @@ import org.springframework.stereotype.Component
 @Component
 class GameHandler(
     private val worldExchange: GameWorldExchange,
-    private val connectionExchange: PlayerConnectionExchange
+    private val connectionExchange: PlayerConnectionExchange,
+    private val actionUpdateExchange: ActionUpdateExchange
 ) {
     suspend fun handle(conn: NetworkConnection) {
         connectionExchange.handleConnection(conn) { spawnedPlayer ->
@@ -80,6 +83,7 @@ class GameHandler(
             // RespawnPacket
 
             // world state //
+            actionUpdateExchange.onConnection(conn)
             worldExchange.onConnection(conn)
             try {
                 // NetworkChunkPublisherUpdatePacket, TODO: sends location of player & radius=64, range updated by chunk radius updated packet
@@ -96,10 +100,18 @@ class GameHandler(
 
                 while (true) {
                     val packet = conn.receivePacket()
-                    worldExchange.onPacket(conn, packet)
+                    var ret = actionUpdateExchange.onPacket(conn, packet)
+                    if (ret == ProcessResult.CONSUME) {
+                        continue
+                    }
+                    ret = worldExchange.onPacket(conn, packet)
+                    if (ret == ProcessResult.CONSUME) {
+                        continue
+                    }
                 }
             } finally {
                 worldExchange.onDisconnected(conn)
+                actionUpdateExchange.onDisconnected(conn)
             }
         }
     }

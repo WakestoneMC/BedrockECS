@@ -1,39 +1,53 @@
 package com.github.bedrockecs.server.comm.zimpl.exchange
 
-import com.github.bedrockecs.server.comm.game.action.Action
+import com.github.bedrockecs.server.comm.game.action.PlayerMoveAction
 import com.github.bedrockecs.server.comm.game.update.DisconnectPlayerUpdate
 import com.github.bedrockecs.server.comm.game.update.Update
+import com.github.bedrockecs.server.comm.server.NetworkConnection
 import com.github.bedrockecs.server.comm.zimpl.log
+import com.nukkitx.protocol.bedrock.BedrockPacket
+import com.nukkitx.protocol.bedrock.packet.MovePlayerPacket
 import org.springframework.stereotype.Component
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 @Component
 class ActionUpdateExchange(
+    private val mailbox: CommActionUpdateMailbox,
     private val connections: PlayerConnectionExchange
 ) {
 
-    private val actionsLock = ReentrantLock()
+    // connection handling //
 
-    private var actions = mutableListOf<Action>()
+    suspend fun onConnection(connection: NetworkConnection) {
+    }
 
-    fun addAction(action: Action) {
-        actionsLock.withLock {
-            actions.add(action)
+    suspend fun onDisconnected(connection: NetworkConnection) {
+    }
+
+    suspend fun onPacket(connection: NetworkConnection, packet: BedrockPacket): ProcessResult {
+        return when (packet) {
+            is MovePlayerPacket -> {
+                handleMovePlayer(connection, packet)
+                ProcessResult.CONSUME
+            }
+            else -> {
+                ProcessResult.CONTINUE
+            }
         }
     }
 
-    fun collectActions(): List<Action> {
-        actionsLock.withLock {
-            val oldActions = actions
-            actions = mutableListOf()
-            return oldActions
-        }
+    // action interpreter //
+
+    private suspend fun handleMovePlayer(connection: NetworkConnection, packet: MovePlayerPacket) {
+        mailbox.addAction(
+            PlayerMoveAction(
+                playerUUID = connection.identifiers.playerUUID!!,
+                packet.position,
+                packet.rotation
+            )
+        )
     }
 
-    fun sendUpdates(actions: List<Update>) {
-        actions.forEach { sendUpdate(it) }
-    }
+    // update sender //
 
     fun sendUpdate(update: Update) {
         when (update) {

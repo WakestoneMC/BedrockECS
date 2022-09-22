@@ -1,13 +1,11 @@
 package com.github.bedrockecs.server.comm.zimpl.exchange
 
-import com.github.bedrockecs.server.comm.game.action.PlayerMoveAction
 import com.github.bedrockecs.server.comm.server.NetworkConnection
 import com.github.bedrockecs.server.game.data.ChunkPosition
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.GameDB
 import com.nukkitx.math.vector.Vector3i
 import com.nukkitx.protocol.bedrock.BedrockPacket
-import com.nukkitx.protocol.bedrock.packet.MovePlayerPacket
 import com.nukkitx.protocol.bedrock.packet.NetworkChunkPublisherUpdatePacket
 import kotlinx.coroutines.future.await
 import org.springframework.stereotype.Component
@@ -17,9 +15,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.ceil
 
 @Component
-class GameWorldExchange(
-    private val actionUpdateExchange: ActionUpdateExchange
-) {
+class GameWorldExchange {
 
     private val pendingAOIAllSentPlayers = ConcurrentHashMap<UUID, CompletableFuture<Void>>()
 
@@ -48,25 +44,7 @@ class GameWorldExchange(
     }
 
     suspend fun onPacket(connection: NetworkConnection, packet: BedrockPacket): ProcessResult {
-        return when (packet) {
-            is MovePlayerPacket -> {
-                handleMovePlayer(connection, packet)
-                ProcessResult.CONSUME
-            }
-            else -> {
-                ProcessResult.CONTINUE
-            }
-        }
-    }
-
-    private suspend fun handleMovePlayer(connection: NetworkConnection, packet: MovePlayerPacket) {
-        actionUpdateExchange.addAction(
-            PlayerMoveAction(
-                playerUUID = connection.identifiers.playerUUID!!,
-                packet.position,
-                packet.rotation
-            )
-        )
+        return ProcessResult.CONTINUE
     }
 
     // GameServer side //

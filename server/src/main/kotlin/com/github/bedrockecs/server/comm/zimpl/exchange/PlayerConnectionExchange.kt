@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @Component
 class PlayerConnectionExchange(
-    private val exchange: ActionUpdateExchange
+    private val mailbox: CommActionUpdateMailbox
 ) {
     data class SpawnedPlayer(
         val eid: EntityID,
@@ -36,7 +36,7 @@ class PlayerConnectionExchange(
         val spawned: SpawnedPlayer
         try {
             pendingPlayers[uuid] = job
-            exchange.addAction(PlayerConnectedAction(connection.identifiers))
+            mailbox.addAction(PlayerConnectedAction(connection.identifiers))
             spawned = job.await()
         } finally {
             pendingPlayers.remove(uuid)
@@ -47,7 +47,7 @@ class PlayerConnectionExchange(
             func(spawned)
         } finally {
             connections.remove(uuid)
-            exchange.addAction(PlayerDisconnectedAction(connection.identifiers))
+            mailbox.addAction(PlayerDisconnectedAction(connection.identifiers))
         }
     }
 
