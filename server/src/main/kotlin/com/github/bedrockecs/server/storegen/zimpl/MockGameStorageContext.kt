@@ -66,7 +66,7 @@ class MockGameStorageContext : GameStorageContext {
         TODO("Not yet implemented")
     }
 
-    override fun writeEntity(id: EntityID, entity: GameStorageContext.SerialInvEntity): CompletableFuture<Void> {
+    override fun writeEntity(entity: GameStorageContext.SerialInvEntity): CompletableFuture<Void> {
         return CompletableFuture.completedFuture(null)
     }
 
