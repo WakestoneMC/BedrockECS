@@ -218,6 +218,12 @@ class EntityDBImpl(
         }
     }
 
+    fun isLoaded(eid: EntityID): Boolean {
+        return entityCollectionLock.read {
+            idMap.contains(eid.value)
+        }
+    }
+
     fun load(serial: SerialEntity) {
         entityCollectionLock.write {
             val contains = idMap.contains(serial.id.value)

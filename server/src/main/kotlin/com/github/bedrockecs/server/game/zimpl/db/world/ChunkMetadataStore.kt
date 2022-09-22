@@ -71,6 +71,18 @@ class ChunkMetadataStore(evb: EventBus) {
         }
     }
 
+    fun isLoaded(pos: ChunkPosition): Boolean {
+        chunksLock.read {
+            return chunks.contains(pos)
+        }
+    }
+
+    fun listLoadedChunks(): Collection<ChunkPosition> {
+        chunksLock.read {
+            return chunks.keys.toList()
+        }
+    }
+
     fun load(pos: ChunkPosition, serial: SerialChunk) {
         chunksLock.write {
             if (chunks.contains(pos)) {

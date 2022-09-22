@@ -79,6 +79,14 @@ class WorldDBImpl(evb: EventBus, reg: BlockRegistry) : WorldDB {
         )
     }
 
+    fun isLoaded(pos: ChunkPosition): Boolean {
+        return metadata.isLoaded(pos)
+    }
+
+    fun listLoadedChunks(): Collection<ChunkPosition> {
+        return metadata.listLoadedChunks()
+    }
+
     fun load(pos: ChunkPosition, serial: SerialChunk) {
         metadata.load(pos, serial)
         subChunkMetadata.load(pos, serial)
