@@ -7,16 +7,14 @@ import com.github.bedrockecs.server.game.db.common.MutateType
 import com.github.bedrockecs.server.game.db.world.data.SubChunkComponent
 import com.github.bedrockecs.server.game.db.world.event.SubChunkMutationEvent
 import com.github.bedrockecs.server.game.db.world.serial.SerialChunk
+import com.github.bedrockecs.server.game.eventbus.EventBus
 import com.github.bedrockecs.server.game.eventbus.publishFor
-import com.github.bedrockecs.server.game.zimpl.eventbus.EventBusImpl
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-class SubChunkMetadataStore(
-    evb: EventBusImpl
-) {
+class SubChunkMetadataStore(evb: EventBus) {
 
     private val mutationEvent = evb.publishFor<SubChunkMutationEvent>("world-db")
 

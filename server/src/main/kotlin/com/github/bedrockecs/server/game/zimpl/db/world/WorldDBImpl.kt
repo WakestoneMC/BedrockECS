@@ -13,11 +13,11 @@ import com.github.bedrockecs.server.game.db.world.data.SubChunkComponent
 import com.github.bedrockecs.server.game.db.world.event.ChunkLoadingEvent
 import com.github.bedrockecs.server.game.db.world.serial.SerialChunk
 import com.github.bedrockecs.server.game.db.world.serial.SerialSubChunk
+import com.github.bedrockecs.server.game.eventbus.EventBus
 import com.github.bedrockecs.server.game.eventbus.publishFor
 import com.github.bedrockecs.server.game.registry.BlockRegistry
-import com.github.bedrockecs.server.game.zimpl.eventbus.EventBusImpl
 
-class WorldDBImpl(evb: EventBusImpl, reg: BlockRegistry) : WorldDB {
+class WorldDBImpl(evb: EventBus, reg: BlockRegistry) : WorldDB {
 
     private val block: BlockStore = BlockStore(evb, reg)
 
