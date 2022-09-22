@@ -31,8 +31,7 @@ class MockGameStorageProvider : GameStorageProvider {
     class Initializer : GameDBInitializer {
         override fun initialLoad(): GameDBInitializer.InitialLoad {
             return GameDBInitializer.InitialLoad(
-                dimensions = mapOf((0.toShort()) to emptySet()),
-                globalEntity = emptySet()
+                dimensions = mapOf((0.toShort()) to emptySet())
             )
         }
     }
