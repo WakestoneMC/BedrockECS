@@ -1,6 +1,7 @@
 package com.github.bedrockecs.server.game.tick.zimpl.system
 
 import com.github.bedrockecs.server.game.db.GameDB
+import com.github.bedrockecs.server.game.db.dimension.data.DimensionConstants.OVERWORLD_ID
 import com.github.bedrockecs.server.game.system.System
 import com.github.bedrockecs.server.game.tick.TickComponent
 import org.springframework.stereotype.Component
@@ -15,7 +16,7 @@ class TickSystem(
     override val tickOrder: Int = Int.MIN_VALUE
 
     override fun tick() {
-        db.dimensions.mutate(0, TickComponent::class.java) {
+        db.dimensions.mutate(OVERWORLD_ID, TickComponent::class.java) {
             if (it == null) {
                 TickComponent()
             } else {
