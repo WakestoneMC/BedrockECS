@@ -74,6 +74,8 @@ class DimensionDBImpl(
 
     fun initialize(dimComponents: Map<Short, Set<DimensionComponent>>) {
         dimensionsLock.write {
+            val maxId = dimComponents.maxOf { it.key }
+            (0..maxId).forEach { dimensions.add(null) }
             dimComponents.forEach { (did, components) ->
                 val componentMap = components.associateBy({ it::class.java }, { it }).toMutableMap()
                 dimensions[did.toInt()] = DimensionEntry(map = componentMap)
