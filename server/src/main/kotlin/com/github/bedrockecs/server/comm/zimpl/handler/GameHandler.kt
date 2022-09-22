@@ -86,15 +86,6 @@ class GameHandler(
             actionUpdateExchange.onConnection(conn)
             worldExchange.onConnection(conn)
             try {
-                // NetworkChunkPublisherUpdatePacket, TODO: sends location of player & radius=64, range updated by chunk radius updated packet
-                // TODO: update sequence REQUEST_CHUNK_RADIUS -> CHUNK_RADIUS_UPDATED NETWORK_CHUNK_PUBLISHER_UPDATE are updated as follow-up
-
-                // LEVEL_CHUNK for initial chunk content TODO: impl this out
-
-                // BLOCK_UPDATE for block updates, UPDATE_SUBCHUNK_BLOCKS for batched update? TODO: figure this out
-
-                // TickSyncPacket
-
                 // done //
                 conn.sendPacket(PlayStatusPacket().apply { status = PlayStatusPacket.Status.PLAYER_SPAWN })
 

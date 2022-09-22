@@ -7,13 +7,16 @@ import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.GameDB
 import com.nukkitx.math.vector.Vector3i
 import com.nukkitx.protocol.bedrock.BedrockPacket
+import com.nukkitx.protocol.bedrock.packet.ChunkRadiusUpdatedPacket
 import com.nukkitx.protocol.bedrock.packet.NetworkChunkPublisherUpdatePacket
+import com.nukkitx.protocol.bedrock.packet.RequestChunkRadiusPacket
 import kotlinx.coroutines.future.await
 import org.springframework.stereotype.Component
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.ceil
+import kotlin.math.min
 
 /**
  * in charge of sending world to client
@@ -27,8 +30,8 @@ class GameWorldExchange {
 
     data class Session(
         val connection: NetworkConnection,
-        var aoiBlockRadius: Int,
-        var sentChunks: MutableSet<ChunkPosition>,
+        var aoiBlockRadius: Int = 64,
+        var sentChunks: MutableSet<ChunkPosition> = mutableSetOf(),
         var lastPosition: FloatBlockPosition? = null
     )
 
@@ -36,7 +39,7 @@ class GameWorldExchange {
 
     suspend fun onConnection(connection: NetworkConnection) {
         val uuid = connection.identifiers.playerUUID!!
-        sessions.put(uuid, Session(connection, 64, mutableSetOf(), null))
+        sessions.put(uuid, Session(connection))
         val worldSentFuture = CompletableFuture<Void>()
         waitingForInitialChunkSent[uuid] = worldSentFuture
         worldSentFuture.await()
@@ -48,7 +51,24 @@ class GameWorldExchange {
     }
 
     suspend fun onPacket(connection: NetworkConnection, packet: BedrockPacket): ProcessResult {
-        return ProcessResult.CONTINUE
+        return when (packet) {
+            is RequestChunkRadiusPacket -> {
+                onPacket(connection, packet)
+                ProcessResult.CONSUME
+            }
+            else -> ProcessResult.CONTINUE
+        }
+        // TODO: TickSyncPacket
+    }
+
+    private fun onPacket(connection: NetworkConnection, packet: RequestChunkRadiusPacket) {
+        val session = sessions[connection.identifiers.playerUUID]
+        if (session != null) {
+            session.aoiBlockRadius = min(packet.radius * SUBCHUNK_SIZE, 16 * SUBCHUNK_SIZE)
+            val resp = ChunkRadiusUpdatedPacket()
+            resp.radius = session.aoiBlockRadius
+            connection.sendPacket(resp, NetworkConnection.Latency.IMMEDIATELY)
+        }
     }
 
     // GameServer side //
@@ -61,7 +81,7 @@ class GameWorldExchange {
                 session.connection.sendPacket(
                     NetworkChunkPublisherUpdatePacket().apply {
                         position = Vector3i.from(pos.x.toInt(), pos.y.toInt(), pos.z.toInt())
-                        radius = 64
+                        radius = session.aoiBlockRadius
                     }
                 )
             }
