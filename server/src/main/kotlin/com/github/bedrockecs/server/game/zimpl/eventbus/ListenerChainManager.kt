@@ -36,7 +36,12 @@ class ListenerChainManager {
         val tokenListenerMap: Map<Any?, List<Listener<T>>>
     ) {
         fun invoke(dispatchToken: Any?, event: T) {
-            tokenListenerMap[dispatchToken]?.forEach { it.func(event) }
+            val lookupToken = if (tokenListenerMap.contains(dispatchToken)) {
+                dispatchToken
+            } else {
+                null
+            }
+            tokenListenerMap[lookupToken]?.forEach { it.func(event) }
         }
     }
 
