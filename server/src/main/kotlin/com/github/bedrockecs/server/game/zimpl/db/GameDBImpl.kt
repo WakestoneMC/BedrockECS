@@ -38,6 +38,19 @@ class GameDBImpl(
         return world.listLoadedChunks()
     }
 
+    fun init() {
+        val loaded = provider.initializer.initialLoad()
+        dimensions.initialize(loaded.dimensions)
+    }
+
+    fun close() {
+        unloadEverything()
+    }
+
+    private fun unloadEverything() {
+        listLoadedChunks().forEach { unloadChunk(it) }
+    }
+
     override fun loadChunk(pos: ChunkPosition): CompletableFuture<Void> {
         if (!isLoaded(pos)) {
             val chunk = provider.context.readChunk(pos).join()

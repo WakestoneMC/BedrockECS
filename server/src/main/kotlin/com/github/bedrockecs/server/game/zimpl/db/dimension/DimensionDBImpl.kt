@@ -7,8 +7,8 @@ import com.github.bedrockecs.server.game.db.dimension.DimensionDB
 import com.github.bedrockecs.server.game.db.dimension.data.DimensionComponent
 import com.github.bedrockecs.server.game.db.dimension.event.DimensionLifecycleEvent
 import com.github.bedrockecs.server.game.db.dimension.event.DimensionMutationEvent
+import com.github.bedrockecs.server.game.eventbus.EventBus
 import com.github.bedrockecs.server.game.eventbus.publishFor
-import com.github.bedrockecs.server.game.zimpl.eventbus.EventBusImpl
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -68,6 +68,15 @@ class DimensionDBImpl(
             val entry = getDimension(id)
             entry.lock.read {
                 return entry.map.values
+            }
+        }
+    }
+
+    fun initialize(dimComponents: Map<Short, Set<DimensionComponent>>) {
+        dimensionsLock.write {
+            dimComponents.forEach { (did, components) ->
+                val componentMap = components.associateBy({ it::class.java }, { it }).toMutableMap()
+                dimensions[did.toInt()] = DimensionEntry(map = componentMap)
             }
         }
     }
