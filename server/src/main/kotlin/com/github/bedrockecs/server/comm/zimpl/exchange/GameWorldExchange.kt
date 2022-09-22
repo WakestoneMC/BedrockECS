@@ -1,6 +1,7 @@
 package com.github.bedrockecs.server.comm.zimpl.exchange
 
 import com.github.bedrockecs.server.comm.server.NetworkConnection
+import com.github.bedrockecs.server.game.data.BlockConstants.SUBCHUNK_SIZE
 import com.github.bedrockecs.server.game.data.ChunkPosition
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.GameDB
@@ -14,15 +15,18 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.ceil
 
+/**
+ * in charge of sending world to client
+ */
 @Component
 class GameWorldExchange {
 
-    private val pendingAOIAllSentPlayers = ConcurrentHashMap<UUID, CompletableFuture<Void>>()
+    private val waitingForInitialChunkSent = ConcurrentHashMap<UUID, CompletableFuture<Void>>()
 
     private val sessions = ConcurrentHashMap<UUID, Session>()
 
     data class Session(
-        val networkConnection: NetworkConnection,
+        val connection: NetworkConnection,
         var aoiBlockRadius: Int,
         var sentChunks: MutableSet<ChunkPosition>,
         var lastPosition: FloatBlockPosition? = null
@@ -33,9 +37,9 @@ class GameWorldExchange {
     suspend fun onConnection(connection: NetworkConnection) {
         val uuid = connection.identifiers.playerUUID!!
         sessions.put(uuid, Session(connection, 64, mutableSetOf(), null))
-        val aoiAllSentFuture = CompletableFuture<Void>()
-        pendingAOIAllSentPlayers[uuid] = aoiAllSentFuture
-        aoiAllSentFuture.await()
+        val worldSentFuture = CompletableFuture<Void>()
+        waitingForInitialChunkSent[uuid] = worldSentFuture
+        worldSentFuture.await()
     }
 
     suspend fun onDisconnected(connection: NetworkConnection) {
@@ -49,16 +53,12 @@ class GameWorldExchange {
 
     // GameServer side //
 
-    fun checkWorldUpdate(
-        db: GameDB,
-        changedChunks: Set<ChunkPosition>,
-        playerPositions: MutableMap<UUID, FloatBlockPosition>
-    ) {
-        sessions.map {
-            val pos = playerPositions[it.key]!!
-            if (it.value.lastPosition != pos) {
-                it.value.lastPosition = pos
-                it.value.networkConnection.sendPacket(
+    fun handlePlayerPositionUpdate(playerPositions: MutableMap<UUID, FloatBlockPosition>) {
+        sessions.map { (uuid, session) ->
+            val pos = playerPositions[uuid]!!
+            if (session.lastPosition != pos) {
+                session.lastPosition = pos
+                session.connection.sendPacket(
                     NetworkChunkPublisherUpdatePacket().apply {
                         position = Vector3i.from(pos.x.toInt(), pos.y.toInt(), pos.z.toInt())
                         radius = 64
@@ -66,15 +66,17 @@ class GameWorldExchange {
                 )
             }
         }
+    }
 
+    fun handleWorldUpdate(db: GameDB, changedChunks: Set<ChunkPosition>) {
         sessions.map { (uuid, session) ->
-            val position = playerPositions[uuid]!!.toChunk()
-            val chunkDelta = ceil(session.aoiBlockRadius / 16.0).toInt()
+            val position = session.lastPosition!!.toChunk()
+            val chunkDelta = ceil(session.aoiBlockRadius / SUBCHUNK_SIZE.toFloat()).toInt()
 
             val chunks = mutableSetOf<ChunkPosition>()
             for (x in -chunkDelta..chunkDelta) {
                 for (z in -chunkDelta..chunkDelta) {
-                    val chunk = ChunkPosition(position.x + x, position.z + z, position.dim)
+                    val chunk = ChunkPosition(position.chunkX + x, position.chunkZ + z, position.dim)
                     chunks.add(chunk)
                 }
             }
@@ -82,11 +84,11 @@ class GameWorldExchange {
             val toSendChunks = (chunks - session.sentChunks.toSet())
 
             if (toSendChunks.isEmpty()) {
-                pendingAOIAllSentPlayers[session.networkConnection.identifiers.playerUUID!!]?.complete(null)
+                waitingForInitialChunkSent[session.connection.identifiers.playerUUID!!]?.complete(null)
             } else {
                 toSendChunks.forEach { chunk ->
                     session.sentChunks.add(chunk)
-                    val connection = session.networkConnection
+                    val connection = session.connection
                     if (!db.isLoaded(chunk)) {
                         db.loadChunk(chunk)
                     }

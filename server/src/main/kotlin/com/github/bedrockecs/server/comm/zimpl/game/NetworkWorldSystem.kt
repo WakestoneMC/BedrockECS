@@ -5,9 +5,9 @@ import com.github.bedrockecs.server.game.data.ChunkPosition
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.GameDB
 import com.github.bedrockecs.server.game.db.entity.EntityID
-import com.github.bedrockecs.server.game.db.entity.EntityScanConfig
 import com.github.bedrockecs.server.game.db.entity.data.EntityPositionComponent
 import com.github.bedrockecs.server.game.db.entity.data.EntityTypeComponent
+import com.github.bedrockecs.server.game.db.entity.scan
 import com.github.bedrockecs.server.game.db.world.data.BlockTypeComponent
 import com.github.bedrockecs.server.game.db.world.event.BlockMutationEvent
 import com.github.bedrockecs.server.game.eventbus.EventBus
@@ -50,13 +50,7 @@ class NetworkWorldSystem(
 
     override fun tick() {
         val playerPositions = mutableMapOf<UUID, FloatBlockPosition>()
-        db.entities.scan(
-            EntityScanConfig(),
-            arrayOf(EntityTypeComponent::class.java, PlayerIdentifierComponent::class.java, EntityPositionComponent::class.java)
-        ) { eid, ec ->
-            val type = ec[0] as EntityTypeComponent
-            val pid = ec[1] as PlayerIdentifierComponent
-            val epc = ec[2] as EntityPositionComponent
+        db.entities.scan<EntityTypeComponent, PlayerIdentifierComponent, EntityPositionComponent> { eid, type, pid, epc ->
             if (type == PlayerEntityType.TYPE) {
                 if (!players.contains(pid.uuid)) {
                     players[pid.uuid] = eid
@@ -67,6 +61,8 @@ class NetworkWorldSystem(
 
         val changes = chunkChanges.toSet()
         chunkChanges.clear()
-        exchange.checkWorldUpdate(db, changes, playerPositions)
+
+        exchange.handlePlayerPositionUpdate(playerPositions)
+        exchange.handleWorldUpdate(db, changes)
     }
 }
