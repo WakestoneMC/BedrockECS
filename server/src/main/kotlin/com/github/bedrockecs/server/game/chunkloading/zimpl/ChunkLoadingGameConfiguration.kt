@@ -2,8 +2,8 @@ package com.github.bedrockecs.server.game.chunkloading.zimpl
 
 import com.github.bedrockecs.server.game.chunkloading.zimpl.system.ChunkLoadingSystem
 import com.github.bedrockecs.server.game.ext.GameConfiguration
-import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Import
 
 @GameConfiguration
-@ComponentScan(basePackageClasses = [ChunkLoadingSystem::class])
+@Import(ChunkLoadingSystem::class)
 class ChunkLoadingGameConfiguration
