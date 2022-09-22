@@ -20,7 +20,7 @@ typealias PreUpdateCallback = (eid: Short, from: DimensionComponent?, to: Dimens
 typealias PostDestroyCallback = (eid: Short, components: Set<DimensionComponent>) -> Unit
 
 class DimensionDBImpl(
-    evb: EventBusImpl,
+    evb: EventBus,
     private val preCreate: PreCreateCallback = { p0, p1 -> },
     private val preUpdate: PreUpdateCallback = { a0, a1, a2 -> },
     private val postDestroy: PostDestroyCallback = { a0, a1 -> }
