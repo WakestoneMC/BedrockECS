@@ -197,19 +197,21 @@ class EntityDBImpl(
         components: Array<Class<out EntityComponent>>,
         callback: (EntityID, Array<EntityComponent>) -> Array<EntityComponent?>
     ) {
-        val entities = engine.getEntitiesFor(Family.all(*components).get()).toList()
-        entities.forEach { entity ->
-            val eid = idReverseMap[entity]!!
-            val lock = entity.getComponent(EntityLockComponent::class.java).lock
-            lock.write {
-                val arr = components.map { entity.getComponent(it) }.toTypedArray()
-                val ret = callback(EntityID(eid), arr)
-                for ((type, ret) in components.zip(ret)) {
-                    assert(ret == null || type.isInstance(ret))
-                    if (ret != null) {
-                        entity.add(ret)
-                    } else {
-                        entity.remove(type)
+        entityCollectionLock.read {
+            val entities = engine.getEntitiesFor(Family.all(*components).get()).toList()
+            entities.forEach { entity ->
+                val eid = idReverseMap[entity]!!
+                val lock = entity.getComponent(EntityLockComponent::class.java).lock
+                lock.write {
+                    val arr = components.map { entity.getComponent(it) }.toTypedArray()
+                    val ret = callback(EntityID(eid), arr)
+                    for ((type, ret) in components.zip(ret)) {
+                        assert(ret == null || type.isInstance(ret))
+                        if (ret != null) {
+                            entity.add(ret)
+                        } else {
+                            entity.remove(type)
+                        }
                     }
                 }
             }
