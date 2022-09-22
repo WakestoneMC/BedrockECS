@@ -69,7 +69,7 @@ class WorldDBImpl(evb: EventBus, reg: BlockRegistry) : WorldDB {
 
     override fun serialize(pos: ChunkPosition, includeComponents: Boolean): SerialChunk {
         assert(!includeComponents) { "include components version are not supported yet!" }
-        val (smallestY, layers) = block.unload(pos)
+        val (smallestY, layers) = block.serialize(pos)
 
         val subchunks = layers.map { SerialSubChunk(emptyMap(), it) }
         return SerialChunk(

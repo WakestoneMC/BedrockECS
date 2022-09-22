@@ -194,6 +194,26 @@ class BlockStore(evb: EventBus, private val registry: BlockRegistry) {
         return minY to ret
     }
 
+    fun serialize(pos: ChunkPosition): Pair<Int, List<List<SerialSubChunkLayer>>> {
+        val subchunks = chunkSubChunkMap.get(pos) ?: throw IllegalArgumentException("chunk $pos is not loaded!")
+        val minY = subchunks.minOf { it.y }
+        val unloadedEntries = entryMapLock.read {
+            val unloaded = mutableListOf<Entry>()
+            subchunks.forEach {
+                unloaded.add(this.entries.get(it)!!)
+            }
+            unloaded
+        }
+        val ret = unloadedEntries.map {
+            val layers = it.layers.mapIndexed { index, storage ->
+                val overrides = it.overrides.filter { it.key.layer == index.toShort() }
+                SerialSubChunkLayer(storage, overrides)
+            }
+            layers
+        }
+        return minY to ret
+    }
+
     private fun computeComponentMap(
         type: BlockTypeComponent,
         overrides: ComponentMap<BlockComponent?>
