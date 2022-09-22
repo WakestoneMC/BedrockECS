@@ -156,7 +156,7 @@ class BlockStore(evb: EventBus, private val registry: BlockRegistry) {
         val subchunks = mutableListOf<SubChunkPosition>()
         val entries = serial.subChunks.mapIndexed { idx, subChunk ->
             val y = idx + serial.subChunksInitialY / SUBCHUNK_SIZE
-            val pos = SubChunkPosition(pos.x, y, pos.z, pos.dim)
+            val pos = SubChunkPosition(pos.chunkX, y, pos.chunkZ, pos.dim)
             val layers = subChunk.layers.map { it.storage }.toMutableList()
             val overrides = mutableMapOf<LayeredBlockPosition, MutableComponentMap<BlockComponent?>>()
             subChunk.layers.forEach { layer -> overrides.putAll(layer.overrides.mapValues { it.value.toMutableMap() }) }
@@ -176,7 +176,7 @@ class BlockStore(evb: EventBus, private val registry: BlockRegistry) {
 
     fun unload(pos: ChunkPosition): Pair<Int, List<List<SerialSubChunkLayer>>> {
         val subchunks = chunkSubChunkMap.remove(pos) ?: throw IllegalArgumentException("chunk $pos is not loaded!")
-        val minY = subchunks.minOf { it.y }
+        val minY = subchunks.minOf { it.chunkY }
         val unloadedEntries = entryMapLock.write {
             val unloaded = mutableListOf<Entry>()
             subchunks.forEach {
@@ -196,7 +196,7 @@ class BlockStore(evb: EventBus, private val registry: BlockRegistry) {
 
     fun serialize(pos: ChunkPosition): Pair<Int, List<List<SerialSubChunkLayer>>> {
         val subchunks = chunkSubChunkMap.get(pos) ?: throw IllegalArgumentException("chunk $pos is not loaded!")
-        val minY = subchunks.minOf { it.y }
+        val minY = subchunks.minOf { it.chunkY }
         val unloadedEntries = entryMapLock.read {
             val unloaded = mutableListOf<Entry>()
             subchunks.forEach {

@@ -50,7 +50,7 @@ class ChunkLoadingSystem(
             val radius = loading.radius
             for (deltaX in (-radius..radius)) {
                 for (deltaZ in (-radius..radius)) {
-                    val chunk = ChunkPosition(selfChunk.x + deltaX, selfChunk.z + deltaZ, selfChunk.dim)
+                    val chunk = ChunkPosition(selfChunk.chunkX + deltaX, selfChunk.chunkZ + deltaZ, selfChunk.dim)
                     shouldLoadChunks.add(chunk)
                 }
             }
