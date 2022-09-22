@@ -23,6 +23,11 @@ import kotlin.math.min
  */
 @Component
 class GameWorldExchange {
+    companion object {
+        private const val DEFAULT_AOI_BLOCK_RADIUS = 64
+
+        private const val MAX_AOI_BLOCK_RADIUS = 16 * SUBCHUNK_SIZE
+    }
 
     private val waitingForInitialChunkSent = ConcurrentHashMap<UUID, CompletableFuture<Void>>()
 
@@ -30,7 +35,7 @@ class GameWorldExchange {
 
     data class Session(
         val connection: NetworkConnection,
-        var aoiBlockRadius: Int = 64,
+        var aoiBlockRadius: Int = DEFAULT_AOI_BLOCK_RADIUS,
         var sentChunks: MutableSet<ChunkPosition> = mutableSetOf(),
         var lastPosition: FloatBlockPosition? = null
     )
@@ -64,7 +69,7 @@ class GameWorldExchange {
     private fun onPacket(connection: NetworkConnection, packet: RequestChunkRadiusPacket) {
         val session = sessions[connection.identifiers.playerUUID]
         if (session != null) {
-            session.aoiBlockRadius = min(packet.radius * SUBCHUNK_SIZE, 16 * SUBCHUNK_SIZE)
+            session.aoiBlockRadius = min(packet.radius * SUBCHUNK_SIZE, MAX_AOI_BLOCK_RADIUS)
             val resp = ChunkRadiusUpdatedPacket()
             resp.radius = session.aoiBlockRadius
             connection.sendPacket(resp, NetworkConnection.Latency.IMMEDIATELY)

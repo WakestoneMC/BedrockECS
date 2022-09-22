@@ -11,6 +11,7 @@ import com.github.bedrockecs.server.game.db.entity.scan
 import com.github.bedrockecs.server.game.db.world.data.BlockTypeComponent
 import com.github.bedrockecs.server.game.db.world.event.BlockMutationEvent
 import com.github.bedrockecs.server.game.eventbus.EventBus
+import com.github.bedrockecs.server.game.system.CommonTickOrders
 import com.github.bedrockecs.server.game.system.System
 import com.github.bedrockecs.vanilla.player.entity.PlayerEntityType
 import com.github.bedrockecs.vanilla.player.entity.PlayerIdentifierComponent
@@ -24,9 +25,8 @@ class NetworkWorldSystem(
     private val eventBus: EventBus,
     private val exchange: GameWorldExchange
 ) : System {
-
     override val tickOrder: Int
-        get() = Int.MAX_VALUE
+        get() = CommonTickOrders.NETWORK_STORAGE_OUTPUT
 
     private val players = mutableMapOf<UUID, EntityID>()
 
