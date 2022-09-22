@@ -13,7 +13,7 @@ class DBGameConfiguration {
         eventBus: EventBus,
         blockRegistry: BlockRegistry,
         provider: GameStorageProvider
-    ): NaiveGameDB {
-        return NaiveGameDB(eventBus, blockRegistry, provider.context)
+    ): GameDBImpl {
+        return GameDBImpl(eventBus, blockRegistry, provider)
     }
 }

@@ -14,6 +14,8 @@ import com.github.bedrockecs.server.game.zimpl.db.dimension.DimensionDBImpl
 import com.github.bedrockecs.server.game.zimpl.db.entity.EntityDBImpl
 import com.github.bedrockecs.server.game.zimpl.db.world.WorldDBImpl
 import java.util.concurrent.CompletableFuture
+import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 
 class GameDBImpl(
     eventBus: EventBus,
@@ -52,11 +54,13 @@ class GameDBImpl(
 
     // lifecycle //
 
+    @PostConstruct
     fun init() {
         val loaded = provider.initializer.initialLoad()
         dimensions.initialize(loaded.dimensions)
     }
 
+    @PreDestroy
     fun close() {
         unloadEverything()
     }
