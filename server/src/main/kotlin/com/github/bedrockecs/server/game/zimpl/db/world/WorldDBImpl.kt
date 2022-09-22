@@ -16,6 +16,8 @@ class WorldDBImpl(evb: EventBusImpl) : WorldDB {
 
     private val metadata: ChunkMetadataStore = ChunkMetadataStore(evb)
 
+    private val subChunkMetadata = SubChunkMetadataStore(evb)
+
     override fun <T : ChunkComponent> mutateChunk(pos: ChunkPosition, clazz: Class<T>, func: (T?) -> T?) {
         metadata.mutateChunk(pos, clazz, func)
     }
@@ -29,15 +31,15 @@ class WorldDBImpl(evb: EventBusImpl) : WorldDB {
     }
 
     override fun <T : SubChunkComponent> mutateSubChunk(pos: SubChunkPosition, clazz: Class<T>, func: (T?) -> T?) {
-        TODO("Not yet implemented")
+        return subChunkMetadata.mutateSubChunk(pos, clazz, func)
     }
 
     override fun <T : SubChunkComponent> readSubChunk(pos: SubChunkPosition, clazz: Class<T>): T? {
-        TODO("Not yet implemented")
+        return subChunkMetadata.readSubChunk(pos, clazz)
     }
 
     override fun listSubChunk(pos: SubChunkPosition): Collection<SubChunkComponent> {
-        TODO("Not yet implemented")
+        return subChunkMetadata.listSubChunk(pos)
     }
 
     override fun placeBlock(pos: LayeredBlockPosition, type: BlockTypeComponent, extras: ComponentMap<BlockComponent>) {
@@ -62,6 +64,7 @@ class WorldDBImpl(evb: EventBusImpl) : WorldDB {
 
     fun load(pos: ChunkPosition, serial: SerialChunk) {
         metadata.load(pos, serial)
+        subChunkMetadata.load(pos, serial)
     }
 
     fun unload(pos: ChunkPosition): ChunkPosition {
