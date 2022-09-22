@@ -49,6 +49,11 @@ class NetworkWorldSystem(
     }
 
     override fun tick() {
+        handlePlayerPositionUpdate()
+        handleWorldUpdate()
+    }
+
+    private fun handlePlayerPositionUpdate() {
         val playerPositions = mutableMapOf<UUID, FloatBlockPosition>()
         db.entities.scan<EntityTypeComponent, PlayerIdentifierComponent, EntityPositionComponent> { eid, type, pid, epc ->
             if (type == PlayerEntityType.TYPE) {
@@ -58,11 +63,13 @@ class NetworkWorldSystem(
             }
             playerPositions[pid.uuid] = epc.pos
         }
+        exchange.handlePlayerPositionUpdate(playerPositions)
+    }
 
+    private fun handleWorldUpdate() {
         val changes = chunkChanges.toSet()
         chunkChanges.clear()
 
-        exchange.handlePlayerPositionUpdate(playerPositions)
         exchange.handleWorldUpdate(db, changes)
     }
 }
