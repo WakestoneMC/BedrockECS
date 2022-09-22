@@ -19,19 +19,21 @@ interface BlockRegistry {
     /**
      * get [BlockTypeComponent] associated with this runtimeId
      */
-    fun typeFor(rid: Short): BlockTypeComponent?
+    fun typeFor(rid: Short): BlockTypeComponent
 
     /**
      * the runtime id of block of this type, used in serialization etc......
      */
-    fun runtimeIDFor(type: BlockTypeComponent): Short?
+    fun runtimeIDFor(type: BlockTypeComponent): Short
 
     // Default BlockComponents //
+
+    // TODO: remove getter for the internal map so we have more room for optimization
 
     /**
      * returns the global level default components, provided as default to all blocks
      */
-    val globalDefaultComponents: ComponentMap<BlockComponent>
+    val defaultComponents: ComponentMap<BlockComponent>
 
     /**
      * returns the overrides at type level
@@ -41,5 +43,10 @@ interface BlockRegistry {
     /**
      * query default block component for type
      */
-    fun defaultComponentsFor(type: BlockTypeComponent): ComponentMap<BlockComponent>
+    fun <T : BlockComponent> defaultComponentOf(type: BlockTypeComponent, clazz: Class<T>): T?
+
+    /**
+     * query default block components for type
+     */
+    fun defaultComponentsOf(type: BlockTypeComponent): ComponentMap<BlockComponent>
 }

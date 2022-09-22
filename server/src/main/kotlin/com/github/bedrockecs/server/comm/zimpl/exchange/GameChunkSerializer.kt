@@ -1,10 +1,8 @@
 package com.github.bedrockecs.server.comm.zimpl.exchange
 
-import com.github.bedrockecs.server.common.zimpl.palette.PaletteStorage
+import com.github.bedrockecs.server.common.palette.PalettedStorage
 import com.github.bedrockecs.server.game.data.ChunkPosition
 import com.github.bedrockecs.server.game.db.world.serial.SerialChunk
-import com.github.bedrockecs.server.game.db.world.serial.SerialSubChunkLayer
-import com.github.bedrockecs.vanilla.blocks.world.AirBlockType
 import com.nukkitx.protocol.bedrock.packet.LevelChunkPacket
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
@@ -37,7 +35,7 @@ object GameChunkSerializer {
             buf.writeByte(8)
             buf.writeByte(subchunk.layers.size)
             for (layer in subchunk.layers) {
-                serializeSubChunkLayer(layer).writeTo(buf)
+                layer.storage.writeTo(buf)
             }
         }
 
@@ -54,26 +52,9 @@ object GameChunkSerializer {
         return buf
     }
 
-    private fun computeBiomePalette(): PaletteStorage {
+    private fun computeBiomePalette(): PalettedStorage {
         val airRID = 0
-        val storage = PaletteStorage.createWithDefaultState(airRID)
+        val storage = PalettedStorage.createWithDefaultState(airRID)
         return storage
-    }
-
-    private fun serializeSubChunkLayer(layer: SerialSubChunkLayer): PaletteStorage {
-        val airRID = AirBlockType.allInstances[0].runtimeID.toInt()
-        val storage = PaletteStorage.createWithDefaultState(airRID)
-        when (layer) {
-            is SerialSubChunkLayer.UnPalettedShort -> {
-                for (x in 0..15) {
-                    for (y in 0..15) {
-                        for (z in 0..15) {
-                            storage.setBlock(x, y, z, layer.idAtOffset(x, y, z).toInt())
-                        }
-                    }
-                }
-                return storage
-            }
-        }
     }
 }

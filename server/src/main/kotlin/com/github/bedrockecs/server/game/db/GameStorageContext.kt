@@ -48,7 +48,7 @@ interface GameStorageContext {
     /**
      * write an entity(and associated inventory) to storage
      */
-    fun writeEntity(id: EntityID, entity: SerialInvEntity): CompletableFuture<Void>
+    fun writeEntity(entity: SerialInvEntity): CompletableFuture<Void>
 
     // player queries //
 

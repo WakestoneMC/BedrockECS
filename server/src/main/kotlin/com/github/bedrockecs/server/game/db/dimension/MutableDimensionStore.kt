@@ -15,4 +15,12 @@ interface MutableDimensionStore : DimensionStore {
      * destroy the dimension, also removes everything inside it
      */
     fun destroy(pos: Short)
+
+    /**
+     * modify a component on the dimension * @param pos dimension id
+     * @param clazz concrete component type of the component to mutate
+     * @param func modifying callback, returns the updated component.
+     *      gets null if not exists, returns null to remove the component
+     */
+    fun <T : DimensionComponent> mutate(pos: Short, clazz: Class<T>, func: (T?) -> T?)
 }
