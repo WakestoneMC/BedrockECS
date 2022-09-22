@@ -21,7 +21,19 @@ class GameDBImpl(
     private val provider: GameStorageProvider
 ) : GameDB {
 
-    override val dimensions = DimensionDBImpl(eventBus)
+    override val dimensions = DimensionDBImpl(
+        eventBus,
+        preCreate = { id, extras ->
+            provider.changeListener.onCreatingDimension(id, extras)
+        },
+        preUpdate = { id, from, to ->
+            provider.changeListener.onUpdatingDimensionComponent(id, from, to)
+        },
+        postDestroy = { id, c ->
+            onDimensionDestroyed(id)
+            provider.changeListener.onDestroyedDimension(id, c)
+        }
+    )
 
     override val world = WorldDBImpl(eventBus, registry)
 
@@ -38,6 +50,8 @@ class GameDBImpl(
         return world.listLoadedChunks()
     }
 
+    // lifecycle //
+
     fun init() {
         val loaded = provider.initializer.initialLoad()
         dimensions.initialize(loaded.dimensions)
@@ -50,6 +64,8 @@ class GameDBImpl(
     private fun unloadEverything() {
         listLoadedChunks().forEach { unloadChunk(it) }
     }
+
+    // loading and unloading //
 
     override fun loadChunk(pos: ChunkPosition): CompletableFuture<Void> {
         if (!isLoaded(pos)) {
@@ -99,5 +115,27 @@ class GameDBImpl(
             provider.context.writeEntity(GameStorageContext.SerialInvEntity(se, emptySet()))
         }
         return CompletableFuture.completedFuture(null)
+    }
+
+    // cascade //
+
+    private fun onDimensionDestroyed(dim: Short) {
+        // remove all entities in the dimension
+        val toUnload = mutableListOf<EntityID>()
+        entities.scan<EntityPositionComponent> { eid, epc ->
+            if (epc.pos.dim == dim) {
+                toUnload.add(eid)
+            }
+        }
+        toUnload.forEach { entities.unload(it) }
+
+        // remove all chunks in the dimension
+        world.listLoadedChunks()
+            .filter { it.dim == dim }
+            .forEach { world.unload(it) }
+    }
+
+    private fun onEntityDestroyed(eid: EntityID) {
+        // remove all inventories that belongs to that entity
     }
 }
