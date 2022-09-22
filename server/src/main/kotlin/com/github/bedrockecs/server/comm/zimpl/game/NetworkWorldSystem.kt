@@ -4,6 +4,7 @@ import com.github.bedrockecs.server.comm.zimpl.exchange.GameWorldExchange
 import com.github.bedrockecs.server.game.data.ChunkPosition
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.GameDB
+import com.github.bedrockecs.server.game.db.dimension.data.DimensionConstants.OVERWORLD_ID
 import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.github.bedrockecs.server.game.db.entity.data.EntityPositionComponent
 import com.github.bedrockecs.server.game.db.entity.data.EntityTypeComponent
@@ -13,6 +14,7 @@ import com.github.bedrockecs.server.game.db.world.event.BlockMutationEvent
 import com.github.bedrockecs.server.game.eventbus.EventBus
 import com.github.bedrockecs.server.game.system.CommonTickOrders
 import com.github.bedrockecs.server.game.system.System
+import com.github.bedrockecs.server.game.tick.TickComponent
 import com.github.bedrockecs.vanilla.player.entity.PlayerEntityType
 import com.github.bedrockecs.vanilla.player.entity.PlayerIdentifierComponent
 import org.springframework.stereotype.Component
@@ -49,8 +51,14 @@ class NetworkWorldSystem(
     }
 
     override fun tick() {
+        handleTickUpdate()
         handlePlayerPositionUpdate()
         handleWorldUpdate()
+    }
+
+    private fun handleTickUpdate() {
+        val ct = db.dimensions.read(OVERWORLD_ID, TickComponent::class.java)!!.currentTick
+        exchange.handleTickUpdate(ct)
     }
 
     private fun handlePlayerPositionUpdate() {

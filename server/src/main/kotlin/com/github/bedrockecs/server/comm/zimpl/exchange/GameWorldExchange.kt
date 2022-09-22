@@ -10,6 +10,7 @@ import com.nukkitx.protocol.bedrock.BedrockPacket
 import com.nukkitx.protocol.bedrock.packet.ChunkRadiusUpdatedPacket
 import com.nukkitx.protocol.bedrock.packet.NetworkChunkPublisherUpdatePacket
 import com.nukkitx.protocol.bedrock.packet.RequestChunkRadiusPacket
+import com.nukkitx.protocol.bedrock.packet.TickSyncPacket
 import kotlinx.coroutines.future.await
 import org.springframework.stereotype.Component
 import java.util.UUID
@@ -32,6 +33,8 @@ class GameWorldExchange {
     private val waitingForInitialChunkSent = ConcurrentHashMap<UUID, CompletableFuture<Void>>()
 
     private val sessions = ConcurrentHashMap<UUID, Session>()
+
+    private var currentTick: Long = 0
 
     data class Session(
         val connection: NetworkConnection,
@@ -61,9 +64,12 @@ class GameWorldExchange {
                 onPacket(connection, packet)
                 ProcessResult.CONSUME
             }
+            is TickSyncPacket -> {
+                onPacket(connection, packet)
+                ProcessResult.CONSUME
+            }
             else -> ProcessResult.CONTINUE
         }
-        // TODO: TickSyncPacket
     }
 
     private fun onPacket(connection: NetworkConnection, packet: RequestChunkRadiusPacket) {
@@ -76,7 +82,19 @@ class GameWorldExchange {
         }
     }
 
+    private fun onPacket(connection: NetworkConnection, packet: TickSyncPacket) {
+        val req = packet.requestTimestamp
+        val ret = TickSyncPacket()
+        ret.requestTimestamp = req
+        ret.responseTimestamp = currentTick
+        connection.sendPacket(ret, NetworkConnection.Latency.IMMEDIATELY)
+    }
+
     // GameServer side //
+
+    fun handleTickUpdate(currentTick: Long) {
+        this.currentTick = currentTick
+    }
 
     fun handlePlayerPositionUpdate(playerPositions: MutableMap<UUID, FloatBlockPosition>) {
         sessions.map { (uuid, session) ->

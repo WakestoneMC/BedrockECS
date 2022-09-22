@@ -18,22 +18,23 @@ import java.util.concurrent.ConcurrentHashMap
 class PlayerConnectionExchange(
     private val mailbox: CommActionUpdateMailbox
 ) {
-    data class CreatedPlayerEntity(
+    data class StartGamePacketData(
         val eid: EntityID,
-        val pos: EntityPositionComponent
+        val pos: EntityPositionComponent,
+        val currentTick: Long
     )
 
-    private val waitingForPlayerEntity = ConcurrentHashMap<UUID, CompletableFuture<CreatedPlayerEntity>>()
+    private val waitingForPlayerEntity = ConcurrentHashMap<UUID, CompletableFuture<StartGamePacketData>>()
 
     private val connections = ConcurrentHashMap<UUID, NetworkConnection>()
 
     // WorldHandler side //
 
-    suspend fun handleConnection(connection: NetworkConnection, func: suspend (CreatedPlayerEntity) -> Unit) {
-        val job = CompletableFuture<CreatedPlayerEntity>()
+    suspend fun handleConnection(connection: NetworkConnection, func: suspend (StartGamePacketData) -> Unit) {
+        val job = CompletableFuture<StartGamePacketData>()
         val uuid = connection.identifiers.playerUUID!!
 
-        val spawned: CreatedPlayerEntity
+        val spawned: StartGamePacketData
         try {
             waitingForPlayerEntity[uuid] = job
             mailbox.addAction(PlayerConnectedAction(connection.identifiers))
@@ -57,7 +58,7 @@ class PlayerConnectionExchange(
 
     // GameServer side //
 
-    fun notifyPlayerEntityCreated(resolved: Map<UUID, CreatedPlayerEntity>) {
+    fun notifyPlayerEntityCreated(resolved: Map<UUID, StartGamePacketData>) {
         resolved.forEach {
             waitingForPlayerEntity[it.key]!!.complete(it.value)
         }

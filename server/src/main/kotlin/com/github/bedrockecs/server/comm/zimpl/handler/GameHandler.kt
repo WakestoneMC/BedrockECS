@@ -46,6 +46,7 @@ class GameHandler(
             // metadata initialization //
             conn.sendPacket(
                 computeStartGamePacket(
+                    spawnedPlayer.currentTick,
                     spawnedPlayer.eid,
                     spawnedPlayer.pos.pos,
                     spawnedPlayer.pos.direction
@@ -108,6 +109,7 @@ class GameHandler(
     }
 
     private suspend fun computeStartGamePacket(
+        currentTick: Long,
         playerEntityID: EntityID,
         playerPosition: FloatBlockPosition,
         playerRotation: Vector3f
@@ -203,7 +205,7 @@ class GameHandler(
         p1.playerMovementSettings.isServerAuthoritativeBlockBreaking = false
         p1.playerMovementSettings.movementMode = AuthoritativeMovementMode.CLIENT
         p1.playerMovementSettings.rewindHistorySize = 0
-        p1.currentTick = 0
+        p1.currentTick = currentTick
         p1.enchantmentSeed = 0
         p1.blockProperties.clear()
         p1.isInventoriesServerAuthoritative = false
