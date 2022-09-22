@@ -160,7 +160,7 @@ class NaiveWorldDB(
             .sortedBy { it.first.y }
             .map { it.second }
             .toList()
-        return SerialChunk(chunk, serials)
+        return SerialChunk(chunk, serials, subChunksInitialY = -64)
     }
 
     fun load(pos: ChunkPosition, serials: SerialChunk) {
@@ -212,6 +212,6 @@ class NaiveWorldDB(
             .sortedBy { it.first.y }
             .map { it.second }
             .toList()
-        return SerialChunk(chunk, serials)
+        return SerialChunk(chunk, serials, subChunksInitialY = -64)
     }
 }

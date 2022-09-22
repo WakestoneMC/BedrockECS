@@ -48,7 +48,8 @@ class MockGameStorageContext : GameStorageContext {
 
         val ret = SerialChunk(
             components = emptyMap(),
-            subChunks = (0..11).map { buildSubChunk(it) }
+            subChunks = (0..11).map { buildSubChunk(it) },
+            subChunksInitialY = -64
         )
         return CompletableFuture.completedFuture(ret)
     }

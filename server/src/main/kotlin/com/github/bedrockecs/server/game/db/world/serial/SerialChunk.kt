@@ -14,5 +14,9 @@ data class SerialChunk(
     /**
      * ordered by value of y
      */
-    val subChunks: List<SerialSubChunk>
+    val subChunks: List<SerialSubChunk>,
+    /**
+     * initial y value
+     */
+    val subChunksInitialY: Int
 )
