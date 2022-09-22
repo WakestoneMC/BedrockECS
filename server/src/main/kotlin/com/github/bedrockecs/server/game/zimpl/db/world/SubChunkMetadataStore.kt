@@ -77,11 +77,11 @@ class SubChunkMetadataStore(evb: EventBus) {
     fun load(pos: ChunkPosition, serial: SerialChunk) {
         val addedSubChunks = mutableListOf<SubChunkPosition>()
         chunksLock.write {
-            if (chunks.contains(SubChunkPosition(pos.x, 0, pos.z, pos.dim))) {
+            if (chunks.contains(SubChunkPosition(pos.chunkX, 0, pos.chunkZ, pos.dim))) {
                 throw IllegalArgumentException("chunk already loaded!")
             }
             serial.subChunks.forEachIndexed { index, subChunk ->
-                val subpos = SubChunkPosition(pos.x, index + serial.subChunksInitialY / 16, pos.z, pos.dim)
+                val subpos = SubChunkPosition(pos.chunkX, index + serial.subChunksInitialY / 16, pos.chunkZ, pos.dim)
                 addedSubChunks.add(subpos)
                 chunks[subpos] = Entry(
                     map = subChunk.components.toMutableMap()

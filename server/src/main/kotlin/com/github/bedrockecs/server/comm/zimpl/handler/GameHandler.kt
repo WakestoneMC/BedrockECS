@@ -1,8 +1,10 @@
 package com.github.bedrockecs.server.comm.zimpl.handler
 
 import com.github.bedrockecs.server.comm.server.NetworkConnection
+import com.github.bedrockecs.server.comm.zimpl.exchange.ActionUpdateExchange
 import com.github.bedrockecs.server.comm.zimpl.exchange.GameWorldExchange
 import com.github.bedrockecs.server.comm.zimpl.exchange.PlayerConnectionExchange
+import com.github.bedrockecs.server.comm.zimpl.exchange.ProcessResult
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.nukkitx.math.vector.Vector2f
@@ -32,7 +34,8 @@ import org.springframework.stereotype.Component
 @Component
 class GameHandler(
     private val worldExchange: GameWorldExchange,
-    private val connectionExchange: PlayerConnectionExchange
+    private val connectionExchange: PlayerConnectionExchange,
+    private val actionUpdateExchange: ActionUpdateExchange
 ) {
     suspend fun handle(conn: NetworkConnection) {
         connectionExchange.handleConnection(conn) { spawnedPlayer ->
@@ -43,6 +46,7 @@ class GameHandler(
             // metadata initialization //
             conn.sendPacket(
                 computeStartGamePacket(
+                    spawnedPlayer.currentTick,
                     spawnedPlayer.eid,
                     spawnedPlayer.pos.pos,
                     spawnedPlayer.pos.direction
@@ -80,31 +84,32 @@ class GameHandler(
             // RespawnPacket
 
             // world state //
+            actionUpdateExchange.onConnection(conn)
             worldExchange.onConnection(conn)
             try {
-                // NetworkChunkPublisherUpdatePacket, TODO: sends location of player & radius=64, range updated by chunk radius updated packet
-                // TODO: update sequence REQUEST_CHUNK_RADIUS -> CHUNK_RADIUS_UPDATED NETWORK_CHUNK_PUBLISHER_UPDATE are updated as follow-up
-
-                // LEVEL_CHUNK for initial chunk content TODO: impl this out
-
-                // BLOCK_UPDATE for block updates, UPDATE_SUBCHUNK_BLOCKS for batched update? TODO: figure this out
-
-                // TickSyncPacket
-
                 // done //
                 conn.sendPacket(PlayStatusPacket().apply { status = PlayStatusPacket.Status.PLAYER_SPAWN })
 
                 while (true) {
                     val packet = conn.receivePacket()
-                    worldExchange.onPacket(conn, packet)
+                    var ret = actionUpdateExchange.onPacket(conn, packet)
+                    if (ret == ProcessResult.CONSUME) {
+                        continue
+                    }
+                    ret = worldExchange.onPacket(conn, packet)
+                    if (ret == ProcessResult.CONSUME) {
+                        continue
+                    }
                 }
             } finally {
                 worldExchange.onDisconnected(conn)
+                actionUpdateExchange.onDisconnected(conn)
             }
         }
     }
 
     private suspend fun computeStartGamePacket(
+        currentTick: Long,
         playerEntityID: EntityID,
         playerPosition: FloatBlockPosition,
         playerRotation: Vector3f
@@ -200,7 +205,7 @@ class GameHandler(
         p1.playerMovementSettings.isServerAuthoritativeBlockBreaking = false
         p1.playerMovementSettings.movementMode = AuthoritativeMovementMode.CLIENT
         p1.playerMovementSettings.rewindHistorySize = 0
-        p1.currentTick = 0
+        p1.currentTick = currentTick
         p1.enchantmentSeed = 0
         p1.blockProperties.clear()
         p1.isInventoriesServerAuthoritative = false

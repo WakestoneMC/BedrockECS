@@ -5,6 +5,7 @@ import com.github.bedrockecs.server.game.GameServer
 import com.github.bedrockecs.server.game.chunkloading.zimpl.ChunkLoadingGameConfiguration
 import com.github.bedrockecs.server.game.ext.GameConfiguration
 import com.github.bedrockecs.server.game.system.System
+import com.github.bedrockecs.server.game.tick.zimpl.TickGameConfiguration
 import com.github.bedrockecs.server.game.zimpl.db.DBGameConfiguration
 import com.github.bedrockecs.server.game.zimpl.eventbus.EventBusGameConfiguration
 import com.github.bedrockecs.server.game.zimpl.registry.RegistryGameConfiguration
@@ -31,7 +32,8 @@ class GameServerImpl(
             RegistryGameConfiguration::class.java,
             EventBusGameConfiguration::class.java,
             DBGameConfiguration::class.java,
-            ChunkLoadingGameConfiguration::class.java
+            ChunkLoadingGameConfiguration::class.java,
+            TickGameConfiguration::class.java
         )
     }
 

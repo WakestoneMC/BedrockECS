@@ -28,7 +28,7 @@ object TestChunks {
         val initial = (INITIAL_Y / SUBCHUNK_SIZE)
         val subChunks = (initial..initial + 11)
             .map { subChunkY ->
-                if (subChunkY == TEST_SUBCHUNK_A_POS.y) {
+                if (subChunkY == TEST_SUBCHUNK_A_POS.chunkY) {
                     SerialSubChunk(
                         components = mapOf(TestSubChunkComponentA::class.java to TestSubChunkComponentA()),
                         layers = listOf(SerialSubChunkLayer(dirtPlatformStorage, emptyMap()))

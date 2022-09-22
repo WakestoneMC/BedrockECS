@@ -16,30 +16,31 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @Component
 class PlayerConnectionExchange(
-    private val exchange: ActionUpdateExchange
+    private val mailbox: CommActionUpdateMailbox
 ) {
-    data class SpawnedPlayer(
+    data class StartGamePacketData(
         val eid: EntityID,
-        val pos: EntityPositionComponent
+        val pos: EntityPositionComponent,
+        val currentTick: Long
     )
 
-    private val pendingPlayers = ConcurrentHashMap<UUID, CompletableFuture<SpawnedPlayer>>()
+    private val waitingForPlayerEntity = ConcurrentHashMap<UUID, CompletableFuture<StartGamePacketData>>()
 
     private val connections = ConcurrentHashMap<UUID, NetworkConnection>()
 
     // WorldHandler side //
 
-    suspend fun handleConnection(connection: NetworkConnection, func: suspend (SpawnedPlayer) -> Unit) {
-        val job = CompletableFuture<SpawnedPlayer>()
+    suspend fun handleConnection(connection: NetworkConnection, func: suspend (StartGamePacketData) -> Unit) {
+        val job = CompletableFuture<StartGamePacketData>()
         val uuid = connection.identifiers.playerUUID!!
 
-        val spawned: SpawnedPlayer
+        val spawned: StartGamePacketData
         try {
-            pendingPlayers[uuid] = job
-            exchange.addAction(PlayerConnectedAction(connection.identifiers))
+            waitingForPlayerEntity[uuid] = job
+            mailbox.addAction(PlayerConnectedAction(connection.identifiers))
             spawned = job.await()
         } finally {
-            pendingPlayers.remove(uuid)
+            waitingForPlayerEntity.remove(uuid)
         }
 
         connections[uuid] = connection
@@ -47,7 +48,7 @@ class PlayerConnectionExchange(
             func(spawned)
         } finally {
             connections.remove(uuid)
-            exchange.addAction(PlayerDisconnectedAction(connection.identifiers))
+            mailbox.addAction(PlayerDisconnectedAction(connection.identifiers))
         }
     }
 
@@ -57,9 +58,9 @@ class PlayerConnectionExchange(
 
     // GameServer side //
 
-    fun resolvePendingPlayers(resolved: Map<UUID, SpawnedPlayer>) {
+    fun notifyPlayerEntityCreated(resolved: Map<UUID, StartGamePacketData>) {
         resolved.forEach {
-            pendingPlayers[it.key]!!.complete(it.value)
+            waitingForPlayerEntity[it.key]!!.complete(it.value)
         }
     }
 }

@@ -18,8 +18,8 @@ object GameChunkSerializer {
         packet.isRequestSubChunks = false
 
         packet.subChunksLength = chunk.subChunks.size
-        packet.chunkX = pos.x
-        packet.chunkZ = pos.z
+        packet.chunkX = pos.chunkX
+        packet.chunkZ = pos.chunkZ
 
         packet.data = serializeSubChunkPayload(chunk).array()
 

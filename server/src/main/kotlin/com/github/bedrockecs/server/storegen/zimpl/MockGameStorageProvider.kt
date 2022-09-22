@@ -4,6 +4,7 @@ import com.github.bedrockecs.server.game.db.GameDBInitializer
 import com.github.bedrockecs.server.game.db.GameStorageContext
 import com.github.bedrockecs.server.game.db.GameStorageProvider
 import com.github.bedrockecs.server.game.db.dimension.DimensionChangeListener
+import com.github.bedrockecs.server.game.db.dimension.data.DimensionComponent
 import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.github.bedrockecs.server.game.db.entity.EntityIDAllocator
 import java.util.concurrent.locks.ReentrantLock
@@ -36,10 +37,23 @@ class MockGameStorageProvider : GameStorageProvider {
         }
     }
 
+    class ChangeListener : DimensionChangeListener {
+        override fun onCreatingDimension(id: Short, components: Set<DimensionComponent>) {
+            // no-op
+        }
+
+        override fun onUpdatingDimensionComponent(id: Short, from: DimensionComponent?, to: DimensionComponent?) {
+            // no-op
+        }
+
+        override fun onDestroyedDimension(id: Short, components: Set<DimensionComponent>) {
+            // no-op
+        }
+    }
+
     override val initializer: GameDBInitializer = Initializer()
 
-    override val changeListener: DimensionChangeListener
-        get() = TODO("Not yet implemented")
+    override val changeListener: DimensionChangeListener = ChangeListener()
 
     override val allocator: EntityIDAllocator = Allocator()
 

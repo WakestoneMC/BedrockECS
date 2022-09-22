@@ -1,11 +1,11 @@
 package com.github.bedrockecs.server.game.data
 
 data class ChunkPosition(
-    val x: Int,
-    val z: Int,
+    val chunkX: Int,
+    val chunkZ: Int,
     val dim: Short
 ) {
-    fun toSubChunk(y: Int): SubChunkPosition {
-        return SubChunkPosition(x, y, z, dim)
+    fun toSubChunk(chunkY: Int): SubChunkPosition {
+        return SubChunkPosition(chunkX, chunkY, chunkZ, dim)
     }
 }
