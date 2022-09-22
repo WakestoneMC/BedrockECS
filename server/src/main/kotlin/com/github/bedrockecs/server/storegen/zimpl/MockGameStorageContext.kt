@@ -18,20 +18,20 @@ class MockGameStorageContext : GameStorageContext {
     override fun readChunk(pos: ChunkPosition): CompletableFuture<SerialChunk> {
         val airIdx = AirBlockType.allInstances[0].runtimeID
         val dirtIdx = DirtBlockType.allInstances[0].runtimeID
-        val arr = PalettedStorage.createWithDefaultState(airIdx.toInt())
+        val dirtArr = PalettedStorage.createWithDefaultState(airIdx.toInt())
         val airArr = PalettedStorage.createWithDefaultState(airIdx.toInt())
         for (idx in (0..4095)) {
+            val x = idx % SUBCHUNK_SIZE
             val y = idx / SUBCHUNK_SIZE % SUBCHUNK_SIZE
+            val z = idx / SUBCHUNK_SIZE / SUBCHUNK_SIZE % SUBCHUNK_SIZE
             if (y == 0) {
-                arr.setBlock(idx, dirtIdx.toInt())
-            } else {
-                arr.setBlock(idx, airIdx.toInt())
+                dirtArr.setBlock(x, y, z, dirtIdx.toInt())
             }
         }
 
         fun buildSubChunk(idx: Int): SerialSubChunk {
             val layer = if (idx == 7) {
-                arr
+                dirtArr
             } else {
                 airArr
             }
