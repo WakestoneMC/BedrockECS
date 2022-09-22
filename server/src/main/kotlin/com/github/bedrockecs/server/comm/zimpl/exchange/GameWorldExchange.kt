@@ -66,7 +66,7 @@ class GameWorldExchange {
         if (session != null) {
             session.aoiBlockRadius = min(packet.radius * SUBCHUNK_SIZE, 16 * SUBCHUNK_SIZE)
             val resp = ChunkRadiusUpdatedPacket()
-            resp.radius = session.aoiBlockRadius
+            resp.radius = session.aoiBlockRadius / SUBCHUNK_SIZE
             connection.sendPacket(resp, NetworkConnection.Latency.IMMEDIATELY)
         }
     }
