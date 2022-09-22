@@ -215,7 +215,7 @@ class NaiveSubChunkTablet(
         type: BlockTypeComponent,
         overrides: ComponentMap<BlockComponent?>
     ): MutableComponentMap<BlockComponent> {
-        val components = registry.defaultComponentsFor(type).toMutableMap()
+        val components = registry.defaultComponentsOf(type).toMutableMap()
         overrides.forEach { (key, value) ->
             if (value == null) {
                 components.remove(key)
