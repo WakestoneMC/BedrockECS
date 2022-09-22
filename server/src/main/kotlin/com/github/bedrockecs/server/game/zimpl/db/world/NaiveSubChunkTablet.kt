@@ -39,8 +39,8 @@ class NaiveSubChunkTablet(
                 pos.x * SUBCHUNK_SIZE + x,
                 pos.y * SUBCHUNK_SIZE + y,
                 pos.z * SUBCHUNK_SIZE + z,
-                pos.layer,
-                pos.dim
+                pos.dim,
+                pos.layer
             )
         }
 

@@ -4,8 +4,8 @@ data class LayeredSubChunkPosition(
     val x: Int,
     val y: Int,
     val z: Int,
-    val layer: Short,
-    val dim: Short
+    val dim: Short,
+    val layer: Short
 ) {
     fun toSubChunk(): SubChunkPosition {
         return SubChunkPosition(x, y, z, dim)

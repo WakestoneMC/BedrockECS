@@ -6,8 +6,8 @@ data class LayeredBlockPosition(
     val x: Int,
     val y: Int,
     val z: Int,
-    val layer: Short = 0,
-    val dim: Short
+    val dim: Short,
+    val layer: Short = 0
 ) {
     val subchunkOffsets: Triple<Int, Int, Int> = Triple(
         x % SUBCHUNK_SIZE,
@@ -23,8 +23,8 @@ data class LayeredBlockPosition(
             x / SUBCHUNK_SIZE,
             y / SUBCHUNK_SIZE,
             z / SUBCHUNK_SIZE,
-            layer,
-            dim
+            dim,
+            layer
         )
     }
 

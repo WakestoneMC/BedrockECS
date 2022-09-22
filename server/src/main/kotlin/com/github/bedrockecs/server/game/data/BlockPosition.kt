@@ -14,7 +14,7 @@ data class BlockPosition(
         z % SUBCHUNK_SIZE
     )
     fun toLayered(layer: Short = 0): LayeredBlockPosition {
-        return LayeredBlockPosition(x, y, z, layer, dim)
+        return LayeredBlockPosition(x, y, z, dim, layer)
     }
 
     fun toFloat(): FloatBlockPosition {

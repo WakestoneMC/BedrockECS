@@ -7,7 +7,7 @@ data class SubChunkPosition(
     val dim: Short
 ) {
     fun toLayered(layer: Short = 0): LayeredSubChunkPosition {
-        return LayeredSubChunkPosition(x, y, z, layer, dim)
+        return LayeredSubChunkPosition(x, y, z, dim, layer)
     }
 
     fun toChunk(): ChunkPosition {
