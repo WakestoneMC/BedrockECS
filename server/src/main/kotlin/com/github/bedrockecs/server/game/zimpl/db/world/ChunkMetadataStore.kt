@@ -19,8 +19,6 @@ class ChunkMetadataStore(
 
     private val mutationEvent = evb.publishFor<ChunkMutationEvent>("world-db")
 
-    private val loadingEvent = evb.publishFor<ChunkMutationEvent>("world-db")
-
     data class ChunkEntry(
         val lock: ReentrantReadWriteLock = ReentrantReadWriteLock(),
         val map: MutableComponentMap<ChunkComponent> = mutableMapOf()
