@@ -1,6 +1,7 @@
 package com.github.bedrockecs.server.game.zimpl.db.world
 
 import com.github.bedrockecs.server.game.data.ChunkPosition
+import com.github.bedrockecs.server.game.db.common.ComponentMap
 import com.github.bedrockecs.server.game.db.common.MutableComponentMap
 import com.github.bedrockecs.server.game.db.common.MutateType
 import com.github.bedrockecs.server.game.db.world.data.ChunkComponent
@@ -85,6 +86,10 @@ class ChunkMetadataStore(
         }
     }
 
-    fun unload() {
+    fun unload(pos: ChunkPosition): ComponentMap<ChunkComponent> {
+        chunksLock.write {
+            val ret = chunks.remove(pos) ?: throw IllegalArgumentException("chunk is not loaded!")
+            return ret.map
+        }
     }
 }

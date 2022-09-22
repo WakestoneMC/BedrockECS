@@ -140,7 +140,7 @@ class NaiveWorldDB(
         }
     }
 
-    override fun serialize(pos: ChunkPosition): SerialChunk {
+    override fun serialize(pos: ChunkPosition, includeComponents: Boolean): SerialChunk {
         val (chunk, tablets) = dbLock.withLock {
             val subchunks = db.keys.filter { it.toChunk() == pos }.toSet()
             if (subchunks.isEmpty()) {

@@ -11,5 +11,5 @@ interface SerializableWorldStore : WorldStore {
      * get the serialized form of the chunk
      * @throws ChunkNotLoadedException if the corresponding chunk is not loaded
      */
-    fun serialize(pos: ChunkPosition): SerialChunk
+    fun serialize(pos: ChunkPosition, includeComponents: Boolean = false): SerialChunk
 }

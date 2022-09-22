@@ -9,6 +9,7 @@ import com.github.bedrockecs.server.game.db.world.event.SubChunkMutationEvent
 import com.github.bedrockecs.server.game.db.world.serial.SerialChunk
 import com.github.bedrockecs.server.game.eventbus.publishFor
 import com.github.bedrockecs.server.game.zimpl.eventbus.EventBusImpl
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -27,6 +28,8 @@ class SubChunkMetadataStore(
     private val chunksLock = ReentrantReadWriteLock()
 
     private val chunks = mutableMapOf<SubChunkPosition, Entry>()
+
+    private val chunkSubChunkMap = ConcurrentHashMap<ChunkPosition, List<SubChunkPosition>>()
 
     fun listSubChunk(pos: SubChunkPosition): Collection<SubChunkComponent> {
         chunksLock.read {
@@ -74,19 +77,29 @@ class SubChunkMetadataStore(
     }
 
     fun load(pos: ChunkPosition, serial: SerialChunk) {
+        val addedSubChunks = mutableListOf<SubChunkPosition>()
         chunksLock.write {
             if (chunks.contains(SubChunkPosition(pos.x, 0, pos.z, pos.dim))) {
                 throw IllegalArgumentException("chunk already loaded!")
             }
             serial.subChunks.forEachIndexed { index, subChunk ->
                 val subpos = SubChunkPosition(pos.x, index + serial.subChunksInitialY / 16, pos.z, pos.dim)
+                addedSubChunks.add(subpos)
                 chunks[subpos] = Entry(
                     map = subChunk.components.toMutableMap()
                 )
             }
         }
+        chunkSubChunkMap[pos] = addedSubChunks
     }
 
-    fun unload() {
+    fun unload(pos: ChunkPosition): List<MutableComponentMap<SubChunkComponent>> {
+        val removed = chunksLock.write {
+            val subchunks = chunkSubChunkMap.remove(pos) ?: throw IllegalArgumentException("chunks is not loaded!")
+            val removedSubChunks = mutableListOf<Entry>()
+            subchunks.forEach { removedSubChunks.add(chunks.remove(it)!!) }
+            removedSubChunks
+        }
+        return removed.map { it.map }
     }
 }
