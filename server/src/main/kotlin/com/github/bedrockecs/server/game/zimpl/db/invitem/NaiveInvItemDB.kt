@@ -216,6 +216,7 @@ class NaiveInvItemDB(evb: EventBus) : InvitemDB {
                     }
                 }
                 .toMap()
+            entries.remove(ref)
             return SerialInventory(inv.metadata, components)
         }
     }
