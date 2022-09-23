@@ -14,6 +14,8 @@ object VanillaBlockTypes {
         types.addAll(AirBlockType.allInstances)
         classes.add(DirtBlockType::class)
         types.addAll(DirtBlockType.allInstances)
+        classes.add(DiamondBlockType::class)
+        types.addAll(DiamondBlockType.allInstances)
         CLASSES = classes
         TYPES = types.sortedBy { it.runtimeID }
     }
