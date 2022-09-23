@@ -164,15 +164,21 @@ class NaiveInvItemDB(evb: EventBus) : InvitemDB {
         }
     }
 
-    override fun list(ref: InvSlotRef): Collection<ItemComponent> {
+    override fun list(ref: InvSlotRef): ComponentMap<ItemComponent> {
         lock.withLock {
             val invRef = InvRef(ref.owner, ref.name)
             val inv = entries[invRef] ?: throw IllegalArgumentException("inventory $ref not exists!")
             val components = inv.items[ref.slot]
             if (components == null) {
-                return emptySet()
+                return emptyMap()
             } else {
-                return components.values.filterNotNull()
+                val entries: MutableComponentMap<ItemComponent> = mutableMapOf()
+                components.forEach {
+                    if (it.value != null) {
+                        entries.put(it.key, it.value!!)
+                    }
+                }
+                return entries
             }
         }
     }

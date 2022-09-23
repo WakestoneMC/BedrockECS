@@ -1,5 +1,6 @@
 package com.github.bedrockecs.server.game.db.invitem
 
+import com.github.bedrockecs.server.game.db.common.ComponentMap
 import com.github.bedrockecs.server.game.db.invitem.data.InventoryMetadata
 import com.github.bedrockecs.server.game.db.invitem.data.ItemComponent
 
@@ -26,7 +27,7 @@ interface InvItemStore {
     /**
      * list all components the item in the slot has
      */
-    fun list(ref: InvSlotRef): Collection<ItemComponent>
+    fun list(ref: InvSlotRef): ComponentMap<ItemComponent>
 
     /**
      * iterate through items and components it has
