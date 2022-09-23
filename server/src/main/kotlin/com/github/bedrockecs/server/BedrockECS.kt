@@ -1,6 +1,7 @@
 package com.github.bedrockecs.server
 
 import com.github.bedrockecs.server.comm.zimpl.CommCoreConfiguration
+import com.github.bedrockecs.server.filesystem.zimpl.FileSystemCoreConfiguration
 import com.github.bedrockecs.server.game.zimpl.GameCoreConfiguration
 import com.github.bedrockecs.server.storegen.zimpl.StoreGenCoreConfiguration
 import com.github.bedrockecs.server.threading.zimpl.ThreadingCoreConfiguration
@@ -26,7 +27,8 @@ class BedrockECS {
             CommCoreConfiguration::class.java,
             GameCoreConfiguration::class.java,
             StoreGenCoreConfiguration::class.java,
-            VanillaCoreConfiguration::class.java
+            VanillaCoreConfiguration::class.java,
+            FileSystemCoreConfiguration::class.java
         )
 
         @JvmStatic
