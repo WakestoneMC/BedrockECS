@@ -96,7 +96,7 @@ class GameWorldExchange {
         this.currentTick = currentTick
     }
 
-    fun handlePlayerPositionUpdate(playerPositions: MutableMap<UUID, FloatBlockPosition>) {
+    fun handlePlayerPositionUpdate(playerPositions: Map<UUID, FloatBlockPosition>) {
         sessions.map { (uuid, session) ->
             val pos = playerPositions[uuid]!!
             if (session.lastPosition != pos) {
