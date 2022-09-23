@@ -1,6 +1,6 @@
 package com.github.bedrockecs.server.game.ext
 
-import com.github.bedrockecs.server.game.config.Configurator
+import com.github.bedrockecs.server.common.config.Configurator
 import com.github.bedrockecs.server.game.system.System
 import org.springframework.context.annotation.Configuration
 

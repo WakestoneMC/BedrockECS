@@ -12,5 +12,5 @@ data class SerialInventory(
     /**
      * non-default components
      */
-    val overrides: Map<Int, ComponentMap<ItemComponent>>
+    val overrides: Map<Int, ComponentMap<ItemComponent?>>
 )

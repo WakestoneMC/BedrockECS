@@ -1,6 +1,6 @@
 package com.github.bedrockecs.server.game.registry
 
-import com.github.bedrockecs.server.game.config.Configurator
+import com.github.bedrockecs.server.common.config.Configurator
 
 /**
  * configures [BlockRegistry]

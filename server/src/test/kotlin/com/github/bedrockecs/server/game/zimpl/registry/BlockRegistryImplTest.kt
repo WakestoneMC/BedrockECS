@@ -2,7 +2,7 @@ package com.github.bedrockecs.server.game.zimpl.registry
 
 import com.github.bedrockecs.server.game.zimpl.common.TestBlockComponentA
 import com.github.bedrockecs.server.game.zimpl.common.TestBlockComponentB
-import com.github.bedrockecs.vanilla.blocks.world.DirtBlockType
+import com.github.bedrockecs.vanilla.data.world.DirtBlockType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

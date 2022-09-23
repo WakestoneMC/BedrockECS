@@ -26,7 +26,8 @@ import kotlin.concurrent.write
 
 class EntityDBImpl(
     eventBus: EventBus,
-    allocator: EntityIDAllocator
+    allocator: EntityIDAllocator,
+    private val preEntityDestroy: (eid: EntityID) -> Unit = { eid -> }
 ) : EntityDB, AutoCloseable {
 
     private val creatingEvent = eventBus.publishFor<EntityCreatingEvent>("entitydb")
@@ -112,6 +113,8 @@ class EntityDBImpl(
                     }
                 val entityType = entity.getComponent(EntityTypeComponent::class.java).entityType
                 lifecycleEvent.publish(entityType, EntityLifecycleEvent(id, LifecycleType.DESTROY))
+
+                preEntityDestroy(id)
 
                 idMap.remove(id.value)
                 idReverseMap.remove(entity)

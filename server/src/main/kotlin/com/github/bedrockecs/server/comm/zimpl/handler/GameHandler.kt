@@ -66,11 +66,7 @@ class GameHandler(
             // PlayerFogPacket TODO: specify player fog
 
             // player state //
-            // InventoryContentPacket
-            // InventoryContentPacket
-            // InventoryContentPacket
-            // InventoryContentPacket
-            // PlayerHotbarPacket
+            // InventoryContentPacket got one unknown stuff
 
             // UpdateAttributesPacket
             // UpdateAttributesPacket

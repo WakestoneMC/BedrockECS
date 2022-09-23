@@ -13,8 +13,8 @@ import com.github.bedrockecs.server.game.eventbus.EventBus
 import com.github.bedrockecs.server.game.system.CommonTickOrders
 import com.github.bedrockecs.server.game.system.System
 import com.github.bedrockecs.server.game.tick.TickComponent
-import com.github.bedrockecs.vanilla.player.entity.PlayerEntityType
-import com.github.bedrockecs.vanilla.player.entity.PlayerIdentifierComponent
+import com.github.bedrockecs.vanilla.game.player.entity.PlayerEntityType
+import com.github.bedrockecs.vanilla.game.player.entity.PlayerIdentifierComponent
 import org.springframework.stereotype.Component
 import java.util.UUID
 

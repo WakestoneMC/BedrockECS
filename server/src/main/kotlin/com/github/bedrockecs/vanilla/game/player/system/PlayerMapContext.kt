@@ -1,4 +1,4 @@
-package com.github.bedrockecs.vanilla.player.system
+package com.github.bedrockecs.vanilla.game.player.system
 
 import com.github.bedrockecs.server.comm.server.ConnectionIdentifiers
 import com.github.bedrockecs.server.game.db.entity.EntityID

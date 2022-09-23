@@ -16,7 +16,7 @@ import com.github.bedrockecs.server.game.db.world.serial.SerialSubChunkLayer
 import com.github.bedrockecs.server.game.eventbus.EventBus
 import com.github.bedrockecs.server.game.eventbus.publishFor
 import com.github.bedrockecs.server.game.registry.BlockRegistry
-import com.github.bedrockecs.vanilla.blocks.world.AirBlockType
+import com.github.bedrockecs.vanilla.data.world.AirBlockType
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.IllegalArgumentException

@@ -17,13 +17,14 @@ typealias PreCreateCallback = (eid: Short, components: Set<DimensionComponent>) 
 
 typealias PreUpdateCallback = (eid: Short, from: DimensionComponent?, to: DimensionComponent?) -> Unit
 
-typealias PostDestroyCallback = (eid: Short, components: Set<DimensionComponent>) -> Unit
+typealias DestroyCallback = (eid: Short, components: Set<DimensionComponent>) -> Unit
 
 class DimensionDBImpl(
     evb: EventBus,
     private val preCreate: PreCreateCallback = { p0, p1 -> },
     private val preUpdate: PreUpdateCallback = { a0, a1, a2 -> },
-    private val postDestroy: PostDestroyCallback = { a0, a1 -> }
+    private val preDestroy: DestroyCallback = { a0, a1 -> },
+    private val postDestroy: DestroyCallback = { a0, a1 -> }
 ) : DimensionDB, AutoCloseable {
 
     private val lifecyclePub = evb.publishFor<DimensionLifecycleEvent>("dimension-db-lifecycle")
@@ -149,6 +150,7 @@ class DimensionDBImpl(
                     components.forEach {
                         mutatePub.publish(it.type, DimensionMutationEvent(pos, MutateType.REMOVE))
                     }
+                    preDestroy(pos, components)
 
                     dimensions[pos.toInt()] = null
                     try {

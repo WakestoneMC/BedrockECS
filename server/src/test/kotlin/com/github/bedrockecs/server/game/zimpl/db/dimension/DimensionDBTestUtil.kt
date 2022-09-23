@@ -105,7 +105,7 @@ object DimensionDBTestUtil {
         var eid by Delegates.notNull<Short>()
         lateinit var db: DimensionDBImpl
         var invoked = false
-        val callback: PostDestroyCallback = { reid, components ->
+        val callback: DestroyCallback = { reid, components ->
             // invoked
             invoked = true
             postDestroy(db, eid, reid, components)

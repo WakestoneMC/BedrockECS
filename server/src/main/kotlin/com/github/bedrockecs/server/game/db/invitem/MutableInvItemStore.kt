@@ -20,7 +20,7 @@ interface MutableInvItemStore : InvItemStore {
     fun destroy(ref: InvRef)
 
     /**
-     * place an item into the specified slot, replacing the old one
+     * put an item into the specified slot, replacing the old one
      * @param slot: slot
      * @param type: type of the new item, cannot be mutated afterwards without calling [place] again
      * @param extras: extra components to put in addition to default components.
@@ -29,14 +29,16 @@ interface MutableInvItemStore : InvItemStore {
     fun place(slot: InvSlotRef, type: ItemTypeComponent, extras: ComponentMap<ItemComponent?>)
 
     /**
+     * remove an item from the specified slot, making it empty
+     * @param slot: slot
+     * @return pair of type component and extras components
+     */
+    fun take(slot: InvSlotRef): Pair<ItemTypeComponent, ComponentMap<ItemComponent?>>?
+
+    /**
      * clear an item in the specified slot
      */
     fun clear(slot: InvSlotRef)
-
-    /**
-     * transfer an item from one inventory to another, replacing what was in the to slot
-     */
-    fun transfer(from: InvSlotRef, to: InvSlotRef)
 
     /**
      * modify a component of an item

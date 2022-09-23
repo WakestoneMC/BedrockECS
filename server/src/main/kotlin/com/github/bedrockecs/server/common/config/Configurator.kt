@@ -1,4 +1,4 @@
-package com.github.bedrockecs.server.game.config
+package com.github.bedrockecs.server.common.config
 
 /**
  * configuration hook for configuring things

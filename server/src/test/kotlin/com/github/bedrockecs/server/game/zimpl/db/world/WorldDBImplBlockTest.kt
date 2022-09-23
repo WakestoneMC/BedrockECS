@@ -5,7 +5,7 @@ import com.github.bedrockecs.server.game.zimpl.common.TestBlockComponentA
 import com.github.bedrockecs.server.game.zimpl.db.world.TestChunks.TEST_CHUNK_A
 import com.github.bedrockecs.server.game.zimpl.db.world.TestChunks.TEST_CHUNK_A_POS
 import com.github.bedrockecs.server.game.zimpl.db.world.WorldDBUtil.withTestDB
-import com.github.bedrockecs.vanilla.blocks.world.DirtBlockType
+import com.github.bedrockecs.vanilla.data.world.DirtBlockType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
