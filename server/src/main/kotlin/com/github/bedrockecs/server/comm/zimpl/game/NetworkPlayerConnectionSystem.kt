@@ -4,12 +4,17 @@ import com.github.bedrockecs.server.comm.zimpl.exchange.PlayerConnectionExchange
 import com.github.bedrockecs.server.comm.zimpl.exchange.PlayerConnectionExchange.StartGamePacketData
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.GameDB
+import com.github.bedrockecs.server.game.db.common.LifecycleType
+import com.github.bedrockecs.server.game.db.common.LoadType
 import com.github.bedrockecs.server.game.db.dimension.data.DimensionConstants.OVERWORLD_ID
 import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.github.bedrockecs.server.game.db.entity.data.EntityPositionComponent
 import com.github.bedrockecs.server.game.db.entity.data.EntityTypeComponent
+import com.github.bedrockecs.server.game.db.entity.event.EntityLifecycleEvent
+import com.github.bedrockecs.server.game.db.entity.event.EntityLoadingEvent
 import com.github.bedrockecs.server.game.db.entity.scan
 import com.github.bedrockecs.server.game.eventbus.EventBus
+import com.github.bedrockecs.server.game.eventbus.listensFor
 import com.github.bedrockecs.server.game.system.CommonTickOrders
 import com.github.bedrockecs.server.game.system.System
 import com.github.bedrockecs.server.game.tick.TickComponent
@@ -32,6 +37,21 @@ class NetworkPlayerConnectionSystem(
         get() = CommonTickOrders.NETWORK_STORAGE_OUTPUT
 
     private val players = mutableMapOf<UUID, EntityID>()
+
+    init {
+        eventBus.listensFor<EntityLoadingEvent>("player-presence", PlayerEntityType.TYPE.entityType) {
+            if (it.type == LoadType.UNLOAD) {
+                val uuid = db.entities.read(it.eid, PlayerIdentifierComponent::class.java)!!.uuid
+                players.remove(uuid)
+            }
+        }
+        eventBus.listensFor<EntityLifecycleEvent>("player-presence", PlayerEntityType.TYPE.entityType) {
+            if (it.type == LifecycleType.DESTROY) {
+                val uuid = db.entities.read(it.pos, PlayerIdentifierComponent::class.java)!!.uuid
+                players.remove(uuid)
+            }
+        }
+    }
 
     override fun tick() {
         val tick = db.dimensions.read(OVERWORLD_ID, TickComponent::class.java)!!
