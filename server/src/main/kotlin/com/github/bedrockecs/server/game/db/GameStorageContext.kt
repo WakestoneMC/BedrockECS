@@ -37,7 +37,7 @@ interface GameStorageContext {
      */
     data class SerialInvEntity(
         val entity: SerialEntity,
-        val inventories: Set<SerialInventory>
+        val inventories: List<SerialInventory>
     )
 
     /**

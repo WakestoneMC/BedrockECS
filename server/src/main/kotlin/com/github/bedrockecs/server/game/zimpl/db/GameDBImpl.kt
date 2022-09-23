@@ -101,7 +101,8 @@ class GameDBImpl(
             val unloadedEntities = toUnload.map { entities.unload(it) }
 
             unloadedEntities.forEach {
-                val e = GameStorageContext.SerialInvEntity(it, emptySet())
+                val invs = invitems.unloadAllForEntity(it.id)
+                val e = GameStorageContext.SerialInvEntity(it, invs)
                 provider.context.writeEntity(e).join()
             }
 
@@ -114,6 +115,7 @@ class GameDBImpl(
         if (!entities.isLoaded(id)) {
             val e = provider.context.readEntity(id).join()
             entities.load(e.entity)
+            e.inventories.forEach { invitems.load(it) }
         }
         return CompletableFuture.completedFuture(null)
     }
@@ -121,7 +123,8 @@ class GameDBImpl(
     override fun unloadEntity(id: EntityID): CompletableFuture<Void> {
         if (entities.isLoaded(id)) {
             val se = entities.unload(id)
-            provider.context.writeEntity(GameStorageContext.SerialInvEntity(se, emptySet()))
+            val inv = invitems.unloadAllForEntity(se.id)
+            provider.context.writeEntity(GameStorageContext.SerialInvEntity(se, inv))
         }
         return CompletableFuture.completedFuture(null)
     }
