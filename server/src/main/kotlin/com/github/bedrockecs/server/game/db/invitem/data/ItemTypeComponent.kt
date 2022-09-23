@@ -5,12 +5,7 @@ import com.github.bedrockecs.server.game.db.common.Component
 /**
  * represents the type of the item
  */
-data class ItemTypeComponent(
-    /**
-     * the item type it represents, should be unique
-     */
-    val itemType: String
-) : ItemComponent {
+interface ItemTypeComponent : ItemComponent {
     companion object : Component.Companion {
         override val TYPE: String = "becs:item_type"
     }
@@ -18,7 +13,5 @@ data class ItemTypeComponent(
     override val type: String
         get() = TYPE
 
-    override fun clone(): ItemTypeComponent {
-        return this
-    }
+    val itemType: String
 }
