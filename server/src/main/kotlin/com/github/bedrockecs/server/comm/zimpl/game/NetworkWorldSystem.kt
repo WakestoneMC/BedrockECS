@@ -17,6 +17,7 @@ import com.github.bedrockecs.server.game.system.System
 import com.github.bedrockecs.server.game.tick.TickComponent
 import com.github.bedrockecs.vanilla.game.player.entity.PlayerEntityType
 import com.github.bedrockecs.vanilla.game.player.entity.PlayerIdentifierComponent
+import com.github.bedrockecs.vanilla.game.player.system.PlayerMapContext
 import org.springframework.stereotype.Component
 import java.util.UUID
 import java.util.concurrent.ConcurrentSkipListSet
@@ -25,7 +26,8 @@ import java.util.concurrent.ConcurrentSkipListSet
 class NetworkWorldSystem(
     private val db: GameDB,
     private val eventBus: EventBus,
-    private val exchange: GameWorldExchange
+    private val exchange: GameWorldExchange,
+    private val mapContext: PlayerMapContext
 ) : System {
     override val tickOrder: Int
         get() = CommonTickOrders.NETWORK_STORAGE_OUTPUT
@@ -52,6 +54,7 @@ class NetworkWorldSystem(
 
     override fun tick() {
         handleTickUpdate()
+        handleInventoryUpdate()
         handlePlayerPositionUpdate()
         handleWorldUpdate()
     }
@@ -59,6 +62,10 @@ class NetworkWorldSystem(
     private fun handleTickUpdate() {
         val ct = db.dimensions.read(OVERWORLD_ID, TickComponent::class.java)!!.currentTick
         exchange.handleTickUpdate(ct)
+    }
+
+    private fun handleInventoryUpdate() {
+        exchange.handleInventoryUpdate(db, mapContext, emptySet())
     }
 
     private fun handlePlayerPositionUpdate() {

@@ -7,10 +7,23 @@ import com.github.bedrockecs.server.game.chunkloading.entity.EntityChunkLoadingC
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.GameDB
 import com.github.bedrockecs.server.game.db.entity.data.EntityPositionComponent
+import com.github.bedrockecs.server.game.db.invitem.InvRef
+import com.github.bedrockecs.server.game.db.invitem.InvSlotRef
+import com.github.bedrockecs.server.game.db.invitem.data.BlockItemType
+import com.github.bedrockecs.server.game.db.invitem.data.InventoryMetadata
+import com.github.bedrockecs.server.game.db.invitem.data.ItemCountComponent
 import com.github.bedrockecs.server.game.system.CommonTickOrders
 import com.github.bedrockecs.server.game.system.System
+import com.github.bedrockecs.vanilla.data.invitem.StickItemType
+import com.github.bedrockecs.vanilla.data.world.DirtBlockType
 import com.github.bedrockecs.vanilla.game.player.entity.PlayerEntityType
 import com.github.bedrockecs.vanilla.game.player.entity.PlayerIdentifierComponent
+import com.github.bedrockecs.vanilla.game.player.invitem.PlayerInvItemConstants.ARMOR_INVENTORY_NAME
+import com.github.bedrockecs.vanilla.game.player.invitem.PlayerInvItemConstants.ARMOR_INVENTORY_SIZE
+import com.github.bedrockecs.vanilla.game.player.invitem.PlayerInvItemConstants.INVENTORY_NAME
+import com.github.bedrockecs.vanilla.game.player.invitem.PlayerInvItemConstants.INVENTORY_SIZE
+import com.github.bedrockecs.vanilla.game.player.invitem.PlayerInvItemConstants.OFFHAND_INVENTORY_NAME
+import com.github.bedrockecs.vanilla.game.player.invitem.PlayerInvItemConstants.OFFHAND_INVENTORY_SIZE
 import com.nukkitx.math.vector.Vector3f
 import org.springframework.stereotype.Component
 
@@ -49,6 +62,20 @@ class PlayerConnectDisconnectSystem(
                 EntityChunkLoadingComponent(radius = 4) // TODO: move this to chunk loading?
             )
         )
+        db.invitems.create(InventoryMetadata(eid, INVENTORY_NAME, INVENTORY_SIZE))
+        db.invitems.place(
+            InvSlotRef(eid, INVENTORY_NAME, 0),
+            StickItemType(),
+            mapOf(ItemCountComponent::class.java to ItemCountComponent(1))
+        )
+        db.invitems.place(
+            InvSlotRef(eid, INVENTORY_NAME, 1),
+            BlockItemType(DirtBlockType.primary),
+            mapOf(ItemCountComponent::class.java to ItemCountComponent(1))
+        )
+        db.invitems.create(InventoryMetadata(eid, ARMOR_INVENTORY_NAME, ARMOR_INVENTORY_SIZE))
+        db.invitems.create(InventoryMetadata(eid, OFFHAND_INVENTORY_NAME, OFFHAND_INVENTORY_SIZE))
+
         mapContext.onPlayerConnected(it.identifiers, eid)
     }
 
@@ -56,6 +83,9 @@ class PlayerConnectDisconnectSystem(
         val eid = mapContext.findPlayerByUUID(it.identifiers.playerUUID!!)
         mapContext.onPlayerDisconnected(it.identifiers)
         if (eid != null) {
+            db.invitems.destroy(InvRef(eid, OFFHAND_INVENTORY_NAME))
+            db.invitems.destroy(InvRef(eid, ARMOR_INVENTORY_NAME))
+            db.invitems.destroy(InvRef(eid, INVENTORY_NAME))
             db.entities.destroy(eid)
         }
     }
