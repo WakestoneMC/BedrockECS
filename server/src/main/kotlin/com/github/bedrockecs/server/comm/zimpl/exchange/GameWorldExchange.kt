@@ -1,10 +1,11 @@
 package com.github.bedrockecs.server.comm.zimpl.exchange
 
 import com.github.bedrockecs.server.comm.server.NetworkConnection
-import com.github.bedrockecs.server.comm.zimpl.exchange.GameInvItemSerializer.PLAYER_ARMOR_CONTAINER_ID
-import com.github.bedrockecs.server.comm.zimpl.exchange.GameInvItemSerializer.PLAYER_INVENTORY_CONTAINER_ID
-import com.github.bedrockecs.server.comm.zimpl.exchange.GameInvItemSerializer.PLAYER_OFFHAND_CONTAINER_ID
-import com.github.bedrockecs.server.comm.zimpl.exchange.GameInvItemSerializer.serializeInventory
+import com.github.bedrockecs.server.comm.zimpl.serial.GameChunkSerializer
+import com.github.bedrockecs.server.comm.zimpl.serial.InventoryNetworkSerializer
+import com.github.bedrockecs.server.comm.zimpl.serial.InventoryNetworkSerializer.Companion.PLAYER_ARMOR_CONTAINER_ID
+import com.github.bedrockecs.server.comm.zimpl.serial.InventoryNetworkSerializer.Companion.PLAYER_INVENTORY_CONTAINER_ID
+import com.github.bedrockecs.server.comm.zimpl.serial.InventoryNetworkSerializer.Companion.PLAYER_OFFHAND_CONTAINER_ID
 import com.github.bedrockecs.server.game.data.BlockConstants.SUBCHUNK_SIZE
 import com.github.bedrockecs.server.game.data.ChunkPosition
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
@@ -34,7 +35,9 @@ import kotlin.math.min
  * in charge of sending world state(chunks/inventory/entities/players) to client
  */
 @Component
-class GameWorldExchange {
+class GameWorldExchange(
+    private val itemSerializer: InventoryNetworkSerializer
+) {
     companion object {
         private const val DEFAULT_AOI_BLOCK_RADIUS = 64
 
@@ -121,49 +124,44 @@ class GameWorldExchange {
     fun handleInventoryUpdate(db: GameDB, mapContext: PlayerMapContext, changedInventories: Set<InvRef>) {
         sessions.map { (uuid, session) ->
             if (!session.sentInventories) {
-                val eid = mapContext.findPlayerByUUID(uuid)!!
-
-                val main = serializeInventory(db.invitems, InvRef(eid, INVENTORY_NAME))
-                session.connection.sendPacket(
-                    InventoryContentPacket().apply {
-                        containerId = PLAYER_INVENTORY_CONTAINER_ID
-                        contents = main.toList()
-                    },
-                    NetworkConnection.Latency.IMMEDIATELY
-                )
-
-                val offhand = serializeInventory(db.invitems, InvRef(eid, OFFHAND_INVENTORY_NAME))
-                session.connection.sendPacket(
-                    InventoryContentPacket().apply {
-                        containerId = PLAYER_OFFHAND_CONTAINER_ID
-                        contents = offhand.toList()
-                    },
-                    NetworkConnection.Latency.IMMEDIATELY
-                )
-
-                val armor = serializeInventory(db.invitems, InvRef(eid, ARMOR_INVENTORY_NAME))
-                session.connection.sendPacket(
-                    InventoryContentPacket().apply {
-                        containerId = PLAYER_ARMOR_CONTAINER_ID
-                        contents = armor.toList()
-                    },
-                    NetworkConnection.Latency.IMMEDIATELY
-                )
-
-                session.connection.sendPacket(
-                    PlayerHotbarPacket().apply {
-                        selectedHotbarSlot = 0
-                        containerId = PLAYER_INVENTORY_CONTAINER_ID
-                        isSelectHotbarSlot = true
-                    },
-                    NetworkConnection.Latency.IMMEDIATELY
-                )
-
+                sendInitialInventory(db, mapContext, uuid, session)
                 waitingForInitialInvSent[uuid]?.complete(null)
-
                 session.sentInventories = true
             }
         }
+    }
+
+    private fun sendInitialInventory(
+        db: GameDB,
+        mapContext: PlayerMapContext,
+        uuid: UUID,
+        session: Session
+    ) {
+        val eid = mapContext.findPlayerByUUID(uuid)!!
+
+        listOf(
+            PLAYER_INVENTORY_CONTAINER_ID to INVENTORY_NAME,
+            PLAYER_OFFHAND_CONTAINER_ID to OFFHAND_INVENTORY_NAME,
+            PLAYER_ARMOR_CONTAINER_ID to ARMOR_INVENTORY_NAME
+        ).forEach { (cid, name) ->
+            val serial = itemSerializer.serializeInventory(db.invitems, InvRef(eid, name))
+            session.connection.sendPacket(
+                InventoryContentPacket().apply {
+                    containerId = cid
+                    contents = serial.toList()
+                },
+                NetworkConnection.Latency.IMMEDIATELY
+            )
+        }
+
+        session.connection.sendPacket(
+            PlayerHotbarPacket().apply {
+                selectedHotbarSlot = 0
+                containerId = PLAYER_INVENTORY_CONTAINER_ID
+                isSelectHotbarSlot = true
+            },
+            NetworkConnection.Latency.IMMEDIATELY
+        )
     }
 
     fun handlePlayerPositionUpdate(playerPositions: Map<UUID, FloatBlockPosition>) {

@@ -1,4 +1,4 @@
-package com.github.bedrockecs.server.comm.zimpl.exchange
+package com.github.bedrockecs.server.comm.zimpl.serial
 
 import com.github.bedrockecs.server.common.palette.PalettedStorage
 import com.github.bedrockecs.server.game.data.ChunkPosition

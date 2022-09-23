@@ -5,6 +5,7 @@ import com.github.bedrockecs.server.comm.config.NetworkConfig
 import com.github.bedrockecs.server.comm.server.policy.NewConnectionPolicy
 import com.github.bedrockecs.server.comm.zimpl.exchange.ActionUpdateExchange
 import com.github.bedrockecs.server.comm.zimpl.handler.PingHandler
+import com.github.bedrockecs.server.comm.zimpl.serial.DispatchingItemNetworkSerializer
 import com.github.bedrockecs.server.comm.zimpl.server.NetworkServerImpl
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec
 import com.nukkitx.protocol.bedrock.v486.Bedrock_v486
@@ -22,7 +23,8 @@ import org.springframework.core.annotation.Order
     basePackageClasses = [
         NetworkServerImpl::class,
         PingHandler::class,
-        ActionUpdateExchange::class
+        ActionUpdateExchange::class,
+        DispatchingItemNetworkSerializer::class
     ]
 )
 class CommCoreConfiguration {
