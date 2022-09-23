@@ -107,4 +107,10 @@ class WorldDBImpl(evb: EventBus, reg: BlockRegistry) : WorldDB {
             subChunksInitialY = smallestY * 16
         )
     }
+
+    fun unloadAllChunksInDimension(dim: Short) {
+        listLoadedChunks()
+            .filter { it.dim == dim }
+            .forEach { unload(it) }
+    }
 }

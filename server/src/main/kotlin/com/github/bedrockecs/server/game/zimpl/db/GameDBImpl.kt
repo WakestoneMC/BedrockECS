@@ -7,11 +7,11 @@ import com.github.bedrockecs.server.game.db.GameStorageProvider
 import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.github.bedrockecs.server.game.db.entity.data.EntityPositionComponent
 import com.github.bedrockecs.server.game.db.entity.scan
-import com.github.bedrockecs.server.game.db.invitem.InvitemDB
 import com.github.bedrockecs.server.game.eventbus.EventBus
 import com.github.bedrockecs.server.game.registry.BlockRegistry
 import com.github.bedrockecs.server.game.zimpl.db.dimension.DimensionDBImpl
 import com.github.bedrockecs.server.game.zimpl.db.entity.EntityDBImpl
+import com.github.bedrockecs.server.game.zimpl.db.invitem.NaiveInvItemDB
 import com.github.bedrockecs.server.game.zimpl.db.world.WorldDBImpl
 import java.util.concurrent.CompletableFuture
 import javax.annotation.PostConstruct
@@ -31,18 +31,23 @@ class GameDBImpl(
         preUpdate = { id, from, to ->
             provider.changeListener.onUpdatingDimensionComponent(id, from, to)
         },
+        preDestroy = { id, c ->
+            onDimensionDestroying(id)
+        },
         postDestroy = { id, c ->
-            onDimensionDestroyed(id)
             provider.changeListener.onDestroyedDimension(id, c)
         }
     )
 
     override val world = WorldDBImpl(eventBus, registry)
 
-    override val entities = EntityDBImpl(eventBus, provider.allocator)
+    override val entities = EntityDBImpl(
+        eventBus,
+        provider.allocator,
+        preEntityDestroy = { eid -> onEntityDestroying(eid) }
+    )
 
-    override val invitems: InvitemDB
-        get() = TODO("Not yet implemented")
+    override val invitems: NaiveInvItemDB = NaiveInvItemDB(eventBus)
 
     override fun isLoaded(pos: ChunkPosition): Boolean {
         return world.isLoaded(pos)
@@ -123,23 +128,25 @@ class GameDBImpl(
 
     // cascade //
 
-    private fun onDimensionDestroyed(dim: Short) {
-        // remove all entities in the dimension
+    private fun onDimensionDestroying(dim: Short) {
+        unloadAllInvEntitiesInDimension(dim)
+        world.unloadAllChunksInDimension(dim)
+    }
+
+    private fun unloadAllInvEntitiesInDimension(dim: Short) {
         val toUnload = mutableListOf<EntityID>()
         entities.scan<EntityPositionComponent> { eid, epc ->
             if (epc.pos.dim == dim) {
                 toUnload.add(eid)
             }
         }
-        toUnload.forEach { entities.unload(it) }
-
-        // remove all chunks in the dimension
-        world.listLoadedChunks()
-            .filter { it.dim == dim }
-            .forEach { world.unload(it) }
+        toUnload.forEach {
+            invitems.unloadAllForEntity(it)
+            entities.unload(it)
+        }
     }
 
-    private fun onEntityDestroyed(eid: EntityID) {
-        // remove all inventories that belongs to that entity
+    private fun onEntityDestroying(eid: EntityID) {
+        invitems.removeAllInventoryForEntity(eid)
     }
 }

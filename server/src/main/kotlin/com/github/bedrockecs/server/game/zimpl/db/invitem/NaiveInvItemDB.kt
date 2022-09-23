@@ -177,7 +177,7 @@ class NaiveInvItemDB(evb: EventBus) : InvitemDB {
         }
     }
 
-    fun onEntityDestroying(eid: EntityID) {
+    fun removeAllInventoryForEntity(eid: EntityID) {
         lock.withLock {
             entries
                 .filterKeys { it.owner == eid }
@@ -217,6 +217,14 @@ class NaiveInvItemDB(evb: EventBus) : InvitemDB {
                 }
                 .toMap()
             return SerialInventory(inv.metadata, components)
+        }
+    }
+
+    fun unloadAllForEntity(owner: EntityID): List<SerialInventory> {
+        lock.withLock {
+            return entries.values
+                .filter { it.metadata.owner == owner }
+                .map { unload(InvRef(it.metadata.owner, it.metadata.name)) }
         }
     }
 }
