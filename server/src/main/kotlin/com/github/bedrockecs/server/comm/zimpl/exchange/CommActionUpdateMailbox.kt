@@ -7,6 +7,11 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
+/**
+ * called with-in tick loop to collect additional actions per tick
+ */
+typealias TickActionProvider = () -> List<Action>
+
 typealias UpdateHandler = (List<Update>) -> Unit
 
 /**
@@ -19,6 +24,8 @@ class CommActionUpdateMailbox {
 
     private var actions = mutableListOf<Action>()
 
+    private val actionProviders = ConcurrentHashMap<TickActionProvider, TickActionProvider>()
+
     private val updateListeners = ConcurrentHashMap<UpdateHandler, UpdateHandler>()
 
     // mailbox exchanges //
@@ -30,10 +37,11 @@ class CommActionUpdateMailbox {
     }
 
     fun collectActions(): List<Action> {
+        val tickActions = actionProviders.values.flatMap { it() }
         actionsLock.withLock {
             val oldActions = actions
             actions = mutableListOf()
-            return oldActions
+            return oldActions + tickActions
         }
     }
 
@@ -44,5 +52,10 @@ class CommActionUpdateMailbox {
     fun subscribeToUpdates(handler: UpdateHandler): AutoCloseable {
         updateListeners.put(handler, handler)
         return AutoCloseable { updateListeners.remove(handler) }
+    }
+
+    fun addTickActionProvider(provider: TickActionProvider): AutoCloseable {
+        actionProviders.put(provider, provider)
+        return AutoCloseable { actionProviders.remove(provider) }
     }
 }
