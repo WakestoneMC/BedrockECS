@@ -3,6 +3,7 @@ package com.github.bedrockecs.server.comm.zimpl.exchange
 import com.github.bedrockecs.server.comm.game.action.Action
 import com.github.bedrockecs.server.comm.game.action.BlockFace
 import com.github.bedrockecs.server.comm.game.action.PlayerBreakBlockAction
+import com.github.bedrockecs.server.comm.game.action.PlayerHotBarSelectSlotAction
 import com.github.bedrockecs.server.comm.game.action.PlayerMoveAction
 import com.github.bedrockecs.server.comm.game.action.PlayerUseItemAction
 import com.github.bedrockecs.server.comm.game.update.DisconnectPlayerUpdate
@@ -12,6 +13,7 @@ import com.github.bedrockecs.server.comm.zimpl.log
 import com.nukkitx.protocol.bedrock.BedrockPacket
 import com.nukkitx.protocol.bedrock.data.inventory.TransactionType
 import com.nukkitx.protocol.bedrock.packet.InventoryTransactionPacket
+import com.nukkitx.protocol.bedrock.packet.MobEquipmentPacket
 import com.nukkitx.protocol.bedrock.packet.MovePlayerPacket
 import org.springframework.stereotype.Component
 import java.util.UUID
@@ -55,6 +57,10 @@ class ActionUpdateExchange(
             }
             is MovePlayerPacket -> {
                 handleMovePlayer(connection, packet)
+                ProcessResult.CONSUME
+            }
+            is MobEquipmentPacket -> {
+                handleMobEquipment(connection, packet)
                 ProcessResult.CONSUME
             }
             else -> {
@@ -113,6 +119,10 @@ class ActionUpdateExchange(
                 packet.rotation
             )
         )
+    }
+
+    private fun handleMobEquipment(connection: NetworkConnection, packet: MobEquipmentPacket) {
+        mailbox.addAction(PlayerHotBarSelectSlotAction(connection.identifiers.playerUUID!!, packet.hotbarSlot))
     }
 
     // update sender //

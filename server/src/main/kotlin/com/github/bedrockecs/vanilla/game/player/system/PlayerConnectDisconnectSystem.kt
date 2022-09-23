@@ -15,7 +15,9 @@ import com.github.bedrockecs.server.game.db.invitem.data.ItemCountComponent
 import com.github.bedrockecs.server.game.system.CommonTickOrders
 import com.github.bedrockecs.server.game.system.System
 import com.github.bedrockecs.vanilla.data.invitem.StickItemType
+import com.github.bedrockecs.vanilla.data.world.DiamondBlockType
 import com.github.bedrockecs.vanilla.data.world.DirtBlockType
+import com.github.bedrockecs.vanilla.game.pinteract.entity.PlayerHotBarComponent
 import com.github.bedrockecs.vanilla.game.player.entity.PlayerEntityType
 import com.github.bedrockecs.vanilla.game.player.entity.PlayerIdentifierComponent
 import com.github.bedrockecs.vanilla.game.player.invitem.PlayerInvItemConstants.ARMOR_INVENTORY_NAME
@@ -59,7 +61,8 @@ class PlayerConnectDisconnectSystem(
                     uuid = it.identifiers.playerUUID!!
                 ),
                 EntityPositionComponent(UNIVERSAL_SPAWN, UNIVERSAL_ROT), // TODO: get proper spawn logic
-                EntityChunkLoadingComponent(radius = 4) // TODO: move this to chunk loading?
+                EntityChunkLoadingComponent(radius = 4), // TODO: move this to chunk loading?
+                PlayerHotBarComponent(selectedSlot = 0) // TODO: move somewhere else?
             )
         )
         db.invitems.create(InventoryMetadata(eid, INVENTORY_NAME, INVENTORY_SIZE))
@@ -72,6 +75,11 @@ class PlayerConnectDisconnectSystem(
             InvSlotRef(eid, INVENTORY_NAME, 1),
             BlockItemType(DirtBlockType.primary),
             mapOf(ItemCountComponent::class.java to ItemCountComponent(1))
+        )
+        db.invitems.place(
+            InvSlotRef(eid, INVENTORY_NAME, 2),
+            BlockItemType(DiamondBlockType.primary),
+            mapOf(ItemCountComponent::class.java to ItemCountComponent(10))
         )
         db.invitems.create(InventoryMetadata(eid, ARMOR_INVENTORY_NAME, ARMOR_INVENTORY_SIZE))
         db.invitems.create(InventoryMetadata(eid, OFFHAND_INVENTORY_NAME, OFFHAND_INVENTORY_SIZE))
