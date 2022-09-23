@@ -1,6 +1,6 @@
 package com.github.bedrockecs.vanilla.data.world
 
-class AirBlockType private constructor(
+data class AirBlockType private constructor(
     override val runtimeID: Short
 ) : VanillaBlockType {
     companion object : VanillaBlockType.Companion {
@@ -11,7 +11,7 @@ class AirBlockType private constructor(
     }
 
     fun with(): AirBlockType {
-        val e = AirBlockType(0)
+        val e = primary.copy()
         return allInstances.find { it.compareVariantProperties(e) }!!
     }
 

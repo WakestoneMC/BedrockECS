@@ -13,7 +13,7 @@ data class DirtBlockType private constructor(
     }
 
     fun with(dirtType: String = this.dirtType): DirtBlockType {
-        val e = DirtBlockType(0, dirtType)
+        val e = DirtBlockType.primary.copy(dirtType = dirtType)
         return allInstances.find { it.compareVariantProperties(e) }!!
     }
 
