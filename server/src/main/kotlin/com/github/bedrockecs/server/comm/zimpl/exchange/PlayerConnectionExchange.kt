@@ -56,6 +56,10 @@ class PlayerConnectionExchange(
         return connections[uuid]
     }
 
+    fun listConnections(): Collection<NetworkConnection> {
+        return connections.values
+    }
+
     // GameServer side //
 
     fun notifyPlayerEntityCreated(resolved: Map<UUID, StartGamePacketData>) {

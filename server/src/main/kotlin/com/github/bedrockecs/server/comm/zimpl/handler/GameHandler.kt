@@ -2,6 +2,7 @@ package com.github.bedrockecs.server.comm.zimpl.handler
 
 import com.github.bedrockecs.server.comm.server.NetworkConnection
 import com.github.bedrockecs.server.comm.zimpl.exchange.ActionUpdateExchange
+import com.github.bedrockecs.server.comm.zimpl.exchange.CommandChatExchange
 import com.github.bedrockecs.server.comm.zimpl.exchange.GameWorldExchange
 import com.github.bedrockecs.server.comm.zimpl.exchange.PlayerConnectionExchange
 import com.github.bedrockecs.server.comm.zimpl.exchange.ProcessResult
@@ -35,7 +36,8 @@ import org.springframework.stereotype.Component
 class GameHandler(
     private val worldExchange: GameWorldExchange,
     private val connectionExchange: PlayerConnectionExchange,
-    private val actionUpdateExchange: ActionUpdateExchange
+    private val actionUpdateExchange: ActionUpdateExchange,
+    private val chatExchange: CommandChatExchange
 ) {
     suspend fun handle(conn: NetworkConnection) {
         connectionExchange.handleConnection(conn) { spawnedPlayer ->
@@ -79,16 +81,20 @@ class GameHandler(
             // RespawnPacket
             // RespawnPacket
 
-            // world state //
             actionUpdateExchange.onConnection(conn)
             worldExchange.onConnection(conn)
+            chatExchange.onConnection(conn)
             try {
                 // done //
                 conn.sendPacket(PlayStatusPacket().apply { status = PlayStatusPacket.Status.PLAYER_SPAWN })
 
                 while (true) {
                     val packet = conn.receivePacket()
-                    var ret = actionUpdateExchange.onPacket(conn, packet)
+                    var ret = chatExchange.onPacket(conn, packet)
+                    if (ret == ProcessResult.CONSUME) {
+                        continue
+                    }
+                    ret = actionUpdateExchange.onPacket(conn, packet)
                     if (ret == ProcessResult.CONSUME) {
                         continue
                     }
@@ -98,6 +104,7 @@ class GameHandler(
                     }
                 }
             } finally {
+                chatExchange.onDisconnected(conn)
                 worldExchange.onDisconnected(conn)
                 actionUpdateExchange.onDisconnected(conn)
             }
