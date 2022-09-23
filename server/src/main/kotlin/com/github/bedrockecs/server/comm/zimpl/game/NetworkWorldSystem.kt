@@ -12,6 +12,7 @@ import com.github.bedrockecs.server.game.db.entity.scan
 import com.github.bedrockecs.server.game.db.world.data.BlockTypeComponent
 import com.github.bedrockecs.server.game.db.world.event.BlockMutationEvent
 import com.github.bedrockecs.server.game.eventbus.EventBus
+import com.github.bedrockecs.server.game.eventbus.listensFor
 import com.github.bedrockecs.server.game.system.CommonTickOrders
 import com.github.bedrockecs.server.game.system.System
 import com.github.bedrockecs.server.game.tick.TickComponent
@@ -19,8 +20,8 @@ import com.github.bedrockecs.vanilla.game.player.entity.PlayerEntityType
 import com.github.bedrockecs.vanilla.game.player.entity.PlayerIdentifierComponent
 import com.github.bedrockecs.vanilla.game.player.system.PlayerMapContext
 import org.springframework.stereotype.Component
+import java.util.Collections.synchronizedSet
 import java.util.UUID
-import java.util.concurrent.ConcurrentSkipListSet
 
 @Component
 class NetworkWorldSystem(
@@ -34,20 +35,13 @@ class NetworkWorldSystem(
 
     private val players = mutableMapOf<UUID, EntityID>()
 
-    private val chunkChanges = ConcurrentSkipListSet<ChunkPosition>()
+    private val chunkChanges = synchronizedSet(HashSet<ChunkPosition>())
 
     init {
-        eventBus.listensFor(
-            EventBus.ListenConfig(
-                name = "network.chunk-change-detection",
-                eventType = BlockMutationEvent::class.java,
-                dispatchToken = BlockTypeComponent::class.java,
-                order = 0
-            )
-        ) {
-            when (it) {
-                is BlockMutationEvent.Batched -> chunkChanges.add(it.pos.toChunk())
-                is BlockMutationEvent.Single -> chunkChanges.add(it.pos.toSubChunk().toChunk())
+        eventBus.listensFor<BlockMutationEvent>("network.chunk-changes", BlockTypeComponent.TYPE) { event ->
+            when (event) {
+                is BlockMutationEvent.Batched -> chunkChanges.add(event.pos.toChunk())
+                is BlockMutationEvent.Single -> chunkChanges.add(event.pos.toSubChunk().toChunk())
             }
         }
     }
