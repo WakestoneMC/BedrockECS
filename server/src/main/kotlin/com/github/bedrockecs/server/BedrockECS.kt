@@ -1,7 +1,9 @@
 package com.github.bedrockecs.server
 
 import com.github.bedrockecs.server.comm.zimpl.CommCoreConfiguration
-import com.github.bedrockecs.server.filesystem.zimpl.FileSystemCoreConfiguration
+import com.github.bedrockecs.server.filesystem.ServerFileSystem
+import com.github.bedrockecs.server.filesystem.zimpl.ServerFileSystemImpl
+import com.github.bedrockecs.server.filesystem.zimpl.initializeFileSystem
 import com.github.bedrockecs.server.game.zimpl.GameCoreConfiguration
 import com.github.bedrockecs.server.storegen.zimpl.StoreGenCoreConfiguration
 import com.github.bedrockecs.server.threading.zimpl.ThreadingCoreConfiguration
@@ -11,6 +13,8 @@ import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.runApplication
 import org.springframework.web.reactive.config.EnableWebFlux
+import java.nio.file.Path
+import kotlin.io.path.absolute
 
 /**
  * main entrypoint to the BedrockECS Server Software
@@ -27,19 +31,28 @@ class BedrockECS {
             CommCoreConfiguration::class.java,
             GameCoreConfiguration::class.java,
             StoreGenCoreConfiguration::class.java,
-            VanillaCoreConfiguration::class.java,
-            FileSystemCoreConfiguration::class.java
+            VanillaCoreConfiguration::class.java
         )
 
         @JvmStatic
-        fun run(args: Array<String>) {
-            run(args, DEFAULT_INTRINSIC_CONFIGS)
-        }
+        fun run(
+            args: Array<String>,
+            intrinsicPlugins: Collection<Class<*>> = DEFAULT_INTRINSIC_CONFIGS,
+            filesystem: ServerFileSystem? = null
+        ) {
+            val finalFileSystem = if (filesystem != null) {
+                filesystem
+            } else {
+                val impl = ServerFileSystemImpl(Path.of(".").absolute().normalize())
+                initializeFileSystem(impl)
+                impl
+            }
 
-        @JvmStatic
-        fun run(args: Array<String>, intrinsicPlugins: Collection<Class<*>>) {
             runApplication<BedrockECS>(*args) {
                 sources = intrinsicPlugins.map { it.canonicalName }.toSet()
+                addInitializers({ ctx ->
+                    ctx.beanFactory.registerSingleton("serverFileSystem", finalFileSystem)
+                })
             }
         }
 
