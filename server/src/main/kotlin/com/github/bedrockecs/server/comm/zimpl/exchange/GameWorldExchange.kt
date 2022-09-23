@@ -183,7 +183,9 @@ class GameWorldExchange(
         sessions.map { (uuid, session) ->
             val aoiChunks = computeAoiChunks(session)
 
-            val toSendChunks = (aoiChunks - session.sentChunks.toSet())
+            val unsentChunksInAoI = aoiChunks - session.sentChunks.toSet()
+            val changedChunksInAoI = aoiChunks.intersect(changedChunks)
+            val toSendChunks = unsentChunksInAoI + changedChunksInAoI
 
             if (toSendChunks.isEmpty()) {
                 waitingForInitialChunkSent[session.connection.identifiers.playerUUID!!]?.complete(null)
