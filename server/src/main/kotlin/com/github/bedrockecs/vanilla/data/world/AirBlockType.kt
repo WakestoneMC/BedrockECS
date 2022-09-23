@@ -1,4 +1,4 @@
-package com.github.bedrockecs.vanilla.blocks.world
+package com.github.bedrockecs.vanilla.data.world
 
 class AirBlockType private constructor(
     override val runtimeID: Short

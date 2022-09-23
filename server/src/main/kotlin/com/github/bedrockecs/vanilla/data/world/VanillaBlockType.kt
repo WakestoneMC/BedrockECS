@@ -1,4 +1,4 @@
-package com.github.bedrockecs.vanilla.blocks.world
+package com.github.bedrockecs.vanilla.data.world
 
 import com.github.bedrockecs.server.game.db.world.data.BlockTypeComponent
 

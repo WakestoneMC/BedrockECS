@@ -1,4 +1,4 @@
-package com.github.bedrockecs.vanilla.blocks.world
+package com.github.bedrockecs.vanilla.data.world
 
 object VanillaBlockTypes {
     val TYPES: List<VanillaBlockType>

@@ -8,8 +8,8 @@ import com.github.bedrockecs.server.game.db.entity.EntityID
 import com.github.bedrockecs.server.game.db.world.serial.SerialChunk
 import com.github.bedrockecs.server.game.db.world.serial.SerialSubChunk
 import com.github.bedrockecs.server.game.db.world.serial.SerialSubChunkLayer
-import com.github.bedrockecs.vanilla.blocks.world.AirBlockType
-import com.github.bedrockecs.vanilla.blocks.world.DirtBlockType
+import com.github.bedrockecs.vanilla.data.world.AirBlockType
+import com.github.bedrockecs.vanilla.data.world.DirtBlockType
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
