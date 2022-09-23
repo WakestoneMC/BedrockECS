@@ -1,4 +1,4 @@
-package com.github.bedrockecs.vanilla.player.entity
+package com.github.bedrockecs.vanilla.game.player.entity
 
 import com.github.bedrockecs.server.game.db.common.Component
 import com.github.bedrockecs.server.game.db.entity.data.EntityComponent

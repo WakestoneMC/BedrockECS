@@ -1,4 +1,4 @@
-package com.github.bedrockecs.vanilla.player.system
+package com.github.bedrockecs.vanilla.game.player.system
 
 import com.github.bedrockecs.server.comm.game.ActionUpdateMailbox
 import com.github.bedrockecs.server.comm.game.action.PlayerConnectedAction
@@ -8,8 +8,8 @@ import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.GameDB
 import com.github.bedrockecs.server.game.db.entity.data.EntityPositionComponent
 import com.github.bedrockecs.server.game.system.System
-import com.github.bedrockecs.vanilla.player.entity.PlayerEntityType
-import com.github.bedrockecs.vanilla.player.entity.PlayerIdentifierComponent
+import com.github.bedrockecs.vanilla.game.player.entity.PlayerEntityType
+import com.github.bedrockecs.vanilla.game.player.entity.PlayerIdentifierComponent
 import com.nukkitx.math.vector.Vector3f
 import org.springframework.stereotype.Component
 

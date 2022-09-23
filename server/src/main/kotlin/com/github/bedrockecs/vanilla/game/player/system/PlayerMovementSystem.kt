@@ -1,4 +1,4 @@
-package com.github.bedrockecs.vanilla.player.system
+package com.github.bedrockecs.vanilla.game.player.system
 
 import com.github.bedrockecs.server.comm.game.ActionUpdateMailbox
 import com.github.bedrockecs.server.comm.game.action.PlayerMoveAction

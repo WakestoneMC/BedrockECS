@@ -3,7 +3,8 @@ package com.github.bedrockecs.vanilla.data.world
 class AirBlockType private constructor(
     override val runtimeID: Short
 ) : VanillaBlockType {
-    companion object {
+    companion object : VanillaBlockType.Companion {
+        override val blockID = BlockID(0)
         private val instance134 = AirBlockType(134)
         val primary = instance134
         val allInstances: List<AirBlockType> = listOf(instance134)
