@@ -35,6 +35,9 @@
     }
   },
   "commonScopes": {
+    "filesystem": {
+      "description": "deals with server folder / file layout"
+    },
     "storegen": {
       "description": "storage and world generation module, deals with storage and world gen"
     },

@@ -1,8 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val kotlinVersion = "1.6.21"
+val springBootVersion = "2.6.12"
+
 plugins {
-    id("org.springframework.boot") version "2.7.3"
-    id("io.spring.dependency-management") version "1.0.13.RELEASE"
+    id("maven-publish")
+    id("org.springframework.boot") version "2.6.12"
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
     kotlin("plugin.serialization") version "1.6.21"
@@ -27,37 +30,32 @@ repositories {
     }
 }
 
-extra["springShellVersion"] = "2.1.1"
+// deps //
 
 dependencies {
     // kotlin functionalities
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+    api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
+    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
 
     // spring boot, shell & telemetry
-    implementation("org.springframework.shell:spring-shell-starter")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    api("org.springframework.boot:spring-boot-starter-webflux:$springBootVersion")
+    api("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion")
 
     // ECS library
-    implementation("com.badlogicgames.ashley:ashley:1.7.4")
+    api("com.badlogicgames.ashley:ashley:1.7.4")
 
     // protocols & network
-    implementation("com.nukkitx.protocol:bedrock-v486:2.9.5-SNAPSHOT")
+    api("com.nukkitx.protocol:bedrock-v486:2.9.5-SNAPSHOT")
 
     // testing
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testApi("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+    testApi("org.mockito.kotlin:mockito-kotlin:4.0.0")
 }
 
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.shell:spring-shell-dependencies:${property("springShellVersion")}")
-    }
-}
+// compiling //
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
@@ -66,6 +64,34 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+// testing //
+
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+// packaging //
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+tasks.jar {
+    archiveClassifier.set("")
+}
+
+tasks.bootJar {
+    archiveClassifier.set("app")
+}
+
+// publishing //
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+            artifact(tasks.findByName("bootJar"))
+        }
+    }
 }

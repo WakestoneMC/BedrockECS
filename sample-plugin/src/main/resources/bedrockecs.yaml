@@ -1,0 +1,6 @@
+name: sample-plugin
+description: sample-plugin showcase
+version: 0.1.0
+classloader: isolate
+configurations:
+  - com.github.bedrockecs.sample.SampleCoreConfiguration
