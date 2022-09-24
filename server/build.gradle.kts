@@ -4,8 +4,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("maven-publish")
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("org.springframework.boot") version "2.7.3"
-    id("io.spring.dependency-management") version "1.0.13.RELEASE"
+    id("org.springframework.boot") version "2.6.12"
+    id("io.spring.dependency-management") version "1.0.14.RELEASE"
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
     kotlin("plugin.serialization") version "1.6.21"
@@ -89,9 +89,10 @@ tasks.withType<ShadowJar> {
     // see: https://youtrack.jetbrains.com/issue/KT-25709/IDE-Unresolved-reference-from-fat-jar-dependency-with-Kotlin-runtime#focus=Comments-27-5180542.0-0
     exclude("**/*.kotlin_metadata")
     exclude("**/*.kotlin_module")
-    exclude("**/*.kotlin_builtins")
+    // so the shadowJar can run on its own
+    // exclude("**/*.kotlin_builtins")
 
-    archiveClassifier.set("plugin-deps")
+    archiveClassifier.set("")
 }
 
 // publishing //
@@ -99,9 +100,6 @@ tasks.withType<ShadowJar> {
 publishing {
     publications {
         create<MavenPublication>("app") {
-            artifact(tasks.named("bootJar"))
-        }
-        create<MavenPublication>("pluginDeps") {
             project.extensions.configure<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>() {
                 component(this@create)
             }
