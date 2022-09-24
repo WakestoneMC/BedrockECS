@@ -12,17 +12,26 @@ version = "0.1.0-SNAPSHOT"
 repositories {
     mavenLocal()
     mavenCentral()
+    // opencollab for Nukkit related stuff
+    maven(url = "https://repo.opencollab.dev/maven-releases") {
+        mavenContent {
+            releasesOnly()
+        }
+    }
+    maven(url = "https://repo.opencollab.dev/maven-snapshots") {
+        mavenContent {
+            snapshotsOnly()
+        }
+    }
 }
 
-val becsVersion = "0.0.1-SNAPSHOT"
+configurations {
+    create("testServer")
+}
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-
-    compileOnly("com.github.bedrockecs:server:$becsVersion:plugin-deps")
-    runtimeOnly("com.github.bedrockecs:server:$becsVersion:app")
-
+    "testServer"("com.github.bedrockecs:server:0.0.1-SNAPSHOT")
+    compileOnly("com.github.bedrockecs:server:0.0.1-SNAPSHOT")
     testImplementation(kotlin("test"))
 }
 
@@ -39,7 +48,7 @@ tasks.test {
 }
 
 tasks.create<JavaExec>("runTestServer") {
-    classpath = sourceSets["main"].runtimeClasspath
+    classpath = sourceSets["main"].runtimeClasspath + configurations["testServer"]
 
     mainClass.set("com.github.bedrockecs.server.BedrockECS")
 
@@ -53,6 +62,6 @@ tasks.create<JavaExec>("runTestServer") {
 
 tasks.shadowJar {
     dependencies {
-        exclude(dependency("com.github.bedrockecs:server:$becsVersion:app"))
+        exclude(dependency("com.github.bedrockecs:server:0.0.1-SNAPSHOT"))
     }
 }
