@@ -1,4 +1,6 @@
+import com.github.jengelman.gradle.plugins.shadow.ShadowExtension
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.transformers.PropertiesFileTransformer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -81,27 +83,62 @@ tasks.withType<Test> {
 
 // packaging //
 
-// additional packaging as plugin dependencies
+tasks.jar {
+    enabled = false
+}
+
+tasks.bootJar {
+    enabled = false
+}
+
 tasks.withType<ShadowJar> {
     isZip64 = true
 
+    archiveClassifier.set("app")
+
+    manifest {
+        attributes["Main-Class"] = "com.github.bedrockecs.server.BedrockECS"
+    }
+
+    // Required for Spring
+    // see: https://github.com/spring-projects/spring-boot/issues/1828#issuecomment-607352468
+    // TODO: this does not work for spring boot 2.7.3, we had to downgrade to 2.6.12
+    mergeServiceFiles()
+    append("META-INF/spring.handlers")
+    append("META-INF/spring.schemas")
+    append("META-INF/spring.tooling")
+    transform(
+        PropertiesFileTransformer().apply {
+            paths = listOf("META-INF/spring.factories")
+            mergeStrategy = "append"
+        }
+    )
+}
+
+val pluginDepsShadowJar = tasks.register<ShadowJar>("pluginDepsShadowJar") {
+    from(sourceSets["main"].output)
+    configurations = listOf(project.configurations.runtimeClasspath.get())
+
+    isZip64 = true
+
+    archiveClassifier.set("plugin-deps")
+
+    // we are using another jar for this because this make the jar not executable
     // Required to let IDEA kotlin highlighting work when used as dep
     // see: https://youtrack.jetbrains.com/issue/KT-25709/IDE-Unresolved-reference-from-fat-jar-dependency-with-Kotlin-runtime#focus=Comments-27-5180542.0-0
     exclude("**/*.kotlin_metadata")
     exclude("**/*.kotlin_module")
-    // so the shadowJar can run on its own
-    // exclude("**/*.kotlin_builtins")
-
-    archiveClassifier.set("")
+    exclude("**/*.kotlin_builtins")
 }
 
 // publishing //
 
 publishing {
     publications {
-        create<MavenPublication>("app") {
-            project.extensions.configure<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>() {
+        create<MavenPublication>("appWithPluginDep") {
+            project.extensions.configure<ShadowExtension> {
                 component(this@create)
+                artifact(pluginDepsShadowJar)
             }
         }
     }
