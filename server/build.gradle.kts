@@ -1,6 +1,9 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    id("maven-publish")
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.springframework.boot") version "2.7.3"
     id("io.spring.dependency-management") version "1.0.13.RELEASE"
     kotlin("jvm") version "1.6.21"
@@ -26,6 +29,8 @@ repositories {
         }
     }
 }
+
+// deps //
 
 extra["springShellVersion"] = "2.1.1"
 
@@ -59,6 +64,8 @@ dependencyManagement {
     }
 }
 
+// compiling //
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
@@ -66,6 +73,38 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+// testing //
+
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+// packaging //
+
+// additional packaging as plugin dependencies
+tasks.withType<ShadowJar> {
+    isZip64 = true
+
+    // Required to let IDEA kotlin highlighting work when used as dep
+    // see: https://youtrack.jetbrains.com/issue/KT-25709/IDE-Unresolved-reference-from-fat-jar-dependency-with-Kotlin-runtime#focus=Comments-27-5180542.0-0
+    exclude("**/*.kotlin_metadata")
+    exclude("**/*.kotlin_module")
+    exclude("**/*.kotlin_builtins")
+
+    archiveClassifier.set("plugin-deps")
+}
+
+// publishing //
+
+publishing {
+    publications {
+        create<MavenPublication>("app") {
+            artifact(tasks.named("bootJar"))
+        }
+        create<MavenPublication>("pluginDeps") {
+            project.extensions.configure<com.github.jengelman.gradle.plugins.shadow.ShadowExtension>() {
+                component(this@create)
+            }
+        }
+    }
 }
