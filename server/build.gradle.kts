@@ -34,8 +34,6 @@ repositories {
 
 // deps //
 
-extra["springShellVersion"] = "2.1.1"
-
 dependencies {
     // kotlin functionalities
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -45,7 +43,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
 
     // spring boot, shell & telemetry
-    implementation("org.springframework.shell:spring-shell-starter")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
@@ -58,12 +55,6 @@ dependencies {
     // testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.shell:spring-shell-dependencies:${property("springShellVersion")}")
-    }
 }
 
 // compiling //
