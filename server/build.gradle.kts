@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val kotlinVersion = "1.6.21"
-val springBootVersion = "2.6.12"
+val springBootVersion = "2.7.3"
 
 plugins {
     id("maven-publish")
