@@ -1,6 +1,8 @@
 package com.github.bedrockecs.server.zimpl
 
 import com.github.bedrockecs.server.GlobalExceptionHook
+import org.springframework.boot.ExitCodeGenerator
+import org.springframework.boot.SpringApplication
 import org.springframework.context.ConfigurableApplicationContext
 
 class GlobalExceptionHookImpl(
@@ -8,6 +10,6 @@ class GlobalExceptionHookImpl(
 ) : GlobalExceptionHook {
     override fun report(ex: Throwable) {
         log.error("internal error encountered, shutting down!", ex)
-        context.close()
+        SpringApplication.exit(context, ExitCodeGenerator { -1 })
     }
 }
