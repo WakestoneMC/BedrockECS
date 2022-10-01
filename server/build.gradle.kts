@@ -1,34 +1,19 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val kotlinVersion = "1.6.21"
-val springBootVersion = "2.7.3"
+val kotlinVersion: String by rootProject.extra
+val springBootVersion: String by rootProject.extra
 
 plugins {
     id("maven-publish")
-    id("org.springframework.boot") version "2.6.12"
-    kotlin("jvm") version "1.6.21"
-    kotlin("plugin.spring") version "1.6.21"
-    kotlin("plugin.serialization") version "1.6.21"
+    id("org.springframework.boot")
+    kotlin("jvm")
+    kotlin("plugin.spring")
+    kotlin("plugin.serialization")
 }
 
-group = "com.github.bedrockecs"
-version = "0.0.1-SNAPSHOT"
+group = rootProject.extra["group"]!!
+version = rootProject.extra["version"]!!
 java.sourceCompatibility = JavaVersion.VERSION_17
-
-repositories {
-    mavenCentral()
-    // opencollab for Nukkit related stuff
-    maven(url = "https://repo.opencollab.dev/maven-releases") {
-        mavenContent {
-            releasesOnly()
-        }
-    }
-    maven(url = "https://repo.opencollab.dev/maven-snapshots") {
-        mavenContent {
-            snapshotsOnly()
-        }
-    }
-}
 
 // deps //
 
