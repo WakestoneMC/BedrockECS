@@ -34,7 +34,7 @@ fun codegenItemType(row: DataRow<ItemTypeDefinition>): Pair<FileSpec, ClassName>
             .build()
     )
     companion.addProperty(
-        PropertySpec.builder("ITEM_TYPE", String::class.asClassName(), KModifier.OVERRIDE)
+        PropertySpec.builder("itemType", String::class.asClassName(), KModifier.OVERRIDE)
             .initializer("\"${row.persistentName}\"")
             .build()
     )
@@ -49,7 +49,7 @@ fun codegenItemType(row: DataRow<ItemTypeDefinition>): Pair<FileSpec, ClassName>
 
     typeSpec.addProperty(
         PropertySpec.builder("itemType", String::class.asClassName(), KModifier.OVERRIDE)
-            .initializer("ITEM_TYPE")
+            .initializer("Companion.itemType")
             .build()
     )
 
