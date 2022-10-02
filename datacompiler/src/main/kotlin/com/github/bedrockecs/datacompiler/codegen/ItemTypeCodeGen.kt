@@ -3,7 +3,6 @@ package com.github.bedrockecs.datacompiler.codegen
 import com.github.bedrockecs.datacompiler.analyze.ItemTypeDefinition
 import com.github.bedrockecs.datacompiler.analyze.itemId
 import com.github.bedrockecs.datacompiler.analyze.persistentName
-import com.github.bedrockecs.datacompiler.snakeCaseToBigCamelCase
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
@@ -82,10 +81,4 @@ fun codegenItemTypes(itemTypes: List<ClassName>): FileSpec {
     type.addInitializerBlock(classesInitializer.build())
 
     return FileSpec.builder(typeName.packageName, typeName.simpleName).addType(type.build()).build()
-}
-
-fun persistentNameToClassName(name: String): String {
-    var ret = name.replace("minecraft:", "")
-    ret = snakeCaseToBigCamelCase(ret)
-    return ret
 }
