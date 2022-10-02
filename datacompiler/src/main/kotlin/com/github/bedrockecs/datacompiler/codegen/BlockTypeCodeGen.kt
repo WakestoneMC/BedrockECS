@@ -201,11 +201,26 @@ private fun emitCompanion(
 
     instanceNameLiterals.forEach { (name, literal) ->
         companion.addProperty(
-            PropertySpec.builder(name, typeName, KModifier.PRIVATE)
-                .initializer(literal)
+            PropertySpec.builder(name, typeName, KModifier.PRIVATE, KModifier.LATEINIT)
+                .mutable(true)
                 .build()
         )
     }
+
+    instanceNameLiterals
+        .chunked(256)
+        .forEachIndexed { index, nameLiterals ->
+            val funName = "init$index"
+
+            val codeBlock = CodeBlock.builder()
+            nameLiterals.forEach { (name, literal) ->
+                codeBlock.addStatement("$name = $literal")
+            }
+
+            val func = FunSpec.builder(funName).addCode(codeBlock.build()).build()
+            companion.addFunction(func)
+            companion.addInitializerBlock(CodeBlock.of("$funName()"))
+        }
 
     companion.addProperty(
         PropertySpec.builder("primary", typeName, KModifier.OVERRIDE)
