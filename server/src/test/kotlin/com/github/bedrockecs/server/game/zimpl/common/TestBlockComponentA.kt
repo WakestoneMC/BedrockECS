@@ -11,7 +11,7 @@ data class TestBlockComponentA(
     }
 
     override val type: String
-        get() = this@Companion.type
+        get() = Companion.type
 
     override fun clone(): Component {
         return copy()
