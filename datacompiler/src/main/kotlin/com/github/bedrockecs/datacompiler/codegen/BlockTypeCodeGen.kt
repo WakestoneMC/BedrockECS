@@ -83,6 +83,8 @@ private fun emitClass(
 
     type.addAnnotation(Serializable::class)
 
+    type.addSuperinterface(VANILLA_BLOCK_TYPE)
+
     type.addType(companion)
 
     run {
@@ -172,6 +174,8 @@ private fun emitCompanion(
     allInstanceLiteral: String
 ): TypeSpec {
     val companion = TypeSpec.companionObjectBuilder()
+
+    companion.addSuperinterface(VANILLA_BLOCK_TYPE_COMPANION)
 
     companion.addProperty(
         PropertySpec.builder("blockType", String::class.asTypeName(), KModifier.OVERRIDE)

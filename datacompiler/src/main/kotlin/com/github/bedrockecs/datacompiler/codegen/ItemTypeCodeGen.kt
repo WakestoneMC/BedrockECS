@@ -43,6 +43,8 @@ fun codegenItemType(row: DataRow<ItemTypeDefinition>): Pair<FileSpec, ClassName>
 
     typeSpec.addAnnotation(Serializable::class.asClassName())
 
+    typeSpec.addSuperinterface(VANILLA_ITEM_TYPE)
+
     typeSpec.addType(companion.build())
 
     typeSpec.addProperty(
