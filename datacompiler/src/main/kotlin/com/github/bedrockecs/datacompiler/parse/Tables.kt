@@ -33,7 +33,18 @@ data class ParsedItemID(
     val id: Int
 )
 
+/**
+ * parsed required_item_list.json
+ */
+@DataSchema
+data class RequiredItem(
+    val persisentName: String,
+    val runtimeId: Int,
+    val componentBased: Boolean
+)
+
 data class ParseResult(
+    val requiredItems: DataFrame<RequiredItem>,
     val blockIds: DataFrame<ParsedBlockID>,
     val blockStates: DataFrame<ParsedBlockState>,
     val itemIds: DataFrame<ParsedItemID>

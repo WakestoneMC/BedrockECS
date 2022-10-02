@@ -10,5 +10,8 @@ fun parse(): ParseResult {
     val itemIdsStream = ItemIDMap.binaryStream()
     val itemIds = ItemIDMap.parse(itemIdsStream)
 
-    return ParseResult(blockIds, parsedCanon, itemIds)
+    val requiredStream = RequiredItemIDList.binaryStream()
+    val requiredItems = RequiredItemIDList.parse(requiredStream)
+
+    return ParseResult(requiredItems, blockIds, parsedCanon, itemIds)
 }
