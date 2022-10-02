@@ -75,12 +75,12 @@ fun codegenItemTypes(itemTypes: List<ClassName>): FileSpec {
 
     val type = TypeSpec.objectBuilder(typeName.simpleName)
 
-    val outVanillaItem = WildcardTypeName.producerOf(VANILLA_ITEM_TYPE)
-    val classesType = List::class.asTypeName().parameterizedBy(KClass::class.asTypeName().parameterizedBy(outVanillaItem))
+    val classesElementType = KClass::class.asTypeName().parameterizedBy(WildcardTypeName.producerOf(VANILLA_ITEM_TYPE))
+    val classesType = List::class.asTypeName().parameterizedBy(classesElementType)
     type.addProperty("CLASSES", classesType)
 
     val classesInitializer = CodeBlock.builder()
-    classesInitializer.addStatement("val types = mutableListOf<%T>()", classesType)
+    classesInitializer.addStatement("val types = mutableListOf<%T>()", classesElementType)
     itemTypes.forEach { classesInitializer.addStatement("types.add(%T::class)", it) }
     classesInitializer.addStatement("CLASSES = types")
     type.addInitializerBlock(classesInitializer.build())

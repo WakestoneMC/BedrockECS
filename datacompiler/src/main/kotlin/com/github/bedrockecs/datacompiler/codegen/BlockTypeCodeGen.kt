@@ -220,15 +220,16 @@ fun codegenBlockTypes(blockTypes: List<ClassName>): FileSpec {
 
     val type = TypeSpec.objectBuilder(typeName.simpleName)
 
-    val outVanillaItem = WildcardTypeName.producerOf(VANILLA_BLOCK_TYPE)
-    val classesType = List::class.asTypeName().parameterizedBy(KClass::class.asTypeName().parameterizedBy(outVanillaItem))
+    val classesElementType = KClass::class.asTypeName().parameterizedBy(WildcardTypeName.producerOf(VANILLA_BLOCK_TYPE))
+    val classesType = List::class.asTypeName().parameterizedBy(classesElementType)
     type.addProperty("CLASSES", classesType)
-    val typesType = List::class.asTypeName().parameterizedBy(VANILLA_BLOCK_TYPE)
+    val typesElementType = VANILLA_BLOCK_TYPE
+    val typesType = List::class.asTypeName().parameterizedBy(typesElementType)
     type.addProperty("TYPES", typesType)
 
     val classesTypesInitializer = CodeBlock.builder()
-    classesTypesInitializer.addStatement("val classes = mutableListOf<%T>()", classesType)
-    classesTypesInitializer.addStatement("val types = mutableListOf<%T>()", typesType)
+    classesTypesInitializer.addStatement("val classes = mutableListOf<%T>()", classesElementType)
+    classesTypesInitializer.addStatement("val types = mutableListOf<%T>()", typesElementType)
     blockTypes.forEach {
         classesTypesInitializer.addStatement("classes.add(%T::class)", it)
         classesTypesInitializer.addStatement("types.addAll(%T.allInstances)", it)
