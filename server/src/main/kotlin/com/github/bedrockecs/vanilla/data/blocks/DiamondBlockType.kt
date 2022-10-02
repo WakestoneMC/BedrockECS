@@ -24,5 +24,5 @@ data class DiamondBlockType private constructor(
     }
 
     override val blockType: String
-        get() = "minecraft:air"
+        get() = Companion.blockType
 }

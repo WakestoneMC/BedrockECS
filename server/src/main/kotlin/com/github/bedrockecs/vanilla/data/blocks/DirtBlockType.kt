@@ -27,5 +27,5 @@ data class DirtBlockType private constructor(
     }
 
     override val blockType: String
-        get() = "minecraft:dirt"
+        get() = Companion.blockType
 }

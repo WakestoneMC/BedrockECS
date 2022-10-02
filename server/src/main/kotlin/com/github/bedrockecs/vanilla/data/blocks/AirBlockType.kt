@@ -24,5 +24,5 @@ data class AirBlockType private constructor(
     }
 
     override val blockType: String
-        get() = "minecraft:air"
+        get() = Companion.blockType
 }
