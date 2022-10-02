@@ -8,12 +8,12 @@ import com.github.bedrockecs.server.game.db.common.Component
 data class ItemCountComponent(
     val count: Int
 ) : ItemComponent {
-    companion object : Component.Companion {
+    companion object : Component.ICompanion {
         override val type: String = "becs:item_count"
     }
 
     override val type: String
-        get() = this@Companion.type
+        get() = Companion.type
 
     override fun clone(): ItemCountComponent {
         return this

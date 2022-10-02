@@ -38,7 +38,7 @@ class NetworkWorldSystem(
     private val chunkChanges = synchronizedSet(HashSet<ChunkPosition>())
 
     init {
-        eventBus.listensFor<BlockMutationEvent>("network.chunk-changes", BlockTypeComponent.TYPE) { event ->
+        eventBus.listensFor<BlockMutationEvent>("network.chunk-changes", BlockTypeComponent.type) { event ->
             when (event) {
                 is BlockMutationEvent.Batched -> chunkChanges.add(event.pos.toChunk())
                 is BlockMutationEvent.Single -> chunkChanges.add(event.pos.toSubChunk().toChunk())

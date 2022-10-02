@@ -5,7 +5,7 @@ import com.github.bedrockecs.vanilla.data.items.ItemID
 data class AirBlockType private constructor(
     override val runtimeID: Short
 ) : VanillaBlockType {
-    companion object : VanillaBlockType.Companion {
+    companion object : VanillaBlockType.ICompanion {
         override val blockType: String = "minecraft:air"
         override val itemID: ItemID = ItemID(0)
         private val instance134 = AirBlockType(134)

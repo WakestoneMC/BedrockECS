@@ -19,7 +19,7 @@ class VanillaBlockItemNetworkSerializer : ItemNetworkSerializer {
     override fun serialize(components: ComponentMap<ItemComponent>): ItemData? {
         val type = components[ItemTypeComponent::class.java]!!
         if (type is BlockItemType && type.block is VanillaBlockType) {
-            val blockTypeCompanion = type.block::class.java.kotlin.companionObjectInstance as VanillaBlockType.Companion
+            val blockTypeCompanion = type.block::class.java.kotlin.companionObjectInstance as VanillaBlockType.ICompanion
             val itemID = blockTypeCompanion.itemID
 
             val countComponent = components[ItemCountComponent::class.java] as ItemCountComponent?

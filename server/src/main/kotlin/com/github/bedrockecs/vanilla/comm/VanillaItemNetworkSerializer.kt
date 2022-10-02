@@ -18,7 +18,7 @@ class VanillaItemNetworkSerializer : ItemNetworkSerializer {
     override fun serialize(components: ComponentMap<ItemComponent>): ItemData? {
         val type = components[ItemTypeComponent::class.java]!!
         if (type is VanillaItemType) {
-            val companion = type::class.java.kotlin.companionObjectInstance as VanillaItemType.Companion
+            val companion = type::class.java.kotlin.companionObjectInstance as VanillaItemType.ICompanion
             val itemId = companion.itemID
 
             val countComponent = components[ItemCountComponent::class.java] as ItemCountComponent?

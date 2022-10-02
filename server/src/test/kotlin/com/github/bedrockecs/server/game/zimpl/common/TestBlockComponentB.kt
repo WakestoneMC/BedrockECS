@@ -6,7 +6,7 @@ import com.github.bedrockecs.server.game.db.world.data.BlockComponent
 data class TestBlockComponentB(
     val test: String = "test"
 ) : BlockComponent {
-    companion object : Component.Companion {
+    companion object : Component.ICompanion {
         override val type: String = "becs:testA"
     }
 

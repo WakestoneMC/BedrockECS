@@ -9,12 +9,12 @@ import com.github.bedrockecs.server.game.db.dimension.data.DimensionComponent
 data class TickComponent(
     var currentTick: Long = 0
 ) : DimensionComponent {
-    companion object : Component.Companion {
+    companion object : Component.ICompanion {
         override val type: String = "becs:tick"
     }
 
     override val type: String
-        get() = this@Companion.type
+        get() = Companion.type
 
     override fun clone(): Component {
         return copy()

@@ -7,15 +7,18 @@ import com.github.bedrockecs.server.game.db.common.Component
  */
 interface BlockTypeComponent : BlockComponent {
     /**
-     * spec for its companion object, with TYPE filled out for implementor
+     * companion object for easier property access
      */
-    interface Companion : Component.Companion {
-        companion object {
-            val type = "becs:block_type"
-        }
+    companion object : Component.ICompanion {
+        override val type = "becs:block_type"
+    }
 
+    /**
+     * spec for implementor's companion object, with TYPE filled out for implementor
+     */
+    interface ICompanion : Component.ICompanion {
         override val type: String
-            get() = BlockTypeComponent.Companion.type
+            get() = BlockTypeComponent.type
 
         val blockType: String
 

@@ -7,13 +7,16 @@ import com.github.bedrockecs.server.game.db.common.Component
  */
 interface ItemTypeComponent : ItemComponent {
     /**
-     * spec for its companion object, with TYPE filled out for implementor
+     * helper for accessing properties
      */
-    interface Companion : Component.Companion {
-        companion object {
-            val type = "becs:item_type"
-        }
+    companion object : Component.ICompanion {
+        override val type = "becs:item_type"
+    }
 
+    /**
+     * spec for implementor's companion object, with TYPE filled out for implementor
+     */
+    interface ICompanion : Component.ICompanion {
         override val type: String
             get() = Companion.type
 

@@ -9,8 +9,8 @@ const val BLOCKS_BASE_PACKAGE = "$BASE_PACKAGE.blocks"
 const val ITEMS_BASE_PACKAGE = "$BASE_PACKAGE.items"
 
 val VANILLA_ITEM_TYPE = ClassName(ITEMS_BASE_PACKAGE, "VanillaItemType")
-val VANILLA_ITEM_TYPE_COMPANION = ClassName(ITEMS_BASE_PACKAGE, "VanillaItemType", "Companion")
+val VANILLA_ITEM_TYPE_COMPANION = ClassName(ITEMS_BASE_PACKAGE, "VanillaItemType", "ICompanion")
 val ITEM_ID = ClassName(ITEMS_BASE_PACKAGE, "ItemID")
 
 val VANILLA_BLOCK_TYPE = ClassName(BLOCKS_BASE_PACKAGE, "VanillaBlockType")
-val VANILLA_BLOCK_TYPE_COMPANION = ClassName(BLOCKS_BASE_PACKAGE, "VanillaBlockType", "Companion")
+val VANILLA_BLOCK_TYPE_COMPANION = ClassName(BLOCKS_BASE_PACKAGE, "VanillaBlockType", "ICompanion")

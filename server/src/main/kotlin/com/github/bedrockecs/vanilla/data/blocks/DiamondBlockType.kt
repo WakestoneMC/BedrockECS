@@ -5,7 +5,7 @@ import com.github.bedrockecs.vanilla.data.items.ItemID
 data class DiamondBlockType private constructor(
     override val runtimeID: Short
 ) : VanillaBlockType {
-    companion object : VanillaBlockType.Companion {
+    companion object : VanillaBlockType.ICompanion {
         override val blockType: String = "minecraft:diamond_block"
         override val itemID: ItemID = ItemID(57)
         private val instance4474 = DiamondBlockType(4474)

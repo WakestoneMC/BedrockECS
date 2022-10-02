@@ -7,8 +7,9 @@ package com.github.bedrockecs.server.game.db.common
 interface Component {
     /**
      * interface for its companion object
+     * @apiNote: we need the I prefix to prevent clashing name with companion object
      */
-    interface Companion {
+    interface ICompanion {
         /**
          * type of the component
          */
