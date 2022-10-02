@@ -1,10 +1,12 @@
 package com.github.bedrockecs.vanilla.data.blocks
 
+import com.github.bedrockecs.vanilla.data.items.ItemID
+
 data class DiamondBlockType private constructor(
     override val runtimeID: Short
 ) : VanillaBlockType {
     companion object : VanillaBlockType.Companion {
-        override val blockID = BlockID(57)
+        override val itemID: ItemID = ItemID(57)
         private val instance4474 = DiamondBlockType(4474)
         val primary = instance4474
         val allInstances: List<DiamondBlockType> = listOf(instance4474)

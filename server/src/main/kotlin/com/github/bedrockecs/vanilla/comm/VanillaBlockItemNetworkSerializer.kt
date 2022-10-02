@@ -20,14 +20,14 @@ class VanillaBlockItemNetworkSerializer : ItemNetworkSerializer {
         val type = components[ItemTypeComponent::class.java]!!
         if (type is BlockItemType && type.block is VanillaBlockType) {
             val blockTypeCompanion = type.block::class.java.kotlin.companionObjectInstance as VanillaBlockType.Companion
-            val blockID = blockTypeCompanion.blockID
+            val itemID = blockTypeCompanion.itemID
 
             val countComponent = components[ItemCountComponent::class.java] as ItemCountComponent?
             val count = countComponent?.count ?: 0
 
             return ItemData.builder().apply {
                 // basics
-                id(blockID.toItemID().value)
+                id(itemID.value)
                 count(count)
                 damage(0) // TODO: figure this out for block state
                 // netId
