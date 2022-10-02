@@ -9,6 +9,5 @@ fun main() {
     val parsed = parse()
 
     parsed.blockStates.writeCSV(GENERATED_DIR.resolve("parsed-canon-blockstate-nbt.csv").toFile())
-    parsed.blockIds.writeCSV(GENERATED_DIR.resolve("parsed-block-ids-map.csv").toFile())
-    parsed.itemIds.writeCSV(GENERATED_DIR.resolve("parsed-item-ids-map.csv").toFile())
+    parsed.requiredItems.writeCSV(GENERATED_DIR.resolve("required-items.csv").toFile())
 }

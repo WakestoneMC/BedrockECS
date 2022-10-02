@@ -16,24 +16,6 @@ data class ParsedBlockState(
 )
 
 /**
- * parsed block_id_map.json table
- */
-@DataSchema
-data class ParsedBlockID(
-    val persisentName: String,
-    val id: Int
-)
-
-/**
- * parsed item_id_map.json table
- */
-@DataSchema
-data class ParsedItemID(
-    val persisentName: String,
-    val id: Int
-)
-
-/**
  * parsed required_item_list.json
  */
 @DataSchema
@@ -45,7 +27,5 @@ data class RequiredItem(
 
 data class ParseResult(
     val requiredItems: DataFrame<RequiredItem>,
-    val blockIds: DataFrame<ParsedBlockID>,
-    val blockStates: DataFrame<ParsedBlockState>,
-    val itemIds: DataFrame<ParsedItemID>
+    val blockStates: DataFrame<ParsedBlockState>
 )
