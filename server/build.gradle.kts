@@ -11,11 +11,19 @@ plugins {
     kotlin("plugin.serialization")
 }
 
+buildscript {
+    dependencies {
+        classpath("com.github.bedrockecs:datacompiler")
+    }
+}
+
 group = rootProject.extra["group"]!!
 version = rootProject.extra["version"]!!
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 // deps //
+
+val ktlint by configurations.creating
 
 dependencies {
     // kotlin functionalities
@@ -38,6 +46,13 @@ dependencies {
     // testing
     testApi("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
     testApi("org.mockito.kotlin:mockito-kotlin:4.0.0")
+
+    // datacompiler linting infrastructure
+    ktlint("com.pinterest:ktlint:0.47.0") {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
+        }
+    }
 }
 
 // compiling //
@@ -47,6 +62,38 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
     }
+}
+
+// codegen : datacompiler //
+
+tasks {
+    val compilerOutputDir = layout.projectDirectory.dir("src/main/kotlin")
+    val linterDir = layout.projectDirectory.dir("src/main/kotlin/com/github/bedrockecs/vanilla/data/")
+    compilerOutputDir.asFile.mkdir()
+    register<com.github.bedrockecs.datacompiler.DataCompilerTask>("runDataCompiler") {
+        group = "datacompiler"
+        outputDir.set(compilerOutputDir)
+
+        doLast {
+            javaexec {
+                classpath = ktlint
+                mainClass.set("com.pinterest.ktlint.Main")
+                // see https://pinterest.github.io/ktlint/install/cli/#command-line-usage for more information
+                args = listOf("-F", "$linterDir/**/*.kt")
+                // see https://github.com/pinterest/ktlint/issues/1195 for why
+                jvmArgs = listOf(
+                    "--add-opens",
+                    "\"java.base/java.util=ALL-UNNAMED\"",
+                    "--add-opens",
+                    "\"java.base/java.lang=ALL-UNNAMED\"",
+                    "--add-exports=\"java.base/sun.nio.ch=ALL-UNNAMED\""
+                )
+            }
+        }
+    }
+}
+tasks.compileKotlin {
+    dependsOn(tasks.getByName("runDataCompiler"))
 }
 
 // testing //
