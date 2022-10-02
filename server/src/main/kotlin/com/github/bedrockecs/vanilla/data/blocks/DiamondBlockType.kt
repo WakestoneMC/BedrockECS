@@ -6,10 +6,11 @@ data class DiamondBlockType private constructor(
     override val runtimeID: Short
 ) : VanillaBlockType {
     companion object : VanillaBlockType.Companion {
+        override val BLOCK_TYPE: String = "minecraft:diamond_block"
         override val itemID: ItemID = ItemID(57)
         private val instance4474 = DiamondBlockType(4474)
-        val primary = instance4474
-        val allInstances: List<DiamondBlockType> = listOf(instance4474)
+        override val primary = instance4474
+        override val allInstances: List<DiamondBlockType> = listOf(instance4474)
     }
 
     fun with(): DiamondBlockType {

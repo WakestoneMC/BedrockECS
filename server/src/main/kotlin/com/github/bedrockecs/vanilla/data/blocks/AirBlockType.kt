@@ -6,10 +6,11 @@ data class AirBlockType private constructor(
     override val runtimeID: Short
 ) : VanillaBlockType {
     companion object : VanillaBlockType.Companion {
+        override val BLOCK_TYPE: String = "minecraft:air"
         override val itemID: ItemID = ItemID(0)
         private val instance134 = AirBlockType(134)
-        val primary = instance134
-        val allInstances: List<AirBlockType> = listOf(instance134)
+        override val primary = instance134
+        override val allInstances: List<AirBlockType> = listOf(instance134)
     }
 
     fun with(): AirBlockType {

@@ -10,7 +10,7 @@ interface VanillaBlockType : BlockTypeComponent {
     /**
      * interface for its companion object
      */
-    interface Companion {
+    interface Companion : BlockTypeComponent.Companion {
         val itemID: ItemID
     }
 
