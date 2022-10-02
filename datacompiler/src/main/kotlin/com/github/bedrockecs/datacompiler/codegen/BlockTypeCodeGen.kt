@@ -170,7 +170,7 @@ private fun emitCompanion(
 
     companion.addProperty(
         PropertySpec.builder("blockType", String::class.asTypeName(), KModifier.OVERRIDE)
-            .initializer("%L", def.persistentName)
+            .initializer("\"%L\"", def.persistentName)
             .build()
     )
 
