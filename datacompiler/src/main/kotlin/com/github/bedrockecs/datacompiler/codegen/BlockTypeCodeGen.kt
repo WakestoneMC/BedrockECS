@@ -233,8 +233,8 @@ fun codegenBlockTypes(blockTypes: List<ClassName>): FileSpec {
         classesTypesInitializer.addStatement("classes.add(%T::class)", it)
         classesTypesInitializer.addStatement("types.addAll(%T.allInstances)", it)
     }
-    classesTypesInitializer.add("CLASSES = classes")
-    classesTypesInitializer.add("TYPES = types.sortedBy { it.runtimeID }")
+    classesTypesInitializer.addStatement("CLASSES = classes")
+    classesTypesInitializer.addStatement("TYPES = types.sortedBy { it.runtimeID }")
     type.addInitializerBlock(classesTypesInitializer.build())
 
     return FileSpec.builder(typeName.packageName, typeName.simpleName)

@@ -82,7 +82,7 @@ fun codegenItemTypes(itemTypes: List<ClassName>): FileSpec {
     val classesInitializer = CodeBlock.builder()
     classesInitializer.addStatement("val types = mutableListOf<%T>()", classesType)
     itemTypes.forEach { classesInitializer.addStatement("types.add(%T::class)", it) }
-    classesInitializer.add("CLASSES = types")
+    classesInitializer.addStatement("CLASSES = types")
     type.addInitializerBlock(classesInitializer.build())
 
     return FileSpec.builder(typeName.packageName, typeName.simpleName)
