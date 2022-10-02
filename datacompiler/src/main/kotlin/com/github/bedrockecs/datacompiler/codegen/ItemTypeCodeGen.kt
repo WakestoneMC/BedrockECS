@@ -21,7 +21,7 @@ import kotlin.reflect.KClass
 fun codegenItemType(row: DataRow<ItemTypeDefinition>): Pair<FileSpec, ClassName> {
     // compute //
 
-    val className = persistentNameToClassName(row.persistentName)
+    val className = persistentNameToClassName(row.persistentName) + "ItemType"
     val typeName = ClassName(ITEMS_BASE_PACKAGE, className)
 
     // emit //
@@ -59,9 +59,12 @@ fun codegenItemType(row: DataRow<ItemTypeDefinition>): Pair<FileSpec, ClassName>
             .build()
     )
 
-    val file = FileSpec.builder(typeName.packageName, typeName.simpleName).addType(typeSpec.build())
+    val file = FileSpec.builder(typeName.packageName, typeName.simpleName)
+        .addFileComment(GENERATED_FILE_COMMENT)
+        .addType(typeSpec.build())
+        .build()
 
-    return file.build() to typeName
+    return file to typeName
 }
 
 fun codegenItemTypes(itemTypes: List<ClassName>): FileSpec {
@@ -80,5 +83,8 @@ fun codegenItemTypes(itemTypes: List<ClassName>): FileSpec {
     classesInitializer.add("CLASSES = types")
     type.addInitializerBlock(classesInitializer.build())
 
-    return FileSpec.builder(typeName.packageName, typeName.simpleName).addType(type.build()).build()
+    return FileSpec.builder(typeName.packageName, typeName.simpleName)
+        .addFileComment(GENERATED_FILE_COMMENT)
+        .addType(type.build())
+        .build()
 }

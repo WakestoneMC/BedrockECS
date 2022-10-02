@@ -30,7 +30,7 @@ fun codeGenBlockType(
     instances: DataFrame<BlockTypeInstance>
 ): Pair<FileSpec, ClassName> {
     // compute //
-    val className = persistentNameToClassName(def.persistentName)
+    val className = persistentNameToClassName(def.persistentName) + "BlockType"
     val typeName = ClassName(BLOCKS_BASE_PACKAGE, className)
 
     val itemID = if (def.itemId == null) {
@@ -63,7 +63,10 @@ fun codeGenBlockType(
     val companion = emitCompanion(def, itemID, instanceNameLiterals, typeName, allInstanceLiteral)
     val type = emitClass(typeName, companion, orderedPropertyNames, def)
 
-    val file = FileSpec.builder(typeName.packageName, typeName.simpleName).addType(type).build()
+    val file = FileSpec.builder(typeName.packageName, typeName.simpleName)
+        .addFileComment(GENERATED_FILE_COMMENT)
+        .addType(type)
+        .build()
 
     return file to typeName
 }
@@ -223,5 +226,8 @@ fun codegenBlockTypes(blockTypes: List<ClassName>): FileSpec {
     classesTypesInitializer.add("TYPES = types.sortedBy { it.runtimeID }")
     type.addInitializerBlock(classesTypesInitializer.build())
 
-    return FileSpec.builder(typeName.packageName, typeName.simpleName).addType(type.build()).build()
+    return FileSpec.builder(typeName.packageName, typeName.simpleName)
+        .addFileComment(GENERATED_FILE_COMMENT)
+        .addType(type.build())
+        .build()
 }
