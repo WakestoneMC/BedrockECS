@@ -89,10 +89,15 @@ private fun emitClass(
         val primaryConstructor = FunSpec.constructorBuilder()
 
         primaryConstructor.addModifiers(KModifier.PRIVATE)
-        orderedPropertyNames.forEach { pname ->
+
+        var properties = orderedPropertyNames.map { pname ->
             val propertyName = snakeCaseToSmallCamelCase(pname)
             val propertyType = def.blockStateProps[pname]!!
+            propertyName to propertyType
+        }
+        properties = listOf("runtimeId" to Short::class) + properties
 
+        properties.forEach { (propertyName, propertyType) ->
             primaryConstructor.addParameter(
                 ParameterSpec.builder(propertyName, propertyType)
                     .build()
