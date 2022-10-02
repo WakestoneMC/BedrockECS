@@ -19,7 +19,7 @@ data class ItemTypeDefinition(
 @DataSchema
 data class BlockTypeDefinition(
     val persistentName: String, // primary key
-    val blockId: String,
+    val itemId: Int?,
     val blockStateProps: Map<String, KClass<*>>
 )
 
