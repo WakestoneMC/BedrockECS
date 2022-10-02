@@ -47,7 +47,7 @@ class DimensionDBImplDestroyTest {
     @Test
     fun destroyEmitsMutationEvents() {
         mutationEventTest(
-            TestComponentA.TYPE,
+            TestComponentA.type,
             listener = { db, eid, event ->
                 // arguments
                 assertThat(event.pos).isEqualTo(eid)

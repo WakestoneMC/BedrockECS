@@ -12,7 +12,7 @@ interface Component {
         /**
          * type of the component
          */
-        val TYPE: String
+        val type: String
     }
 
     /**

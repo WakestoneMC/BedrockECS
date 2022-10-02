@@ -24,7 +24,7 @@ class DimensionDBImplMutateTest {
     @Test
     fun mutateAddsComponentEmitsEvents() {
         mutationEventTest(
-            TestComponentB.TYPE,
+            TestComponentB.type,
             listener = { db, eid, event ->
                 // arguments
                 assertThat(event.pos).isEqualTo(eid)
@@ -69,7 +69,7 @@ class DimensionDBImplMutateTest {
     @Test
     fun mutateChangesComponentEmitsEvents() {
         mutationEventTest(
-            TestComponentA.TYPE,
+            TestComponentA.type,
             listener = { db, eid, event ->
                 // arguments
                 assertThat(event.pos).isEqualTo(eid)
@@ -114,7 +114,7 @@ class DimensionDBImplMutateTest {
     @Test
     fun mutateRemovesComponentEmitsEvents() {
         mutationEventTest(
-            TestComponentA.TYPE,
+            TestComponentA.type,
             listener = { db, eid, event ->
                 // arguments
                 assertThat(event.pos).isEqualTo(eid)

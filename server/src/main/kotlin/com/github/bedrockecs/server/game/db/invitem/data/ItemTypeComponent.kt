@@ -11,17 +11,17 @@ interface ItemTypeComponent : ItemComponent {
      */
     interface Companion : Component.Companion {
         companion object {
-            val TYPE = "becs:item_type"
+            val type = "becs:item_type"
         }
 
-        override val TYPE: String
-            get() = ItemTypeComponent.Companion.TYPE
+        override val type: String
+            get() = Companion.type
 
-        val ITEM_TYPE: String
+        val itemType: String
     }
 
     override val type: String
-        get() = Companion.TYPE
+        get() = Companion.type
 
     val itemType: String
 }

@@ -9,11 +9,11 @@ data class ItemCountComponent(
     val count: Int
 ) : ItemComponent {
     companion object : Component.Companion {
-        override val TYPE: String = "becs:item_count"
+        override val type: String = "becs:item_count"
     }
 
     override val type: String
-        get() = TYPE
+        get() = this@Companion.type
 
     override fun clone(): ItemCountComponent {
         return this

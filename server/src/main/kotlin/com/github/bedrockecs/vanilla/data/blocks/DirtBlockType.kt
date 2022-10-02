@@ -7,7 +7,7 @@ data class DirtBlockType private constructor(
     val dirtType: String
 ) : VanillaBlockType {
     companion object : VanillaBlockType.Companion {
-        override val BLOCK_TYPE: String = "minecraft:dirt"
+        override val blockType: String = "minecraft:dirt"
         override val itemID: ItemID = ItemID(3)
         private val instance4484 = DirtBlockType(4484, "normal")
         private val instance4485 = DirtBlockType(4485, "coarse")

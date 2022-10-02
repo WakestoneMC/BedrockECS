@@ -6,7 +6,7 @@ data class DiamondBlockType private constructor(
     override val runtimeID: Short
 ) : VanillaBlockType {
     companion object : VanillaBlockType.Companion {
-        override val BLOCK_TYPE: String = "minecraft:diamond_block"
+        override val blockType: String = "minecraft:diamond_block"
         override val itemID: ItemID = ItemID(57)
         private val instance4474 = DiamondBlockType(4474)
         override val primary = instance4474

@@ -78,7 +78,7 @@ class EntityDBImplDestroyTest {
 
                 Unit
             }
-            val sub = evb.listensFor("testing", TestComponentA.TYPE, listener)
+            val sub = evb.listensFor("testing", TestComponentA.type, listener)
 
             db.destroy(eid)
 

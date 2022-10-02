@@ -10,11 +10,11 @@ data class TickComponent(
     var currentTick: Long = 0
 ) : DimensionComponent {
     companion object : Component.Companion {
-        override val TYPE: String = "becs:tick"
+        override val type: String = "becs:tick"
     }
 
     override val type: String
-        get() = TYPE
+        get() = this@Companion.type
 
     override fun clone(): Component {
         return copy()

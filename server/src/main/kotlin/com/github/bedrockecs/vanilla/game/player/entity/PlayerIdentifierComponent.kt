@@ -12,11 +12,11 @@ data class PlayerIdentifierComponent(
     val uuid: UUID
 ) : EntityComponent {
     companion object : Component.Companion {
-        override val TYPE = "vanilla:player_identifiers"
+        override val type = "vanilla:player_identifiers"
     }
 
     override val type: String
-        get() = TYPE
+        get() = this@Companion.type
 
     override fun clone(): PlayerIdentifierComponent {
         return this // because everything is immutable here

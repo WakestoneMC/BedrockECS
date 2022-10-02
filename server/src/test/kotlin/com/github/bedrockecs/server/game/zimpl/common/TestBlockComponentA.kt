@@ -7,11 +7,11 @@ data class TestBlockComponentA(
     val test: String = "test"
 ) : BlockComponent {
     companion object : Component.Companion {
-        override val TYPE: String = "becs:testA"
+        override val type: String = "becs:testA"
     }
 
     override val type: String
-        get() = TYPE
+        get() = this@Companion.type
 
     override fun clone(): Component {
         return copy()

@@ -11,13 +11,13 @@ interface BlockTypeComponent : BlockComponent {
      */
     interface Companion : Component.Companion {
         companion object {
-            val TYPE = "becs:block_type"
+            val type = "becs:block_type"
         }
 
-        override val TYPE: String
-            get() = BlockTypeComponent.Companion.TYPE
+        override val type: String
+            get() = BlockTypeComponent.Companion.type
 
-        val BLOCK_TYPE: String
+        val blockType: String
 
         val primary: BlockTypeComponent
 
@@ -25,7 +25,7 @@ interface BlockTypeComponent : BlockComponent {
     }
 
     override val type: String
-        get() = Companion.TYPE
+        get() = Companion.type
 
     /**
      * the block type it represents, should be unique

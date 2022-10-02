@@ -90,7 +90,7 @@ class WorldDBImplSubChunkTest {
                     .isEqualTo(TestSubChunkComponentB())
                 Unit
             }
-            evb.listensFor("test", TestSubChunkComponentB.TYPE, listener)
+            evb.listensFor("test", TestSubChunkComponentB.type, listener)
             db.load(TEST_CHUNK_A_POS, TEST_CHUNK_A)
 
             db.mutateSubChunk(TEST_SUBCHUNK_A_POS, TestSubChunkComponentB::class.java) { TestSubChunkComponentB() }
@@ -124,7 +124,7 @@ class WorldDBImplSubChunkTest {
                     .isEqualTo(TestSubChunkComponentA("updated"))
                 Unit
             }
-            evb.listensFor("test", TestSubChunkComponentA.TYPE, listener)
+            evb.listensFor("test", TestSubChunkComponentA.type, listener)
             db.load(TEST_CHUNK_A_POS, TEST_CHUNK_A)
 
             db.mutateSubChunk(TEST_SUBCHUNK_A_POS, TestSubChunkComponentA::class.java) { TestSubChunkComponentA("updated") }
@@ -158,7 +158,7 @@ class WorldDBImplSubChunkTest {
                     .isEqualTo(TestSubChunkComponentA())
                 Unit
             }
-            evb.listensFor("test", TestSubChunkComponentA.TYPE, listener)
+            evb.listensFor("test", TestSubChunkComponentA.type, listener)
             db.load(TEST_CHUNK_A_POS, TEST_CHUNK_A)
 
             db.mutateSubChunk(TEST_SUBCHUNK_A_POS, TestSubChunkComponentA::class.java) { null }

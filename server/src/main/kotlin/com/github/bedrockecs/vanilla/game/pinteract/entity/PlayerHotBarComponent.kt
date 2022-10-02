@@ -7,11 +7,11 @@ data class PlayerHotBarComponent(
     var selectedSlot: Int = 0
 ) : EntityComponent {
     companion object : Component.Companion {
-        override val TYPE: String = "vanilla:hot_bar_slot"
+        override val type: String = "vanilla:hot_bar_slot"
     }
 
     override val type: String
-        get() = TYPE
+        get() = this@Companion.type
 
     override fun clone(): PlayerHotBarComponent {
         return copy()
