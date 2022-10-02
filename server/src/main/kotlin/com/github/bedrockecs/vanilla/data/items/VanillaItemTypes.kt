@@ -1,4 +1,4 @@
-package com.github.bedrockecs.vanilla.data.invitem
+package com.github.bedrockecs.vanilla.data.items
 
 import kotlin.reflect.KClass
 

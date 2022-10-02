@@ -13,7 +13,7 @@ import com.github.bedrockecs.server.game.db.invitem.data.BlockItemType
 import com.github.bedrockecs.server.game.db.invitem.data.ItemTypeComponent
 import com.github.bedrockecs.server.game.system.CommonTickOrders
 import com.github.bedrockecs.server.game.system.System
-import com.github.bedrockecs.vanilla.data.world.AirBlockType
+import com.github.bedrockecs.vanilla.data.blocks.AirBlockType
 import com.github.bedrockecs.vanilla.game.pinteract.entity.PlayerHotBarComponent
 import com.github.bedrockecs.vanilla.game.player.invitem.PlayerInvItemConstants.INVENTORY_NAME
 import com.github.bedrockecs.vanilla.game.player.system.PlayerMapContext

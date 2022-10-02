@@ -1,4 +1,4 @@
-package com.github.bedrockecs.vanilla.data.world
+package com.github.bedrockecs.vanilla.data.blocks
 
 data class DirtBlockType private constructor(
     override val runtimeID: Short,

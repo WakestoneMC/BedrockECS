@@ -14,9 +14,9 @@ import com.github.bedrockecs.server.game.db.invitem.data.InventoryMetadata
 import com.github.bedrockecs.server.game.db.invitem.data.ItemCountComponent
 import com.github.bedrockecs.server.game.system.CommonTickOrders
 import com.github.bedrockecs.server.game.system.System
-import com.github.bedrockecs.vanilla.data.invitem.StickItemType
-import com.github.bedrockecs.vanilla.data.world.DiamondBlockType
-import com.github.bedrockecs.vanilla.data.world.DirtBlockType
+import com.github.bedrockecs.vanilla.data.blocks.DiamondBlockType
+import com.github.bedrockecs.vanilla.data.blocks.DirtBlockType
+import com.github.bedrockecs.vanilla.data.items.StickItemType
 import com.github.bedrockecs.vanilla.game.pinteract.entity.PlayerHotBarComponent
 import com.github.bedrockecs.vanilla.game.player.entity.PlayerEntityType
 import com.github.bedrockecs.vanilla.game.player.entity.PlayerIdentifierComponent

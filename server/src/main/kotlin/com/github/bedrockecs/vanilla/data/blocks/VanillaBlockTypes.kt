@@ -1,4 +1,4 @@
-package com.github.bedrockecs.vanilla.data.world
+package com.github.bedrockecs.vanilla.data.blocks
 
 import kotlin.reflect.KClass
 

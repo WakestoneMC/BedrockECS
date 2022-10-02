@@ -1,6 +1,6 @@
-package com.github.bedrockecs.vanilla.data.world
+package com.github.bedrockecs.vanilla.data.blocks
 
-import com.github.bedrockecs.vanilla.data.invitem.ItemID
+import com.github.bedrockecs.vanilla.data.items.ItemID
 
 @JvmInline
 value class BlockID(val value: Int) {

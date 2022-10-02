@@ -7,8 +7,8 @@ import com.github.bedrockecs.server.game.data.SubChunkPosition
 import com.github.bedrockecs.server.game.db.world.serial.SerialChunk
 import com.github.bedrockecs.server.game.db.world.serial.SerialSubChunk
 import com.github.bedrockecs.server.game.db.world.serial.SerialSubChunkLayer
-import com.github.bedrockecs.vanilla.data.world.AirBlockType
-import com.github.bedrockecs.vanilla.data.world.DirtBlockType
+import com.github.bedrockecs.vanilla.data.blocks.AirBlockType
+import com.github.bedrockecs.vanilla.data.blocks.DirtBlockType
 
 object TestChunks {
     val TEST_CHUNK_A: SerialChunk

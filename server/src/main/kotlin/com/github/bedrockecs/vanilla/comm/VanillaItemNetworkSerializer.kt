@@ -5,7 +5,7 @@ import com.github.bedrockecs.server.game.db.common.ComponentMap
 import com.github.bedrockecs.server.game.db.invitem.data.ItemComponent
 import com.github.bedrockecs.server.game.db.invitem.data.ItemCountComponent
 import com.github.bedrockecs.server.game.db.invitem.data.ItemTypeComponent
-import com.github.bedrockecs.vanilla.data.invitem.VanillaItemType
+import com.github.bedrockecs.vanilla.data.items.VanillaItemType
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData
 import org.springframework.stereotype.Component
 import kotlin.reflect.full.companionObjectInstance
