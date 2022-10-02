@@ -45,16 +45,24 @@ fun codeGenBlockType(
 
     val instanceNameLiterals = instances.map { inst ->
         val orderedValues = orderedPropertyNames.map { inst.blockStatePropValues[it]!! }
-        val literalValuesCount = orderedValues.size + 1 // runtimeId
 
-        val templateLiteral = (0 until literalValuesCount).joinToString(",") { "%L" }
-        val template = "%T($templateLiteral)"
-        val templateValues = arrayOf<Any>(typeName, inst.runtimeId, *(orderedValues.toTypedArray()))
+        val literal = with(StringBuilder()) {
+            append(typeName.simpleName)
+            append("(")
+
+            append(primitiveToLiteral(inst.runtimeId.toShort()))
+            orderedValues.forEach { v ->
+                append(", ")
+                append(primitiveToLiteral(v))
+            }
+
+            append(")")
+        }.toString()
 
         val name = "instance${inst.runtimeId}"
-        val literal = CodeBlock.builder().add(template, *templateValues).build()
+        val code = CodeBlock.builder().add(literal).build()
 
-        name to literal
+        name to code
     }
 
     val allInstanceLiteral = "listOf(${instanceNameLiterals.joinToString(",") { it.first }})"
@@ -212,6 +220,20 @@ private fun emitCompanion(
     )
 
     return companion.build()
+}
+
+private fun primitiveToLiteral(value: Any): String {
+    return when (value) {
+        // primitives
+        is Byte -> "$value.toByte()"
+        is Double -> "$value"
+        is Float -> "${value}f"
+        is Int -> "$value"
+        is Long -> "${value}L"
+        is Short -> "$value.toShort()"
+        is String -> "\"$value\""
+        else -> throw IllegalArgumentException("unexpected type: $value")
+    }
 }
 
 fun codegenBlockTypes(blockTypes: List<ClassName>): FileSpec {
