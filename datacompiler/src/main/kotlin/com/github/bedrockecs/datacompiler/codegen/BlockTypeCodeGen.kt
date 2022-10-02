@@ -8,6 +8,7 @@ import com.github.bedrockecs.datacompiler.analyze.itemId
 import com.github.bedrockecs.datacompiler.analyze.persistentName
 import com.github.bedrockecs.datacompiler.analyze.runtimeId
 import com.github.bedrockecs.datacompiler.snakeCaseToSmallCamelCase
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
@@ -150,6 +151,12 @@ private fun emitClass(
 
     run {
         val compare = FunSpec.builder("compareVariantProperties")
+
+        compare.addAnnotation(
+            AnnotationSpec.builder(Suppress::class)
+                .addMember(CodeBlock.of("\"UNUSED_PARAMETER\""))
+                .build()
+        )
 
         compare.addParameter("other", typeName)
 
