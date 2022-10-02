@@ -13,6 +13,7 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.LIST
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
@@ -95,17 +96,17 @@ private fun emitClass(
         var properties = orderedPropertyNames.map { pname ->
             val propertyName = snakeCaseToSmallCamelCase(pname)
             val propertyType = def.blockStateProps[pname]!!
-            propertyName to propertyType
+            Triple(propertyName, propertyType, emptyArray<KModifier>())
         }
-        properties = listOf("runtimeId" to Short::class) + properties
+        properties = listOf(Triple("runtimeID", Short::class, arrayOf(KModifier.OVERRIDE))) + properties
 
-        properties.forEach { (propertyName, propertyType) ->
+        properties.forEach { (propertyName, propertyType, modifiers) ->
             primaryConstructor.addParameter(
                 ParameterSpec.builder(propertyName, propertyType)
                     .build()
             )
             type.addProperty(
-                PropertySpec.builder(propertyName, propertyType)
+                PropertySpec.builder(propertyName, propertyType, *modifiers)
                     .initializer(propertyName)
                     .build()
             )
@@ -123,7 +124,7 @@ private fun emitClass(
 
             with.addParameter(
                 ParameterSpec.builder(propertyName, propertyType)
-                    .defaultValue(propertyName)
+                    .defaultValue("this.$propertyName")
                     .build()
             )
         }
@@ -131,8 +132,8 @@ private fun emitClass(
         with.returns(typeName)
 
         val code = CodeBlock.builder()
-        val ctorParams = orderedPropertyNames.joinToString(",")
-        code.addStatement("val e = %T($ctorParams)", typeName)
+        val ctorParams = orderedPropertyNames.joinToString(",") { snakeCaseToSmallCamelCase(it) }
+        code.addStatement("val e = %T(0.toShort(), $ctorParams)", typeName)
         code.addStatement("return allInstances.find { it.compareVariantProperties(e) }!!")
         with.addCode(code.build())
 
@@ -149,7 +150,8 @@ private fun emitClass(
         val code = CodeBlock.builder()
         code.addStatement("var ret = true")
         orderedPropertyNames.forEach { propName ->
-            code.addStatement("ret = ret && (this.$propName == other.$propName)")
+            val property = snakeCaseToSmallCamelCase(propName)
+            code.addStatement("ret = ret && (this.$property == other.$property)")
         }
         code.addStatement("return ret")
         compare.addCode(code.build())
@@ -158,7 +160,7 @@ private fun emitClass(
     }
 
     type.addProperty(
-        PropertySpec.builder("blockType", String::class.asTypeName())
+        PropertySpec.builder("blockType", String::class.asTypeName(), KModifier.OVERRIDE)
             .initializer("Companion.blockType")
             .build()
     )
@@ -204,7 +206,7 @@ private fun emitCompanion(
     )
 
     companion.addProperty(
-        PropertySpec.builder("allInstances", typeName, KModifier.OVERRIDE)
+        PropertySpec.builder("allInstances", LIST.parameterizedBy(typeName), KModifier.OVERRIDE)
             .initializer(allInstanceLiteral)
             .build()
     )
