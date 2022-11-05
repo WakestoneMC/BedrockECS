@@ -61,7 +61,7 @@ gradle publish
 
 Kotlin + Spring Boot
 
-Yes we don't use Spring Boot for game servers, but it is such a convenient way to use spring!
+Yes we don't use Spring Boot for game servers, but we use spring for DI and spring boot is so convenient!
 
 ## :gem: Acknowledgements
 
