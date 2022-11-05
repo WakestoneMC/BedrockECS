@@ -7,6 +7,12 @@
     <a href="https://www.repostatus.org/#concept">
       <img src="https://www.repostatus.org/badges/latest/concept.svg" alt="Project Status: Concept – Minimal or no implementation has been done yet">
     </a>
+    <a href="https://codeclimate.com/github/WakestoneMC/BedrockECS/maintainability">
+      <img src="https://api.codeclimate.com/v1/badges/0e49485e5101aaa6da50/maintainability"/>
+    </a>
+    <a href="https://codeclimate.com/github/WakestoneMC/BedrockECS/test_coverage">
+      <img src="https://api.codeclimate.com/v1/badges/0e49485e5101aaa6da50/test_coverage"/>
+    </a>
   </p>
 </div>
 
