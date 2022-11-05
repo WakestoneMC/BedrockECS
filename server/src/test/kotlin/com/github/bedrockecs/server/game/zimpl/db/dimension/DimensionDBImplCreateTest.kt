@@ -68,9 +68,9 @@ class DimensionDBImplCreateTest {
         val evb = EventBusImpl()
         val db = DimensionDBImpl(evb)
         val listenerA = mock<(DimensionMutationEvent) -> Unit>()
-        val subA = evb.listensFor("testA", TestComponentA.TYPE, listenerA)
+        val subA = evb.listensFor("testA", TestComponentA.type, listenerA)
         val listenerB = mock<(DimensionMutationEvent) -> Unit>()
-        val subB = evb.listensFor("testB", TestComponentB.TYPE, listenerB)
+        val subB = evb.listensFor("testB", TestComponentB.type, listenerB)
 
         val eid = db.create(setOf(TestComponentA(), TestComponentB()))
 
@@ -93,7 +93,7 @@ class DimensionDBImplCreateTest {
         val listenerA: (DimensionMutationEvent) -> Unit = {
             assertThat(db.list(it.pos)).containsExactly(TestComponentA())
         }
-        val subA = evb.listensFor("testA", TestComponentA.TYPE, listenerA)
+        val subA = evb.listensFor("testA", TestComponentA.type, listenerA)
 
         db.create(setOf(TestComponentA()))
 

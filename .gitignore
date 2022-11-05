@@ -38,3 +38,7 @@ out/
 
 # test work directory
 becs
+
+# datacompiler test directory
+
+generated

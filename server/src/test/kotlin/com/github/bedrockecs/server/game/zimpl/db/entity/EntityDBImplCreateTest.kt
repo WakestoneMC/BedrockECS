@@ -93,7 +93,7 @@ class EntityDBImplCreateTest {
 
                 Unit
             }
-            val sub = evb.listensFor("testing", TestComponentA.TYPE, listener)
+            val sub = evb.listensFor("testing", TestComponentA.type, listener)
 
             val eid = db.create(TYPE_A, setOf(TestComponentA()))
 

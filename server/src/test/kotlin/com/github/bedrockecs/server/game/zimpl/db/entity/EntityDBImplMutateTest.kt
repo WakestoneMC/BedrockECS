@@ -38,7 +38,7 @@ class EntityDBImplMutateTest {
 
                 Unit
             }
-            val sub = evb.listensFor("testing", TestComponentA.TYPE, listener)
+            val sub = evb.listensFor("testing", TestComponentA.type, listener)
             val eid = db.create(TYPE_A, setOf())
 
             db.mutate(eid, TestComponentA::class.java) { TestComponentA() }
@@ -76,7 +76,7 @@ class EntityDBImplMutateTest {
 
                 Unit
             }
-            val sub = evb.listensFor("testing", TestComponentA.TYPE, listener)
+            val sub = evb.listensFor("testing", TestComponentA.type, listener)
 
             db.mutate(eid, TestComponentA::class.java) { TestComponentA(test = "updated") }
 
@@ -113,7 +113,7 @@ class EntityDBImplMutateTest {
 
                 Unit
             }
-            val sub = evb.listensFor("testing", TestComponentA.TYPE, listener)
+            val sub = evb.listensFor("testing", TestComponentA.type, listener)
 
             db.mutate(eid, TestComponentA::class.java) { null }
 

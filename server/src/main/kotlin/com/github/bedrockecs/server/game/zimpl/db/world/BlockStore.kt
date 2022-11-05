@@ -16,7 +16,7 @@ import com.github.bedrockecs.server.game.db.world.serial.SerialSubChunkLayer
 import com.github.bedrockecs.server.game.eventbus.EventBus
 import com.github.bedrockecs.server.game.eventbus.publishFor
 import com.github.bedrockecs.server.game.registry.BlockRegistry
-import com.github.bedrockecs.vanilla.data.world.AirBlockType
+import com.github.bedrockecs.vanilla.data.blocks.AirBlockType
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.IllegalArgumentException
@@ -86,7 +86,7 @@ class BlockStore(evb: EventBus, private val registry: BlockRegistry) {
                     }
                     val newRid = registry.runtimeIDFor(newValue)
                     entry.layers[pos.layer.toInt()].setBlock(x, y, z, newRid.toInt())
-                    mutationEvent.publish(BlockTypeComponent.TYPE, BlockMutationEvent.Single(pos, MutateType.UPDATE))
+                    mutationEvent.publish(BlockTypeComponent.type, BlockMutationEvent.Single(pos, MutateType.UPDATE))
                 } else {
                     val (x, y, z) = pos.subchunkOffsets
                     val type = registry.typeFor(entry.layers[pos.layer.toInt()].getBlock(x, y, z).toShort())
