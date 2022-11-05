@@ -22,6 +22,8 @@ This project will then be put in hibernation till (hopefully) 2024/2025.
 
 Please refer to [this blogpost series(chinese)]() for motivations and design overview
 
+Also, refer to [conventionalcommit.json](./conventionalcommit.json) for the code organization of the project
+
 Forks are welcomed!
 
 ## :toolbox: Getting Started
