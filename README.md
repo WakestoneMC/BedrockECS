@@ -26,7 +26,7 @@ Potential Update on Feb/2023:
 
 This project will then be put in hibernation till (hopefully) 2024/2025. 
 
-Please refer to [this blogpost series(chinese)]() for motivations and design overview
+Please refer to [this blogpost series(chinese)](https://0xffff.one/d/1369-guan-yu-wo-xie-le-ge-minecraft-ji) for motivations and design overview
 
 Also, refer to [conventionalcommit.json](./conventionalcommit.json) for the code organization of the project
 
