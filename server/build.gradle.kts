@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val kotlinVersion: String by rootProject.extra
 val kotlinCoroutineVersion: String by rootProject.extra
 val kotlinSerializationVersion: String by rootProject.extra
-val springBootVersion: String by rootProject.extra
 
 plugins {
     id("maven-publish")
@@ -36,8 +35,8 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializationVersion")
 
     // spring boot, shell & telemetry
-    api("org.springframework.boot:spring-boot-starter-webflux:$springBootVersion")
-    api("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion")
+    api("org.springframework.boot:spring-boot-starter-webflux")
+    api("org.springframework.boot:spring-boot-starter-actuator")
 
     // ECS library
     api("com.badlogicgames.ashley:ashley:1.7.4")
@@ -46,7 +45,7 @@ dependencies {
     api("com.nukkitx.protocol:bedrock-v486:2.9.5-SNAPSHOT")
 
     // testing
-    testApi("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+    testApi("org.springframework.boot:spring-boot-starter-test")
     testApi("org.mockito.kotlin:mockito-kotlin:4.0.0")
 
     // datacompiler linting infrastructure
