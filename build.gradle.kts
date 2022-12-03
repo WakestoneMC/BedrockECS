@@ -1,5 +1,6 @@
 val kotlinVersion by extra { "1.6.21" }
-val springBootVersion by extra { "2.7.3" }
+val kotlinCoroutineVersion by extra { "1.6.4" }
+val kotlinSerializationVersion by extra { "1.4.0" }
 
 val group by extra { "com.github.bedrockecs" }
 val version by extra { "0.0.1-SNAPSHOT" }
