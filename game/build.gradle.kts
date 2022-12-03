@@ -26,6 +26,9 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinCoroutineVersion")
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializationVersion")
 
+    // deps for some convenient data types
+    api("com.nukkitx:math:1.1.1")
+
     // spring
     implementation("org.springframework.boot:spring-boot-starter")
 
