@@ -8,7 +8,7 @@ import com.github.bedrockecs.game.db.world.data.BlockTypeComponent
 import com.github.bedrockecs.game.db.world.serial.SerialChunk
 import com.github.bedrockecs.game.db.world.serial.SerialSubChunk
 import com.github.bedrockecs.game.db.world.serial.SerialSubChunkLayer
-import com.github.bedrockecs.game.zimpl.common.TestAirBlockType
+import com.github.bedrockecs.game.zimpl.common.testdata.TestAirBlockType
 import io.netty.buffer.Unpooled
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

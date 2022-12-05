@@ -1,9 +1,9 @@
 package com.github.bedrockecs.game.zimpl.db.world
 
 import com.github.bedrockecs.game.db.world.BlockRegistry
-import com.github.bedrockecs.game.zimpl.common.TestBlockComponentA
-import com.github.bedrockecs.game.zimpl.common.TestBlockComponentB
-import com.github.bedrockecs.game.zimpl.common.TestDirtBlockType
+import com.github.bedrockecs.game.zimpl.common.testdata.TestBlockComponentA
+import com.github.bedrockecs.game.zimpl.common.testdata.TestBlockComponentB
+import com.github.bedrockecs.game.zimpl.common.testdata.TestDirtBlockType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

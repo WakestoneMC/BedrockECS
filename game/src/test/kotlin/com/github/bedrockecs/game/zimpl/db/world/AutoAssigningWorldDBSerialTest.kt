@@ -1,8 +1,8 @@
 package com.github.bedrockecs.game.zimpl.db.world
 
 import com.github.bedrockecs.game.db.world.WorldDBSerial
-import com.github.bedrockecs.game.zimpl.common.TestAirBlockType
-import com.github.bedrockecs.game.zimpl.common.TestDirtBlockType
+import com.github.bedrockecs.game.zimpl.common.testdata.TestAirBlockType
+import com.github.bedrockecs.game.zimpl.common.testdata.TestDirtBlockType
 import org.junit.jupiter.api.Test
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.assertThrows

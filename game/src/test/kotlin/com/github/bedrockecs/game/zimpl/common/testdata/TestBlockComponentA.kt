@@ -1,9 +1,9 @@
-package com.github.bedrockecs.game.zimpl.common
+package com.github.bedrockecs.game.zimpl.common.testdata
 
 import com.github.bedrockecs.game.db.common.Component
 import com.github.bedrockecs.game.db.world.data.BlockComponent
 
-data class TestBlockComponentB(
+data class TestBlockComponentA(
     val test: String = "test"
 ) : BlockComponent {
     companion object : Component.ICompanion {
