@@ -3,11 +3,18 @@ package com.github.bedrockecs.game.db.world
 import com.github.bedrockecs.game.db.common.ComponentMap
 import com.github.bedrockecs.game.db.world.data.BlockComponent
 import com.github.bedrockecs.game.db.world.data.BlockTypeComponent
+import com.github.bedrockecs.game.zimpl.db.world.BlockRegistryImpl
 
 /**
  * registry for [WorldDB]
  */
 interface BlockRegistry {
+    companion object {
+        fun create(): BlockRegistry {
+            return BlockRegistryImpl()
+        }
+    }
+
     // region types
 
     val blockTypes: Collection<BlockTypeComponent>

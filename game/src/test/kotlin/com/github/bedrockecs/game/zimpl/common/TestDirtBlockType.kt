@@ -1,4 +1,4 @@
-package com.github.bedrockecs.game.zimpl.db.world
+package com.github.bedrockecs.game.zimpl.common
 
 import com.github.bedrockecs.game.db.world.data.BlockTypeComponent
 import kotlin.String
