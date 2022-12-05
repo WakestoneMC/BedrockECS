@@ -15,6 +15,7 @@ import com.github.bedrockecs.game.db.world.serial.SerialChunk
  * database for all world(block+chunk/subchunk metadata) data
  */
 interface WorldDB {
+
     // region chunk-subchunk metadata
 
     /**
