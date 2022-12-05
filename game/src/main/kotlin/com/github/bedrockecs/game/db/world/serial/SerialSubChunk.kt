@@ -10,7 +10,7 @@ data class SerialSubChunk(
     /**
      * components attached to this subchunk
      */
-    val components: ComponentMap<SubChunkComponent>,
+    val components: ComponentMap<SubChunkComponent> = emptyMap(),
     /**
      * ordered by layer
      */

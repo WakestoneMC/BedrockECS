@@ -15,5 +15,5 @@ data class SerialSubChunkLayer(
     /**
      * represents instance level non-default components
      */
-    val overrides: Map<LayeredBlockPosition, Map<Class<out BlockComponent>, BlockComponent?>>
+    val overrides: Map<LayeredBlockPosition, Map<Class<out BlockComponent>, BlockComponent?>> = emptyMap()
 )

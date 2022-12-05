@@ -10,13 +10,13 @@ data class SerialChunk(
     /**
      * components attached to this chunk
      */
-    val components: ComponentMap<ChunkComponent>,
+    val components: ComponentMap<ChunkComponent> = emptyMap(),
     /**
      * ordered by value of y
      */
     val subChunks: List<SerialSubChunk>,
     /**
-     * the Y value of the lowest subchunk
+     * the Y value of the lowest block in chunk
      */
-    val subChunksInitialY: Int
+    val initialY: Int
 )
