@@ -1,6 +1,7 @@
 package com.github.bedrockecs.game.zimpl.eventbus
 
 import com.github.bedrockecs.game.eventbus.Event
+import com.github.bedrockecs.game.eventbus.EventBus
 import com.github.bedrockecs.game.eventbus.publishFor
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.verify
@@ -14,7 +15,7 @@ class EventBusImplTest {
 
     @Test
     fun eventBusWorks() {
-        val evb = EventBusImpl()
+        val evb = EventBus.create()
         val (receiver, _) = evb.testListener<TestEventA>("receiver")
         val sender = evb.publishFor<TestEventA>("sender")
 
@@ -27,7 +28,7 @@ class EventBusImplTest {
 
     @Test
     fun eventBusUnsubscribeWorks() {
-        val evb = EventBusImpl()
+        val evb = EventBus.create()
         val (receiver, sub) = evb.testListener<TestEventA>("receiver")
         val sender = evb.publishFor<TestEventA>("sender")
 
@@ -42,7 +43,7 @@ class EventBusImplTest {
 
     @Test
     fun regressShouldInvokeNullListenerEvenWhenNoOneIsListeningThatToken() {
-        val evb = EventBusImpl()
+        val evb = EventBus.create()
         val (receiver, _) = evb.testListener<TestEventA>("receiver")
         val sender = evb.publishFor<TestEventA>("sender")
 

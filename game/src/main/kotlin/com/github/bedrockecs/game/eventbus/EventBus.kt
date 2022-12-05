@@ -1,5 +1,7 @@
 package com.github.bedrockecs.game.eventbus
 
+import com.github.bedrockecs.game.zimpl.eventbus.EventBusImpl
+
 /**
  * delivers event throughout the level server
  *
@@ -8,6 +10,12 @@ package com.github.bedrockecs.game.eventbus
  * Despite every event instance is processed in order, multiple threads could be publishing events at the same time.
  */
 interface EventBus {
+    companion object {
+        fun create(): EventBus {
+            return EventBusImpl()
+        }
+    }
+
     /**
      * config for the publisher
      */
