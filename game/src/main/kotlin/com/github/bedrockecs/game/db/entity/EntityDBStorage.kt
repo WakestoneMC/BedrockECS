@@ -2,6 +2,7 @@ package com.github.bedrockecs.game.db.entity
 
 import com.github.bedrockecs.game.data.ChunkPosition
 import com.github.bedrockecs.game.db.entity.serial.SerialEntity
+import com.github.bedrockecs.game.zimpl.db.entity.InMemoryEntityDBStorage
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
@@ -9,6 +10,15 @@ import java.util.concurrent.CompletableFuture
  * backend storage for [EntityDB]
  */
 interface EntityDBStorage {
+    companion object {
+        /**
+         * mock storage that keeps everything in memory
+         */
+        fun inMemory(): EntityDBStorage {
+            return InMemoryEntityDBStorage()
+        }
+    }
+
     // region CRUD
 
     /**
@@ -17,19 +27,19 @@ interface EntityDBStorage {
     fun allocateEntity(): CompletableFuture<EntityID>
 
     /**
-     * removes the entity from backend store, also frees the ID
+     * reads entity from storage
      */
-    fun removeEntity(id: EntityID): CompletableFuture<Void>
+    fun readEntity(id: EntityID): CompletableFuture<SerialEntity?>
 
     /**
      * writes entity to storage
      */
-    fun writeEntity(entity: SerialEntity): CompletableFuture<EntityID>
+    fun writeEntity(entity: SerialEntity): CompletableFuture<Void>
 
     /**
-     * reads entity from storage
+     * removes the entity from backend store, also frees the ID
      */
-    fun readEntity(id: EntityID): CompletableFuture<SerialEntity>
+    fun removeEntity(id: EntityID): CompletableFuture<Void>
 
     // endregion
 
@@ -43,12 +53,12 @@ interface EntityDBStorage {
     /**
      * try to find a player's entity id using its name from storage
      */
-    fun entityForPlayerName(name: String): CompletableFuture<EntityID?>
+    fun findEntityByPlayerName(name: String): CompletableFuture<EntityID?>
 
     /**
      * try to find a player's entity id using its uuid from storage
      */
-    fun entityForPlayerUUID(uuid: UUID): CompletableFuture<EntityID?>
+    fun findEntityByPlayerUUID(uuid: UUID): CompletableFuture<EntityID?>
 
     // endregion
 }
