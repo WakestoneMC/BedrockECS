@@ -1,6 +1,6 @@
 package com.github.bedrockecs.comm.zimpl
 
-import com.github.bedrockecs.GlobalExceptionHook
+import com.github.bedrockecs.server.GlobalExceptionHook
 import com.github.bedrockecs.comm.config.NetworkConfig
 import com.github.bedrockecs.comm.server.policy.NewConnectionPolicy
 import com.github.bedrockecs.comm.zimpl.exchange.ActionUpdateExchange

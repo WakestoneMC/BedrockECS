@@ -1,4 +1,4 @@
-package com.github.bedrockecs;
+package com.github.bedrockecs.server;
 
 /**
  * used to report exception and performs server shutdown
