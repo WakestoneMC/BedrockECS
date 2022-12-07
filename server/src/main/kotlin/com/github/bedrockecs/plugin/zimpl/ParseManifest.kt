@@ -1,6 +1,6 @@
-package com.github.bedrockecs.server.plugin.zimpl
+package com.github.bedrockecs.plugin.zimpl
 
-import com.github.bedrockecs.server.plugin.BedrockECSManifest
+import com.github.bedrockecs.plugin.BedrockECSManifest
 import org.yaml.snakeyaml.Yaml
 import java.io.Reader
 

@@ -1,6 +1,6 @@
-package com.github.bedrockecs.server.plugin.zimpl
+package com.github.bedrockecs.plugin.zimpl
 
-import com.github.bedrockecs.server.plugin.BedrockECSManifest
+import com.github.bedrockecs.plugin.BedrockECSManifest
 import org.springframework.boot.ApplicationArguments
 import java.io.InputStreamReader
 import java.net.URL

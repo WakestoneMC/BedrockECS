@@ -1,4 +1,4 @@
-package com.github.bedrockecs.server.plugin
+package com.github.bedrockecs.plugin
 
 import kotlinx.serialization.Serializable
 

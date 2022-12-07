@@ -5,9 +5,9 @@ import com.github.bedrockecs.server.filesystem.ServerFileSystem
 import com.github.bedrockecs.server.filesystem.zimpl.ServerFileSystemImpl
 import com.github.bedrockecs.server.filesystem.zimpl.initializeFileSystem
 import com.github.bedrockecs.server.game.zimpl.GameCoreConfiguration
-import com.github.bedrockecs.server.plugin.zimpl.loadPlugins
-import com.github.bedrockecs.server.plugin.zimpl.parseCLIArgs
-import com.github.bedrockecs.server.plugin.zimpl.scanFolder
+import com.github.bedrockecs.plugin.zimpl.loadPlugins
+import com.github.bedrockecs.plugin.zimpl.parseCLIArgs
+import com.github.bedrockecs.plugin.zimpl.scanFolder
 import com.github.bedrockecs.server.storegen.zimpl.StoreGenCoreConfiguration
 import com.github.bedrockecs.server.threading.zimpl.ThreadingCoreConfiguration
 import com.github.bedrockecs.server.zimpl.ChassisConfiguration
