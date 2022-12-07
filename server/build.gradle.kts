@@ -50,6 +50,7 @@ dependencies {
 
     // subproject deps
     api(project(":plugin"))
+    api(project(":filesystem"))
 
     // datacompiler linting infrastructure
     ktlint("com.pinterest:ktlint:0.47.0") {
