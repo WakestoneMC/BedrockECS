@@ -14,7 +14,7 @@ import com.github.bedrockecs.game.db.entity.EntityScanConfig
 import com.github.bedrockecs.game.db.entity.data.EntityComponent
 import com.github.bedrockecs.game.db.entity.data.EntityPositionComponent
 import com.github.bedrockecs.game.db.entity.data.EntityTypeComponent
-import com.github.bedrockecs.game.db.entity.data.PlayerIdentityComponent
+import com.github.bedrockecs.game.db.entity.data.PlayerIdentifiersComponent
 import com.github.bedrockecs.game.db.entity.event.EntityCreatingEvent
 import com.github.bedrockecs.game.db.entity.event.EntityLifecycleEvent
 import com.github.bedrockecs.game.db.entity.event.EntityLoadingEvent
@@ -348,7 +348,7 @@ class EntityDBImpl(
         val inMemoryVer = entityCollectionLock.read {
             engine.entities
                 .filter {
-                    val component = it.getComponent(PlayerIdentityComponent::class.java)
+                    val component = it.getComponent(PlayerIdentifiersComponent::class.java)
                     component != null && component.name == name
                 }
                 .map { idReverseMap[it]!! }
@@ -365,7 +365,7 @@ class EntityDBImpl(
         val inMemoryVer = entityCollectionLock.read {
             engine.entities
                 .filter {
-                    val component = it.getComponent(PlayerIdentityComponent::class.java)
+                    val component = it.getComponent(PlayerIdentifiersComponent::class.java)
                     component != null && component.uuid == uuid
                 }
                 .map { idReverseMap[it]!! }
