@@ -6,8 +6,8 @@ import com.github.bedrockecs.comm.zimpl.exchange.CommandChatExchange
 import com.github.bedrockecs.comm.zimpl.exchange.GameWorldExchange
 import com.github.bedrockecs.comm.zimpl.exchange.PlayerConnectionExchange
 import com.github.bedrockecs.comm.zimpl.exchange.ProcessResult
-import com.github.bedrockecs.server.game.data.FloatBlockPosition
-import com.github.bedrockecs.server.game.db.entity.EntityID
+import com.github.bedrockecs.game.data.FloatBlockPosition
+import com.github.bedrockecs.game.db.entity.EntityID
 import com.nukkitx.math.vector.Vector2f
 import com.nukkitx.math.vector.Vector3f
 import com.nukkitx.math.vector.Vector3i
@@ -160,7 +160,7 @@ class GameHandler(
         p1.seed = -1
         p1.spawnBiomeType = SpawnBiomeType.DEFAULT
         p1.customBiomeName = "plains"
-        p1.dimensionId = playerPosition.dim.toInt()
+        p1.dimensionId = 0
         p1.generatorId = 1
         p1.levelGameType = GameType.CREATIVE
         p1.difficulty = 1

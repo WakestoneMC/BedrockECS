@@ -1,8 +1,8 @@
 package com.github.bedrockecs.comm.zimpl.serial
 
-import com.github.bedrockecs.server.game.db.invitem.InvItemStore
-import com.github.bedrockecs.server.game.db.invitem.InvRef
-import com.github.bedrockecs.server.game.db.invitem.InvSlotRef
+import com.github.bedrockecs.game.db.invitem.InvItemDB
+import com.github.bedrockecs.game.db.invitem.InvRef
+import com.github.bedrockecs.game.db.invitem.InvSlotRef
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData
 import org.springframework.stereotype.Component
 
@@ -20,7 +20,7 @@ class InventoryNetworkSerializer(
 
     // serialization //
 
-    fun serializeInventory(db: InvItemStore, invRef: InvRef): Array<ItemData> {
+    fun serializeInventory(db: InvItemDB, invRef: InvRef): Array<ItemData> {
         val metadata = db.readMetadata(invRef)
         return (0 until metadata.size)
             .map { slot ->

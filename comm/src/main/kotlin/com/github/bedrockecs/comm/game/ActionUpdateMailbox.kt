@@ -2,11 +2,11 @@ package com.github.bedrockecs.comm.game
 
 import com.github.bedrockecs.comm.game.action.Action
 import com.github.bedrockecs.comm.game.update.Update
-import com.github.bedrockecs.server.game.system.System
+import com.github.bedrockecs.game.system.ECSSystem
 
 /**
  * central exchange point of [Action] and [Update],
- * [System] can send [Update] to client and receive [Action] from client
+ * [ECSSystem] can send [Update] to client and receive [Action] from client
  */
 interface ActionUpdateMailbox {
     fun listActions(): List<Action>

@@ -3,8 +3,8 @@ package com.github.bedrockecs.comm.zimpl.exchange
 import com.github.bedrockecs.comm.game.action.PlayerConnectedAction
 import com.github.bedrockecs.comm.game.action.PlayerDisconnectedAction
 import com.github.bedrockecs.comm.server.NetworkConnection
-import com.github.bedrockecs.server.game.db.entity.EntityID
-import com.github.bedrockecs.server.game.db.entity.data.EntityPositionComponent
+import com.github.bedrockecs.game.db.entity.EntityID
+import com.github.bedrockecs.game.db.entity.data.EntityPositionComponent
 import kotlinx.coroutines.future.await
 import org.springframework.stereotype.Component
 import java.util.UUID

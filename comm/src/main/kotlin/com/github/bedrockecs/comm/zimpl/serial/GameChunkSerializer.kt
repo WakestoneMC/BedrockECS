@@ -1,8 +1,8 @@
 package com.github.bedrockecs.comm.zimpl.serial
 
-import com.github.bedrockecs.server.common.palette.PalettedStorage
-import com.github.bedrockecs.server.game.data.ChunkPosition
-import com.github.bedrockecs.server.game.db.world.serial.SerialChunk
+import com.github.bedrockecs.common.palette.PalettedStorage
+import com.github.bedrockecs.game.data.ChunkPosition
+import com.github.bedrockecs.game.db.world.serial.SerialChunk
 import com.nukkitx.protocol.bedrock.packet.LevelChunkPacket
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled

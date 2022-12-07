@@ -1,9 +1,9 @@
 package com.github.bedrockecs.comm.zimpl
 
 import com.github.bedrockecs.comm.zimpl.game.NetworkActionUpdateSystem
-import com.github.bedrockecs.server.game.ext.GameConfiguration
+import com.github.bedrockecs.game.ext.DimensionConfiguration
 import org.springframework.context.annotation.ComponentScan
 
-@GameConfiguration
+@DimensionConfiguration
 @ComponentScan(basePackageClasses = [NetworkActionUpdateSystem::class])
-class CommGameConfiguration
+class CommDimensionConfiguration

@@ -6,15 +6,16 @@ import com.github.bedrockecs.comm.zimpl.serial.InventoryNetworkSerializer
 import com.github.bedrockecs.comm.zimpl.serial.InventoryNetworkSerializer.Companion.PLAYER_ARMOR_CONTAINER_ID
 import com.github.bedrockecs.comm.zimpl.serial.InventoryNetworkSerializer.Companion.PLAYER_INVENTORY_CONTAINER_ID
 import com.github.bedrockecs.comm.zimpl.serial.InventoryNetworkSerializer.Companion.PLAYER_OFFHAND_CONTAINER_ID
-import com.github.bedrockecs.server.game.data.BlockConstants.SUBCHUNK_SIZE
-import com.github.bedrockecs.server.game.data.ChunkPosition
-import com.github.bedrockecs.server.game.data.FloatBlockPosition
-import com.github.bedrockecs.server.game.db.GameDB
-import com.github.bedrockecs.server.game.db.invitem.InvRef
-import com.github.bedrockecs.vanilla.game.player.invitem.PlayerInvItemConstants.ARMOR_INVENTORY_NAME
-import com.github.bedrockecs.vanilla.game.player.invitem.PlayerInvItemConstants.INVENTORY_NAME
-import com.github.bedrockecs.vanilla.game.player.invitem.PlayerInvItemConstants.OFFHAND_INVENTORY_NAME
-import com.github.bedrockecs.vanilla.game.player.system.PlayerMapContext
+import com.github.bedrockecs.game.data.BlockConstants.SUBCHUNK_SIZE
+import com.github.bedrockecs.game.data.ChunkPosition
+import com.github.bedrockecs.game.data.FloatBlockPosition
+import com.github.bedrockecs.game.db.invitem.InvItemDB
+import com.github.bedrockecs.game.db.invitem.InvRef
+import com.github.bedrockecs.game.db.invitem.data.CommonInventoryConstants.ARMOR_INVENTORY_NAME
+import com.github.bedrockecs.game.db.invitem.data.CommonInventoryConstants.BASE_INVENTORY_NAME
+import com.github.bedrockecs.game.db.invitem.data.CommonInventoryConstants.OFFHAND_INVENTORY_NAME
+import com.github.bedrockecs.game.db.world.WorldDB
+import com.github.bedrockecs.game.zimpl.db.entity.EntityDBInternal
 import com.nukkitx.math.vector.Vector3i
 import com.nukkitx.protocol.bedrock.BedrockPacket
 import com.nukkitx.protocol.bedrock.packet.ChunkRadiusUpdatedPacket
@@ -121,10 +122,10 @@ class GameWorldExchange(
         this.currentTick = currentTick
     }
 
-    fun handleInventoryUpdate(db: GameDB, mapContext: PlayerMapContext, changedInventories: Set<InvRef>) {
+    fun handleInventoryUpdate(db: InvItemDB, db2: EntityDBInternal, changedInventories: Set<InvRef>) {
         sessions.map { (uuid, session) ->
             if (!session.sentInventories) {
-                sendInitialInventory(db, mapContext, uuid, session)
+                sendInitialInventory(db, db2, uuid, session)
                 waitingForInitialInvSent[uuid]?.complete(null)
                 session.sentInventories = true
             }
@@ -132,19 +133,19 @@ class GameWorldExchange(
     }
 
     private fun sendInitialInventory(
-        db: GameDB,
-        mapContext: PlayerMapContext,
+        db: InvItemDB,
+        db2: EntityDBInternal,
         uuid: UUID,
         session: Session
     ) {
-        val eid = mapContext.findPlayerByUUID(uuid)!!
+        val eid = db2.findEntityByPlayerUUID(uuid)!!
 
         listOf(
-            PLAYER_INVENTORY_CONTAINER_ID to INVENTORY_NAME,
+            PLAYER_INVENTORY_CONTAINER_ID to BASE_INVENTORY_NAME,
             PLAYER_OFFHAND_CONTAINER_ID to OFFHAND_INVENTORY_NAME,
             PLAYER_ARMOR_CONTAINER_ID to ARMOR_INVENTORY_NAME
         ).forEach { (cid, name) ->
-            val serial = itemSerializer.serializeInventory(db.invitems, InvRef(eid, name))
+            val serial = itemSerializer.serializeInventory(db, InvRef(eid, name))
             session.connection.sendPacket(
                 InventoryContentPacket().apply {
                     containerId = cid
@@ -179,7 +180,7 @@ class GameWorldExchange(
         }
     }
 
-    fun handleWorldUpdate(db: GameDB, changedChunks: Set<ChunkPosition>) {
+    fun handleWorldUpdate(db: WorldDB, changedChunks: Set<ChunkPosition>) {
         sessions.map { (uuid, session) ->
             val aoiChunks = computeAoiChunks(session)
 
@@ -193,10 +194,7 @@ class GameWorldExchange(
                 toSendChunks.forEach { chunk ->
                     session.sentChunks.add(chunk)
                     val connection = session.connection
-                    if (!db.isLoaded(chunk)) {
-                        db.loadChunk(chunk) // TODO: comm shouldn't in charge of loading chunks!
-                    }
-                    val serial = db.world.serialize(chunk)
+                    val serial = db.serialize(chunk)
                     val packet = GameChunkSerializer.serializeChunk(chunk, serial)
                     connection.sendPacket(packet)
                 }
@@ -210,7 +208,7 @@ class GameWorldExchange(
         val aoiChunks = mutableSetOf<ChunkPosition>()
         for (x in -chunkDelta..chunkDelta) {
             for (z in -chunkDelta..chunkDelta) {
-                val chunk = ChunkPosition(position.chunkX + x, position.chunkZ + z, position.dim)
+                val chunk = ChunkPosition(position.chunkX + x, position.chunkZ + z)
                 aoiChunks.add(chunk)
             }
         }

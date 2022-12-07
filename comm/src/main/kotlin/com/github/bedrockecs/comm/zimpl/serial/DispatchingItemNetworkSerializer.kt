@@ -2,9 +2,9 @@ package com.github.bedrockecs.comm.zimpl.serial
 
 import com.github.bedrockecs.comm.serial.ItemNetworkSerializer
 import com.github.bedrockecs.comm.zimpl.log
-import com.github.bedrockecs.server.game.db.common.ComponentMap
-import com.github.bedrockecs.server.game.db.invitem.InvSlotRef
-import com.github.bedrockecs.server.game.db.invitem.data.ItemComponent
+import com.github.bedrockecs.game.db.common.ComponentMap
+import com.github.bedrockecs.game.db.invitem.InvSlotRef
+import com.github.bedrockecs.game.db.invitem.data.ItemComponent
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData
 import org.springframework.stereotype.Component
 
