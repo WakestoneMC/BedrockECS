@@ -8,9 +8,6 @@ import com.github.bedrockecs.game.eventbus.Event
 /**
  * represents changes related to an item component
  *
- * ## Related: Loading/Unloading
- * we are not in charge of load/unloading, see [InventoryLoadingEvent] for that
- *
  * ## Event: Dispatch Token
  * [String], being the value of [ItemComponent.type] of respective component type
  *
