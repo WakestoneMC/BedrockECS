@@ -1,6 +1,6 @@
 package com.github.bedrockecs.server
 
-import com.github.bedrockecs.server.comm.zimpl.CommCoreConfiguration
+import com.github.bedrockecs.comm.zimpl.CommCoreConfiguration
 import com.github.bedrockecs.filesystem.ServerFileSystem
 import com.github.bedrockecs.filesystem.zimpl.ServerFileSystemImpl
 import com.github.bedrockecs.filesystem.zimpl.initializeFileSystem
@@ -33,7 +33,7 @@ class BedrockECS {
         val DEFAULT_INTRINSIC_CONFIGS: List<Class<*>> = listOf(
             ChassisConfiguration::class.java,
             ThreadingCoreConfiguration::class.java,
-            CommCoreConfiguration::class.java,
+            com.github.bedrockecs.comm.zimpl.CommCoreConfiguration::class.java,
             GameCoreConfiguration::class.java,
             StoreGenCoreConfiguration::class.java,
             VanillaCoreConfiguration::class.java

@@ -1,8 +1,8 @@
 package com.github.bedrockecs.vanilla.game.command.system
 
-import com.github.bedrockecs.server.comm.game.ActionUpdateMailbox
-import com.github.bedrockecs.server.comm.game.action.CommandAction
-import com.github.bedrockecs.server.comm.game.update.ChatUpdate
+import com.github.bedrockecs.comm.game.ActionUpdateMailbox
+import com.github.bedrockecs.comm.game.action.CommandAction
+import com.github.bedrockecs.comm.game.update.ChatUpdate
 import com.github.bedrockecs.server.game.system.CommonTickOrders
 import com.github.bedrockecs.server.game.system.System
 import com.nukkitx.protocol.bedrock.packet.TextPacket

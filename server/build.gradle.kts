@@ -52,6 +52,7 @@ dependencies {
     api(project(":plugin"))
     api(project(":filesystem"))
     api(project(":threading"))
+    implementation("com.github.bedrockecs:common")
 
     // datacompiler linting infrastructure
     ktlint("com.pinterest:ktlint:0.47.0") {

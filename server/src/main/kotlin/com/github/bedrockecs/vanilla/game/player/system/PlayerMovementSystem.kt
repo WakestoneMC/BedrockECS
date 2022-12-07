@@ -1,7 +1,7 @@
 package com.github.bedrockecs.vanilla.game.player.system
 
-import com.github.bedrockecs.server.comm.game.ActionUpdateMailbox
-import com.github.bedrockecs.server.comm.game.action.PlayerMoveAction
+import com.github.bedrockecs.comm.game.ActionUpdateMailbox
+import com.github.bedrockecs.comm.game.action.PlayerMoveAction
 import com.github.bedrockecs.server.game.db.GameDB
 import com.github.bedrockecs.server.game.db.entity.data.EntityPositionComponent
 import com.github.bedrockecs.server.game.system.System

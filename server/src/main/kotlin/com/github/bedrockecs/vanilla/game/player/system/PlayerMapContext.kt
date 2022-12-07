@@ -1,6 +1,6 @@
 package com.github.bedrockecs.vanilla.game.player.system
 
-import com.github.bedrockecs.server.comm.server.ConnectionIdentifiers
+import com.github.bedrockecs.comm.server.ConnectionIdentifiers
 import com.github.bedrockecs.server.game.db.entity.EntityID
 import org.springframework.stereotype.Component
 import java.util.UUID

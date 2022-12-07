@@ -1,8 +1,8 @@
 package com.github.bedrockecs.vanilla.game.player.system
 
-import com.github.bedrockecs.server.comm.game.ActionUpdateMailbox
-import com.github.bedrockecs.server.comm.game.action.PlayerConnectedAction
-import com.github.bedrockecs.server.comm.game.action.PlayerDisconnectedAction
+import com.github.bedrockecs.comm.game.ActionUpdateMailbox
+import com.github.bedrockecs.comm.game.action.PlayerConnectedAction
+import com.github.bedrockecs.comm.game.action.PlayerDisconnectedAction
 import com.github.bedrockecs.server.game.chunkloading.entity.EntityChunkLoadingComponent
 import com.github.bedrockecs.server.game.data.FloatBlockPosition
 import com.github.bedrockecs.server.game.db.GameDB

@@ -1,6 +1,6 @@
 package com.github.bedrockecs.vanilla.comm
 
-import com.github.bedrockecs.server.comm.serial.ItemNetworkSerializer
+import com.github.bedrockecs.comm.serial.ItemNetworkSerializer
 import com.github.bedrockecs.server.game.db.common.ComponentMap
 import com.github.bedrockecs.server.game.db.invitem.data.BlockItemType
 import com.github.bedrockecs.server.game.db.invitem.data.ItemComponent
