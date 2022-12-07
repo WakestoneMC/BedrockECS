@@ -48,6 +48,9 @@ dependencies {
     testApi("org.springframework.boot:spring-boot-starter-test")
     testApi("org.mockito.kotlin:mockito-kotlin:4.0.0")
 
+    // subproject deps
+    api(project(":plugin"))
+
     // datacompiler linting infrastructure
     ktlint("com.pinterest:ktlint:0.47.0") {
         attributes {
