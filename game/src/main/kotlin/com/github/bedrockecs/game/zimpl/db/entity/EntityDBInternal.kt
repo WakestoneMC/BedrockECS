@@ -3,6 +3,7 @@ package com.github.bedrockecs.game.zimpl.db.entity
 import com.github.bedrockecs.game.data.ChunkPosition
 import com.github.bedrockecs.game.db.entity.EntityDB
 import com.github.bedrockecs.game.db.entity.EntityID
+import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -48,6 +49,20 @@ interface EntityDBInternal : EntityDB {
      * execute per-tick cleanup tasks, such as evicting not loaded entities
      */
     fun tick()
+
+    // endregion
+
+    // region player query
+
+    /**
+     * try to find a player's entity id using its name
+     */
+    fun findEntityByPlayerName(name: String): EntityID?
+
+    /**
+     * try to find a player's entity id using its uuid
+     */
+    fun findEntityByPlayerUUID(uuid: UUID): EntityID?
 
     // endregion
 }
