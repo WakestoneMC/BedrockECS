@@ -1,9 +1,9 @@
 package com.github.bedrockecs.server
 
 import com.github.bedrockecs.server.comm.zimpl.CommCoreConfiguration
-import com.github.bedrockecs.server.filesystem.ServerFileSystem
-import com.github.bedrockecs.server.filesystem.zimpl.ServerFileSystemImpl
-import com.github.bedrockecs.server.filesystem.zimpl.initializeFileSystem
+import com.github.bedrockecs.filesystem.ServerFileSystem
+import com.github.bedrockecs.filesystem.zimpl.ServerFileSystemImpl
+import com.github.bedrockecs.filesystem.zimpl.initializeFileSystem
 import com.github.bedrockecs.server.game.zimpl.GameCoreConfiguration
 import com.github.bedrockecs.plugin.zimpl.loadPlugins
 import com.github.bedrockecs.plugin.zimpl.parseCLIArgs

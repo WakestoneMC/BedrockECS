@@ -1,4 +1,4 @@
-package com.github.bedrockecs.server.filesystem.zimpl
+package com.github.bedrockecs.filesystem.zimpl
 
 import kotlin.io.path.createDirectory
 import kotlin.io.path.notExists

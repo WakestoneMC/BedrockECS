@@ -1,4 +1,4 @@
-package com.github.bedrockecs.server.filesystem
+package com.github.bedrockecs.filesystem
 
 import java.nio.file.Path
 

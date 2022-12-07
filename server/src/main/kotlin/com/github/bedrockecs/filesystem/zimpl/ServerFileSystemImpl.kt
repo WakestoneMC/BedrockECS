@@ -1,6 +1,6 @@
-package com.github.bedrockecs.server.filesystem.zimpl
+package com.github.bedrockecs.filesystem.zimpl
 
-import com.github.bedrockecs.server.filesystem.ServerFileSystem
+import com.github.bedrockecs.filesystem.ServerFileSystem
 import java.nio.file.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.notExists
