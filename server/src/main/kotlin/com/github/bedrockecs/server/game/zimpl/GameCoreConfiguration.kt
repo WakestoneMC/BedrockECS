@@ -1,7 +1,7 @@
 package com.github.bedrockecs.server.game.zimpl
 
 import com.github.bedrockecs.server.GlobalExceptionHook
-import com.github.bedrockecs.server.threading.Logic
+import com.github.bedrockecs.threading.Logic
 import kotlinx.coroutines.asCoroutineDispatcher
 import org.springframework.boot.context.event.ApplicationStartedEvent
 import org.springframework.context.ApplicationContext

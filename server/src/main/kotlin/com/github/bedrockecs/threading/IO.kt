@@ -1,4 +1,4 @@
-package com.github.bedrockecs.server.threading
+package com.github.bedrockecs.threading
 
 import org.springframework.beans.factory.annotation.Qualifier
 

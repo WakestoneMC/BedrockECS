@@ -9,7 +9,7 @@ import com.github.bedrockecs.plugin.zimpl.loadPlugins
 import com.github.bedrockecs.plugin.zimpl.parseCLIArgs
 import com.github.bedrockecs.plugin.zimpl.scanFolder
 import com.github.bedrockecs.server.storegen.zimpl.StoreGenCoreConfiguration
-import com.github.bedrockecs.server.threading.zimpl.ThreadingCoreConfiguration
+import com.github.bedrockecs.threading.zimpl.ThreadingCoreConfiguration
 import com.github.bedrockecs.server.zimpl.ChassisConfiguration
 import com.github.bedrockecs.vanilla.VanillaCoreConfiguration
 import org.springframework.boot.DefaultApplicationArguments

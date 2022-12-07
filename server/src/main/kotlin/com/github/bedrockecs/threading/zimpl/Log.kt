@@ -1,4 +1,4 @@
-package com.github.bedrockecs.server.threading.zimpl
+package com.github.bedrockecs.threading.zimpl
 
 import org.slf4j.LoggerFactory
 

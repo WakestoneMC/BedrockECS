@@ -1,9 +1,9 @@
-package com.github.bedrockecs.server.threading.zimpl
+package com.github.bedrockecs.threading.zimpl
 
-import com.github.bedrockecs.server.threading.BossEventLoopGroup
-import com.github.bedrockecs.server.threading.IO
-import com.github.bedrockecs.server.threading.Logic
-import com.github.bedrockecs.server.threading.WorkerEventLoopGroup
+import com.github.bedrockecs.threading.BossEventLoopGroup
+import com.github.bedrockecs.threading.IO
+import com.github.bedrockecs.threading.Logic
+import com.github.bedrockecs.threading.WorkerEventLoopGroup
 import io.netty.channel.EventLoopGroup
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
