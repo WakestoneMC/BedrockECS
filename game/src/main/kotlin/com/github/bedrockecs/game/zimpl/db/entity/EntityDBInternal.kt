@@ -1,5 +1,6 @@
 package com.github.bedrockecs.game.zimpl.db.entity
 
+import com.github.bedrockecs.game.data.ChunkPosition
 import com.github.bedrockecs.game.db.entity.EntityDB
 import com.github.bedrockecs.game.db.entity.EntityID
 import java.util.concurrent.CompletableFuture
@@ -29,6 +30,15 @@ interface EntityDBInternal : EntityDB {
      * try to unload a chunk to storage
      */
     fun unloadEntity(eid: EntityID): CompletableFuture<Void>
+
+    // endregion
+
+    // region queries
+
+    /**
+     * returns a set of entity IDs that belongs to the chunk, meaning they should be loaded together
+     */
+    fun listEntitiesInChunk(pos: ChunkPosition): CompletableFuture<Set<EntityID>>
 
     // endregion
 

@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
+import com.github.bedrockecs.game.data.ChunkPosition
 import com.github.bedrockecs.game.db.common.LifecycleType
 import com.github.bedrockecs.game.db.common.LoadType
 import com.github.bedrockecs.game.db.common.MutateType
@@ -11,15 +12,18 @@ import com.github.bedrockecs.game.db.entity.EntityDBStorage
 import com.github.bedrockecs.game.db.entity.EntityID
 import com.github.bedrockecs.game.db.entity.EntityScanConfig
 import com.github.bedrockecs.game.db.entity.data.EntityComponent
+import com.github.bedrockecs.game.db.entity.data.EntityPositionComponent
 import com.github.bedrockecs.game.db.entity.data.EntityTypeComponent
 import com.github.bedrockecs.game.db.entity.event.EntityCreatingEvent
 import com.github.bedrockecs.game.db.entity.event.EntityLifecycleEvent
 import com.github.bedrockecs.game.db.entity.event.EntityLoadingEvent
 import com.github.bedrockecs.game.db.entity.event.EntityMutationEvent
+import com.github.bedrockecs.game.db.entity.scan
 import com.github.bedrockecs.game.db.entity.serial.SerialEntity
 import com.github.bedrockecs.game.eventbus.EventBus
 import com.github.bedrockecs.game.eventbus.publishFor
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -272,6 +276,21 @@ class EntityDBImpl(
             storage.writeEntity(serial)
         }
         return CompletableFuture.completedFuture(null)
+    }
+
+    override fun listEntitiesInChunk(pos: ChunkPosition): CompletableFuture<Set<EntityID>> {
+        val storage = storage.listEntitiesInChunk(pos).join()
+        val live = entityCollectionLock.read {
+            val poses = ConcurrentHashMap<EntityID, EntityID>()
+            scan<EntityPositionComponent> { eid, posc ->
+                if (posc.pos.toChunk() == pos) {
+                    poses[eid] = eid
+                }
+            }
+            poses.values
+        }
+        val ret = storage + live
+        return CompletableFuture.completedFuture(ret)
     }
 
     override fun tick() {
