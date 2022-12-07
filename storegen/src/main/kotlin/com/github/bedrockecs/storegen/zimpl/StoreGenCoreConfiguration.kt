@@ -1,4 +1,4 @@
-package com.github.bedrockecs.server.storegen.zimpl
+package com.github.bedrockecs.storegen.zimpl
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class StoreGenCoreConfiguration {
     @Bean
-    fun storeGenGameConfiguration(): StoreGenGameConfiguration {
-        return StoreGenGameConfiguration()
+    fun storeGenDimensionConfiguration(): MockStoreGenDimensionConfiguration {
+        return MockStoreGenDimensionConfiguration()
     }
 }
