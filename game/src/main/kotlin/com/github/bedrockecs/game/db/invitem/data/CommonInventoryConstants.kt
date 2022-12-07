@@ -6,7 +6,7 @@ package com.github.bedrockecs.game.db.invitem.data
 object CommonInventoryConstants {
     val BASE_INVENTORY_NAME = "inventory"
 
-    val INVENTORY_SIZE = 4 * 9
+    val BASE_INVENTORY_SIZE = 4 * 9
 
     val OFFHAND_INVENTORY_NAME = "offhand"
 

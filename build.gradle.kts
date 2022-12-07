@@ -42,12 +42,6 @@ allprojects {
                 snapshotsOnly()
             }
         }
-        // for ktlint
-        maven(url = "https://s01.oss.sonatype.org/content/repositories/releases") {
-            mavenContent {
-                releasesOnly()
-            }
-        }
     }
     dependencies {
         // kotlin functionalities
