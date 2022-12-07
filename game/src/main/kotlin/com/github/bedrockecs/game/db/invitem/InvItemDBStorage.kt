@@ -2,12 +2,22 @@ package com.github.bedrockecs.game.db.invitem
 
 import com.github.bedrockecs.game.db.entity.EntityID
 import com.github.bedrockecs.game.db.invitem.serial.SerialInventory
+import com.github.bedrockecs.game.zimpl.db.invitem.InMemoryInvItemDBStorage
 import java.util.concurrent.CompletableFuture
 
 /**
- * backend storage for [InvitemDB]
+ * backend storage for [InvItemDB]
  */
 interface InvItemDBStorage {
+    companion object {
+        /**
+         * mock storage that keeps everything in memory
+         */
+        fun inMemory(): InvItemDBStorage {
+            return InMemoryInvItemDBStorage()
+        }
+    }
+
     /**
      * list inventories owned by entity
      */
@@ -16,10 +26,15 @@ interface InvItemDBStorage {
     /**
      * read an inventory from storage
      */
-    fun readInventory(ref: InvRef): CompletableFuture<SerialInventory>
+    fun readInventory(ref: InvRef): CompletableFuture<SerialInventory?>
 
     /**
      * write an inventory to storage
      */
-    fun writeEntity(ref: InvRef, serial: SerialInventory): CompletableFuture<Void>
+    fun writeInventory(ref: InvRef, serial: SerialInventory): CompletableFuture<Void>
+
+    /**
+     * removes an inventory from storage
+     */
+    fun removeInventory(ref: InvRef): CompletableFuture<Void>
 }

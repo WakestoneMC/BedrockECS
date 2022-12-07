@@ -8,7 +8,7 @@ import com.github.bedrockecs.game.db.invitem.data.ItemTypeComponent
 /**
  * database for all entity inventory & item data
  */
-interface InvitemDB {
+interface InvItemDB {
     // region inventory CRUD
 
     /**

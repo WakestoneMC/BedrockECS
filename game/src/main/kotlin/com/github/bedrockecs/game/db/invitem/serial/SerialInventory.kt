@@ -9,8 +9,5 @@ import com.github.bedrockecs.game.db.invitem.data.ItemComponent
  */
 data class SerialInventory(
     val metadata: InventoryMetadata,
-    /**
-     * non-default components
-     */
-    val overrides: Map<Int, ComponentMap<ItemComponent?>>
+    val slots: Map<Int, ComponentMap<ItemComponent?>>
 )
