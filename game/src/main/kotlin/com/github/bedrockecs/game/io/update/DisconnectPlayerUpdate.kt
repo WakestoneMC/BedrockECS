@@ -1,4 +1,4 @@
-package com.github.bedrockecs.comm.game.update
+package com.github.bedrockecs.game.io.update
 
 import java.util.UUID
 

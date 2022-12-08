@@ -1,12 +1,12 @@
-package com.github.bedrockecs.comm.game.action
+package com.github.bedrockecs.game.io.action
 
 import com.nukkitx.math.vector.Vector3i
 import java.util.UUID
 
 /**
- * invoked when player is using an item (right clicking)
+ * emitted whenever player is breaking a block
  */
-data class PlayerUseItemAction(
+data class PlayerBreakBlockAction(
     val player: UUID,
     val block: Vector3i, // x, y, z of the block
     val face: BlockFace

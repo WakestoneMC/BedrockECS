@@ -1,10 +1,10 @@
 package com.github.bedrockecs.vanilla.game.pinteract.system
 
-import com.github.bedrockecs.comm.game.ActionUpdateMailbox
-import com.github.bedrockecs.comm.game.action.BlockFace
-import com.github.bedrockecs.comm.game.action.PlayerBreakBlockAction
-import com.github.bedrockecs.comm.game.action.PlayerHotBarSelectSlotAction
-import com.github.bedrockecs.comm.game.action.PlayerUseItemAction
+import com.github.bedrockecs.game.io.ActionUpdateMailbox
+import com.github.bedrockecs.game.io.action.BlockFace
+import com.github.bedrockecs.game.io.action.PlayerBreakBlockAction
+import com.github.bedrockecs.game.io.action.PlayerHotBarSelectSlotAction
+import com.github.bedrockecs.game.io.action.PlayerUseItemAction
 import com.github.bedrockecs.game.data.BlockPosition
 import com.github.bedrockecs.game.db.invitem.InvItemDB
 import com.github.bedrockecs.game.db.invitem.InvSlotRef

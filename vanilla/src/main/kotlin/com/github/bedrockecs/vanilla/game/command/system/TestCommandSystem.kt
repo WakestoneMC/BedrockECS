@@ -1,11 +1,10 @@
 package com.github.bedrockecs.vanilla.game.command.system
 
-import com.github.bedrockecs.comm.game.ActionUpdateMailbox
-import com.github.bedrockecs.comm.game.action.CommandAction
-import com.github.bedrockecs.comm.game.update.ChatUpdate
+import com.github.bedrockecs.game.io.ActionUpdateMailbox
+import com.github.bedrockecs.game.io.action.CommandAction
+import com.github.bedrockecs.game.io.update.ChatUpdate
 import com.github.bedrockecs.game.system.CommonTickOrders
 import com.github.bedrockecs.game.system.ECSSystem
-import com.nukkitx.protocol.bedrock.packet.TextPacket
 import org.springframework.stereotype.Component
 
 @Component
@@ -24,13 +23,8 @@ class TestCommandSystem(
                     mailbox.addUpdate(
                         ChatUpdate(
                             ChatUpdate.Receiver.Players(setOf(sender)),
-                            TextPacket().apply {
-                                sourceName = "server"
-                                type = TextPacket.Type.ANNOUNCEMENT
-                                message = "hello world!"
-                                xuid = ""
-                                platformChatId = ""
-                            }
+                            sender = "server",
+                            text = "hello world!"
                         )
                     )
                 }

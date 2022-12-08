@@ -1,8 +1,8 @@
 package com.github.bedrockecs.comm.zimpl.exchange
 
-import com.github.bedrockecs.comm.game.action.CommandAction
-import com.github.bedrockecs.comm.game.update.ChatUpdate
-import com.github.bedrockecs.comm.game.update.Update
+import com.github.bedrockecs.game.io.action.CommandAction
+import com.github.bedrockecs.game.io.update.ChatUpdate
+import com.github.bedrockecs.game.io.update.Update
 import com.github.bedrockecs.comm.server.ConnectionClosedException
 import com.github.bedrockecs.comm.server.NetworkConnection
 import com.nukkitx.protocol.bedrock.BedrockPacket
@@ -57,7 +57,15 @@ class CommandChatExchange(
                     ChatUpdate.Receiver.Broadcast -> {
                         conns.listConnections().map { conn ->
                             try {
-                                conn.sendPacket(update.packet)
+                                conn.sendPacket(
+                                    TextPacket().apply {
+                                        sourceName = update.sender
+                                        type = TextPacket.Type.CHAT
+                                        message = update.text
+                                        xuid = ""
+                                        platformChatId = ""
+                                    }
+                                )
                             } catch (ex: ConnectionClosedException) {
                                 // no-op
                             }
@@ -65,9 +73,17 @@ class CommandChatExchange(
                     }
 
                     is ChatUpdate.Receiver.Players -> {
-                        update.receiver.players.forEach { player ->
+                        (update.receiver as ChatUpdate.Receiver.Players).players.forEach { player ->
                             try {
-                                conns.connectionForUUID(player)?.sendPacket(update.packet)
+                                conns.connectionForUUID(player)?.sendPacket(
+                                    TextPacket().apply {
+                                        sourceName = update.sender
+                                        type = TextPacket.Type.CHAT
+                                        message = update.text
+                                        xuid = ""
+                                        platformChatId = ""
+                                    }
+                                )
                             } catch (ex: ConnectionClosedException) {
                                 // no-op
                             }

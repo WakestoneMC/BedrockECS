@@ -1,8 +1,8 @@
 package com.github.bedrockecs.comm.zimpl.game
 
-import com.github.bedrockecs.comm.game.ActionUpdateMailbox
-import com.github.bedrockecs.comm.game.action.Action
-import com.github.bedrockecs.comm.game.update.Update
+import com.github.bedrockecs.game.io.ActionUpdateMailbox
+import com.github.bedrockecs.game.io.action.Action
+import com.github.bedrockecs.game.io.update.Update
 import org.springframework.stereotype.Component
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock

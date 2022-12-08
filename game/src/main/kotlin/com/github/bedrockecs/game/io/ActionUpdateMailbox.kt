@@ -1,7 +1,7 @@
-package com.github.bedrockecs.comm.game
+package com.github.bedrockecs.game.io
 
-import com.github.bedrockecs.comm.game.action.Action
-import com.github.bedrockecs.comm.game.update.Update
+import com.github.bedrockecs.game.io.action.Action
+import com.github.bedrockecs.game.io.update.Update
 import com.github.bedrockecs.game.system.ECSSystem
 
 /**
