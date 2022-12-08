@@ -37,13 +37,13 @@ class NetworkPlayerConnectionSystem(
     private val players = mutableMapOf<UUID, EntityID>()
 
     init {
-        eventBus.listensFor<EntityLoadingEvent>("player-presence", CommonEntityTypes.PLAYER) {
+        eventBus.listensFor<EntityLoadingEvent>("player-presence", CommonEntityTypes.PLAYER.entityType) {
             if (it.type == LoadType.UNLOAD) {
                 val uuid = db.read(it.eid, PlayerIdentifiersComponent::class.java)!!.uuid
                 players.remove(uuid)
             }
         }
-        eventBus.listensFor<EntityLifecycleEvent>("player-presence", CommonEntityTypes.PLAYER) {
+        eventBus.listensFor<EntityLifecycleEvent>("player-presence", CommonEntityTypes.PLAYER.entityType) {
             if (it.type == LifecycleType.DESTROY) {
                 val uuid = db.read(it.pos, PlayerIdentifiersComponent::class.java)!!.uuid
                 players.remove(uuid)
