@@ -11,7 +11,9 @@ import org.springframework.context.annotation.Bean
 class MockStoreGenDimensionConfiguration {
     @Bean
     fun worldDBStorage(testSerial: WorldDBSerial): WorldDBStorage {
-        return WorldDBStorage.inMemoryEmpty(-64 to 320, testSerial)
+        val heightRange = -64 to 320
+        val generator = DirtPlatformChunkGenerator(heightRange)
+        return WorldDBStorage.inMemory(heightRange, generator::generateChunk)
     }
 
     @Bean
