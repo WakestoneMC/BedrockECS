@@ -1,21 +1,17 @@
 package com.github.bedrockecs.game.zimpl.db.world
 
-import com.github.bedrockecs.common.palette.PalettedStorage
 import com.github.bedrockecs.game.data.BlockConstants.SUBCHUNK_SIZE
 import com.github.bedrockecs.game.data.ChunkPosition
-import com.github.bedrockecs.game.db.world.WorldDBSerial
 import com.github.bedrockecs.game.db.world.WorldDBStorage
 import com.github.bedrockecs.game.db.world.serial.SerialChunk
-import com.github.bedrockecs.game.db.world.serial.SerialSubChunk
-import com.github.bedrockecs.game.db.world.serial.SerialSubChunkLayer
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.math.ceil
 
-class InMemoryEmptyWorldDBStorage(
+class InMemoryWorldDBStorage(
     heightRange: Pair<Int, Int>,
-    private val serial: WorldDBSerial
+    private val generator: (ChunkPosition) -> SerialChunk
 ) : WorldDBStorage {
 
     private val lowestY = heightRange.first
@@ -28,7 +24,7 @@ class InMemoryEmptyWorldDBStorage(
 
     override fun readChunk(pos: ChunkPosition): CompletableFuture<SerialChunk> {
         val ret = lock.withLock {
-            chunkMap.getOrPut(pos) { generateEmptyChunk() }
+            chunkMap.getOrPut(pos) { generator(pos) }
         }
         return CompletableFuture.completedFuture(ret)
     }
@@ -44,15 +40,5 @@ class InMemoryEmptyWorldDBStorage(
             chunkMap[pos] = chunk
         }
         return CompletableFuture.completedFuture(null)
-    }
-    
-    private fun generateEmptyChunk(): SerialChunk {
-        val airID = serial.idFor(serial.airBlockType).toInt()
-        
-        val subChunkLayer = SerialSubChunkLayer(storage = PalettedStorage.createWithDefaultState(airID))
-        val subChunks = (0 until subChunkCount)
-            .map { SerialSubChunk(layers = listOf(subChunkLayer)) }
-        
-        return SerialChunk(subChunks = subChunks, initialY = lowestY)
     }
 }
