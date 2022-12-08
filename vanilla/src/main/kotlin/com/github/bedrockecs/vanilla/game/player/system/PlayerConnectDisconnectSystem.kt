@@ -1,8 +1,8 @@
 package com.github.bedrockecs.vanilla.game.player.system
 
-import com.github.bedrockecs.comm.game.ActionUpdateMailbox
-import com.github.bedrockecs.comm.game.action.PlayerConnectedAction
-import com.github.bedrockecs.comm.game.action.PlayerDisconnectedAction
+import com.github.bedrockecs.game.io.ActionUpdateMailbox
+import com.github.bedrockecs.game.io.action.PlayerConnectedAction
+import com.github.bedrockecs.game.io.action.PlayerDisconnectedAction
 import com.github.bedrockecs.game.chunkloading.entity.EntityChunkLoadingComponent
 import com.github.bedrockecs.game.data.FloatBlockPosition
 import com.github.bedrockecs.game.db.entity.data.CommonEntityTypes
@@ -58,8 +58,8 @@ class PlayerConnectDisconnectSystem(
             CommonEntityTypes.PLAYER,
             mutableSetOf(
                 PlayerIdentifiersComponent(
-                    name = it.identifiers.displayName!!,
-                    uuid = it.identifiers.playerUUID!!
+                    name = it.displayName,
+                    uuid = it.playerUUID
                 ),
                 EntityPositionComponent(UNIVERSAL_SPAWN, UNIVERSAL_ROT), // TODO: get proper spawn logic
                 EntityChunkLoadingComponent(radius = 4), // TODO: move this to chunk loading?
@@ -87,7 +87,7 @@ class PlayerConnectDisconnectSystem(
     }
 
     private fun handleDisconnectedAction(it: PlayerDisconnectedAction) {
-        val eid = edb.findEntityByPlayerUUID(it.identifiers.playerUUID!!)
+        val eid = edb.findEntityByPlayerUUID(it.playerUUID)
         if (eid != null) {
             idb.destroy(InvRef(eid, OFFHAND_INVENTORY_NAME))
             idb.destroy(InvRef(eid, ARMOR_INVENTORY_NAME))

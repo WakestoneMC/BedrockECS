@@ -1,13 +1,13 @@
 package com.github.bedrockecs.comm.zimpl.exchange
 
-import com.github.bedrockecs.comm.game.action.Action
-import com.github.bedrockecs.comm.game.action.BlockFace
-import com.github.bedrockecs.comm.game.action.PlayerBreakBlockAction
-import com.github.bedrockecs.comm.game.action.PlayerHotBarSelectSlotAction
-import com.github.bedrockecs.comm.game.action.PlayerMoveAction
-import com.github.bedrockecs.comm.game.action.PlayerUseItemAction
-import com.github.bedrockecs.comm.game.update.DisconnectPlayerUpdate
-import com.github.bedrockecs.comm.game.update.Update
+import com.github.bedrockecs.game.io.action.Action
+import com.github.bedrockecs.game.io.action.BlockFace
+import com.github.bedrockecs.game.io.action.PlayerBreakBlockAction
+import com.github.bedrockecs.game.io.action.PlayerHotBarSelectSlotAction
+import com.github.bedrockecs.game.io.action.PlayerMoveAction
+import com.github.bedrockecs.game.io.action.PlayerUseItemAction
+import com.github.bedrockecs.game.io.update.DisconnectPlayerUpdate
+import com.github.bedrockecs.game.io.update.Update
 import com.github.bedrockecs.comm.server.NetworkConnection
 import com.github.bedrockecs.comm.zimpl.log
 import com.nukkitx.protocol.bedrock.BedrockPacket

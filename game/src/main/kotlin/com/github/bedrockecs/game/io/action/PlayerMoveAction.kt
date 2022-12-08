@@ -1,4 +1,4 @@
-package com.github.bedrockecs.comm.game.action
+package com.github.bedrockecs.game.io.action
 
 import com.nukkitx.math.vector.Vector3f
 import java.util.UUID

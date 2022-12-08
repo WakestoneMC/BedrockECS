@@ -1,4 +1,4 @@
-package com.github.bedrockecs.comm.game.action
+package com.github.bedrockecs.game.io.action
 
 enum class BlockFace {
     BOTTOM, // 0

@@ -1,4 +1,4 @@
-package com.github.bedrockecs.comm.game.action
+package com.github.bedrockecs.game.io.action
 
 /**
  * represents a high-level action from client

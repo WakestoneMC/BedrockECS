@@ -1,7 +1,7 @@
 package com.github.bedrockecs.comm.zimpl.exchange
 
-import com.github.bedrockecs.comm.game.action.PlayerConnectedAction
-import com.github.bedrockecs.comm.game.action.PlayerDisconnectedAction
+import com.github.bedrockecs.game.io.action.PlayerConnectedAction
+import com.github.bedrockecs.game.io.action.PlayerDisconnectedAction
 import com.github.bedrockecs.comm.server.NetworkConnection
 import com.github.bedrockecs.game.db.entity.EntityID
 import com.github.bedrockecs.game.db.entity.data.EntityPositionComponent
@@ -37,7 +37,12 @@ class PlayerConnectionExchange(
         val spawned: StartGamePacketData
         try {
             waitingForPlayerEntity[uuid] = job
-            mailbox.addAction(PlayerConnectedAction(connection.identifiers))
+            mailbox.addAction(
+                PlayerConnectedAction(
+                    playerUUID = connection.identifiers.playerUUID!!,
+                    displayName = connection.identifiers.displayName!!
+                )
+            )
             spawned = job.await()
         } finally {
             waitingForPlayerEntity.remove(uuid)
@@ -48,7 +53,7 @@ class PlayerConnectionExchange(
             func(spawned)
         } finally {
             connections.remove(uuid)
-            mailbox.addAction(PlayerDisconnectedAction(connection.identifiers))
+            mailbox.addAction(PlayerDisconnectedAction(connection.identifiers.playerUUID!!))
         }
     }
 

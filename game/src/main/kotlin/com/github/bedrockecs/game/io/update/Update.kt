@@ -1,4 +1,4 @@
-package com.github.bedrockecs.comm.game.update
+package com.github.bedrockecs.game.io.update
 
 /**
  * represents a high-level update to client

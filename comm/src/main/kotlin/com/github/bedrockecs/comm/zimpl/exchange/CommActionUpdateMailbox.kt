@@ -1,7 +1,7 @@
 package com.github.bedrockecs.comm.zimpl.exchange
 
-import com.github.bedrockecs.comm.game.action.Action
-import com.github.bedrockecs.comm.game.update.Update
+import com.github.bedrockecs.game.io.action.Action
+import com.github.bedrockecs.game.io.update.Update
 import org.springframework.stereotype.Component
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantLock
