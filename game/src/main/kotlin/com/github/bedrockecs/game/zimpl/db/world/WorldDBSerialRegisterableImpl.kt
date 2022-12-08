@@ -7,15 +7,15 @@ import java.util.concurrent.ConcurrentHashMap
 
 class WorldDBSerialRegisterableImpl(configurators: List<WorldDBSerialConfigurator>) : WorldDBSerialRegisterable {
 
-    init {
-        configurators.forEach { it.configure(this) }
-    }
-
     private var airBlockType0: BlockTypeComponent? = null
 
     private val idTypeMap = ConcurrentHashMap<Short, BlockTypeComponent>()
 
     private val typeIdMap = ConcurrentHashMap<BlockTypeComponent, Short>()
+
+    init {
+        configurators.forEach { it.configure(this) }
+    }
 
     override fun registerAirBlock(type: BlockTypeComponent) {
         if (airBlockType0 == null) {
