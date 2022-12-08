@@ -6,6 +6,7 @@ import com.github.bedrockecs.comm.zimpl.exchange.CommandChatExchange
 import com.github.bedrockecs.comm.zimpl.exchange.GameWorldExchange
 import com.github.bedrockecs.comm.zimpl.exchange.PlayerConnectionExchange
 import com.github.bedrockecs.comm.zimpl.exchange.ProcessResult
+import com.github.bedrockecs.comm.zimpl.exchange.UIExchange
 import com.github.bedrockecs.game.data.FloatBlockPosition
 import com.github.bedrockecs.game.db.entity.EntityID
 import com.nukkitx.math.vector.Vector2f
@@ -21,12 +22,19 @@ import com.nukkitx.protocol.bedrock.data.GameType
 import com.nukkitx.protocol.bedrock.data.PlayerPermission
 import com.nukkitx.protocol.bedrock.data.SpawnBiomeType
 import com.nukkitx.protocol.bedrock.data.SyncedPlayerMovementSettings
+import com.nukkitx.protocol.bedrock.data.inventory.ItemData
 import com.nukkitx.protocol.bedrock.packet.AvailableEntityIdentifiersPacket
 import com.nukkitx.protocol.bedrock.packet.BiomeDefinitionListPacket
+import com.nukkitx.protocol.bedrock.packet.CreativeContentPacket
 import com.nukkitx.protocol.bedrock.packet.NetworkSettingsPacket
 import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket
 import com.nukkitx.protocol.bedrock.packet.SetCommandsEnabledPacket
 import com.nukkitx.protocol.bedrock.packet.StartGamePacket
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.int
 import org.springframework.stereotype.Component
 
 /**
@@ -37,7 +45,8 @@ class GameHandler(
     private val worldExchange: GameWorldExchange,
     private val connectionExchange: PlayerConnectionExchange,
     private val actionUpdateExchange: ActionUpdateExchange,
-    private val chatExchange: CommandChatExchange
+    private val chatExchange: CommandChatExchange,
+    private val uiExchange: UIExchange
 ) {
     suspend fun handle(conn: NetworkConnection) {
         connectionExchange.handleConnection(conn) { spawnedPlayer ->
@@ -84,6 +93,7 @@ class GameHandler(
             actionUpdateExchange.onConnection(conn)
             worldExchange.onConnection(conn)
             chatExchange.onConnection(conn)
+            uiExchange.onConnection(conn)
             try {
                 // done //
                 conn.sendPacket(PlayStatusPacket().apply { status = PlayStatusPacket.Status.PLAYER_SPAWN })
@@ -102,8 +112,13 @@ class GameHandler(
                     if (ret == ProcessResult.CONSUME) {
                         continue
                     }
+                    ret = uiExchange.onPacket(conn, packet)
+                    if (ret == ProcessResult.CONSUME) {
+                        continue
+                    }
                 }
             } finally {
+                uiExchange.onDisconnected(conn)
                 chatExchange.onDisconnected(conn)
                 worldExchange.onDisconnected(conn)
                 actionUpdateExchange.onDisconnected(conn)
