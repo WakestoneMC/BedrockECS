@@ -4,6 +4,7 @@ import com.github.bedrockecs.game.DimensionServer
 import com.github.bedrockecs.game.chunkloading.zimpl.ChunkLoadingGameConfiguration
 import com.github.bedrockecs.game.ext.DimensionConfiguration
 import com.github.bedrockecs.game.system.ECSSystem
+import com.github.bedrockecs.game.tick.zimpl.TickDimensionConfiguration
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.time.Duration
@@ -22,10 +23,11 @@ class DimensionServerImpl(
     companion object {
         val INTRINSIC_GAME_CONFIGS: List<Class<*>> = listOf(
             EventBusDimensionConfiguration::class.java,
-            WorldDBDimensionServerConfiguration::class.java,
+            WorldDBDimensionConfiguration::class.java,
             EntityDBDimensionConfiguration::class.java,
             InvItemDBDimensionConfiguration::class.java,
-            ChunkLoadingGameConfiguration::class.java
+            ChunkLoadingGameConfiguration::class.java,
+            TickDimensionConfiguration::class.java
         )
     }
 

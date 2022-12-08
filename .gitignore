@@ -40,5 +40,4 @@ out/
 becs
 
 # datacompiler test directory
-
-generated
+/generated

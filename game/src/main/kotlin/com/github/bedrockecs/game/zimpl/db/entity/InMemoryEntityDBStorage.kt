@@ -4,7 +4,7 @@ import com.github.bedrockecs.game.data.ChunkPosition
 import com.github.bedrockecs.game.db.entity.EntityDBStorage
 import com.github.bedrockecs.game.db.entity.EntityID
 import com.github.bedrockecs.game.db.entity.data.EntityPositionComponent
-import com.github.bedrockecs.game.db.entity.data.PlayerIdentityComponent
+import com.github.bedrockecs.game.db.entity.data.PlayerIdentifiersComponent
 import com.github.bedrockecs.game.db.entity.serial.SerialEntity
 import java.lang.IllegalArgumentException
 import java.util.UUID
@@ -63,7 +63,7 @@ class InMemoryEntityDBStorage : EntityDBStorage {
         val ret = entityMap
             .values
             .filter {
-                val component = it.components[PlayerIdentityComponent::class.java] as PlayerIdentityComponent?
+                val component = it.components[PlayerIdentifiersComponent::class.java] as PlayerIdentifiersComponent?
                 component != null && component.name == name
             }
             .map { it.id }
@@ -75,7 +75,7 @@ class InMemoryEntityDBStorage : EntityDBStorage {
         val ret = entityMap
             .values
             .filter {
-                val component = it.components[PlayerIdentityComponent::class.java] as PlayerIdentityComponent?
+                val component = it.components[PlayerIdentifiersComponent::class.java] as PlayerIdentifiersComponent?
                 component != null && component.uuid == uuid
             }
             .map { it.id }

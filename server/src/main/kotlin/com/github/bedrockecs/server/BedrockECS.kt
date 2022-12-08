@@ -1,15 +1,16 @@
 package com.github.bedrockecs.server
 
-import com.github.bedrockecs.server.comm.zimpl.CommCoreConfiguration
-import com.github.bedrockecs.server.filesystem.ServerFileSystem
-import com.github.bedrockecs.server.filesystem.zimpl.ServerFileSystemImpl
-import com.github.bedrockecs.server.filesystem.zimpl.initializeFileSystem
-import com.github.bedrockecs.server.game.zimpl.GameCoreConfiguration
-import com.github.bedrockecs.server.plugin.zimpl.loadPlugins
-import com.github.bedrockecs.server.plugin.zimpl.parseCLIArgs
-import com.github.bedrockecs.server.plugin.zimpl.scanFolder
-import com.github.bedrockecs.server.storegen.zimpl.StoreGenCoreConfiguration
-import com.github.bedrockecs.server.threading.zimpl.ThreadingCoreConfiguration
+import com.github.bedrockecs.comm.zimpl.CommCoreConfiguration
+import com.github.bedrockecs.filesystem.ServerFileSystem
+import com.github.bedrockecs.filesystem.zimpl.ServerFileSystemImpl
+import com.github.bedrockecs.filesystem.zimpl.initializeFileSystem
+import com.github.bedrockecs.game.zimpl.DimensionServerCoreConfiguration
+import com.github.bedrockecs.game.zimpl.WorldDBDepsCoreConfiguration
+import com.github.bedrockecs.plugin.zimpl.loadPlugins
+import com.github.bedrockecs.plugin.zimpl.parseCLIArgs
+import com.github.bedrockecs.plugin.zimpl.scanFolder
+import com.github.bedrockecs.storegen.zimpl.StoreGenCoreConfiguration
+import com.github.bedrockecs.threading.zimpl.ThreadingCoreConfiguration
 import com.github.bedrockecs.server.zimpl.ChassisConfiguration
 import com.github.bedrockecs.vanilla.VanillaCoreConfiguration
 import org.springframework.boot.DefaultApplicationArguments
@@ -33,8 +34,9 @@ class BedrockECS {
         val DEFAULT_INTRINSIC_CONFIGS: List<Class<*>> = listOf(
             ChassisConfiguration::class.java,
             ThreadingCoreConfiguration::class.java,
+            DimensionServerCoreConfiguration::class.java,
+            WorldDBDepsCoreConfiguration::class.java,
             CommCoreConfiguration::class.java,
-            GameCoreConfiguration::class.java,
             StoreGenCoreConfiguration::class.java,
             VanillaCoreConfiguration::class.java
         )

@@ -14,6 +14,7 @@ import com.github.bedrockecs.game.db.entity.EntityScanConfig
 import com.github.bedrockecs.game.db.entity.data.EntityComponent
 import com.github.bedrockecs.game.db.entity.data.EntityPositionComponent
 import com.github.bedrockecs.game.db.entity.data.EntityTypeComponent
+import com.github.bedrockecs.game.db.entity.data.PlayerIdentifiersComponent
 import com.github.bedrockecs.game.db.entity.event.EntityCreatingEvent
 import com.github.bedrockecs.game.db.entity.event.EntityLifecycleEvent
 import com.github.bedrockecs.game.db.entity.event.EntityLoadingEvent
@@ -22,6 +23,7 @@ import com.github.bedrockecs.game.db.entity.scan
 import com.github.bedrockecs.game.db.entity.serial.SerialEntity
 import com.github.bedrockecs.game.eventbus.EventBus
 import com.github.bedrockecs.game.eventbus.publishFor
+import java.util.UUID
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -339,6 +341,40 @@ class EntityDBImpl(
             engine.removeEntity(entity)
 
             return SerialEntity(eid, returnComponents)
+        }
+    }
+
+    override fun findEntityByPlayerName(name: String): EntityID? {
+        val inMemoryVer = entityCollectionLock.read {
+            engine.entities
+                .filter {
+                    val component = it.getComponent(PlayerIdentifiersComponent::class.java)
+                    component != null && component.name == name
+                }
+                .map { idReverseMap[it]!! }
+                .firstOrNull()
+        }
+        return if (inMemoryVer != null) {
+            EntityID(inMemoryVer)
+        } else {
+            storage.findEntityByPlayerName(name).join()
+        }
+    }
+
+    override fun findEntityByPlayerUUID(uuid: UUID): EntityID? {
+        val inMemoryVer = entityCollectionLock.read {
+            engine.entities
+                .filter {
+                    val component = it.getComponent(PlayerIdentifiersComponent::class.java)
+                    component != null && component.uuid == uuid
+                }
+                .map { idReverseMap[it]!! }
+                .firstOrNull()
+        }
+        return if (inMemoryVer != null) {
+            EntityID(inMemoryVer)
+        } else {
+            storage.findEntityByPlayerUUID(uuid).join()
         }
     }
 }

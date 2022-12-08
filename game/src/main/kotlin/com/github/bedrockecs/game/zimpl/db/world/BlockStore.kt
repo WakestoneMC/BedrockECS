@@ -216,7 +216,10 @@ class BlockStore(
     }
 
     fun serialize(pos: ChunkPosition): Pair<Int, List<List<SerialSubChunkLayer>>> {
-        val subchunks = chunkSubChunkMap.get(pos) ?: throw IllegalArgumentException("chunk $pos is not loaded!")
+        if (!chunkSubChunkMap.contains(pos)) {
+            installChunkCallback(pos)
+        }
+        val subchunks = chunkSubChunkMap.get(pos)!!
         val minY = subchunks.minOf { it.chunkY }
         val unloadedEntries = entryMapLock.read {
             val unloaded = mutableListOf<Entry>()

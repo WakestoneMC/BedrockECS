@@ -6,7 +6,7 @@ import com.github.bedrockecs.game.db.entity.data.EntityComponent
 import com.github.bedrockecs.game.db.entity.data.EntityPositionComponent
 import com.github.bedrockecs.game.db.entity.data.EntityTypeComponent
 import com.github.bedrockecs.game.db.entity.data.CommonEntityTypes
-import com.github.bedrockecs.game.db.entity.data.PlayerIdentityComponent
+import com.github.bedrockecs.game.db.entity.data.PlayerIdentifiersComponent
 import com.nukkitx.math.vector.Vector3f
 import java.util.UUID
 
@@ -17,7 +17,7 @@ object TestEntities {
     val TEST_ENTITY_A_DIRECTION = Vector3f.UNIT_X
     val TEST_SERIAL_ENTITY_A_PARTS: ComponentMap<EntityComponent> = mutableMapOf(
         EntityTypeComponent::class.java to CommonEntityTypes.PLAYER,
-        PlayerIdentityComponent::class.java to PlayerIdentityComponent(TEST_ENTITY_A_NAME, TEST_ENTITY_A_UUID),
+        PlayerIdentifiersComponent::class.java to PlayerIdentifiersComponent(TEST_ENTITY_A_NAME, TEST_ENTITY_A_UUID),
         EntityPositionComponent::class.java to EntityPositionComponent(TEST_ENTITY_A_POSITION, TEST_ENTITY_A_DIRECTION),
         TestComponentA::class.java to TestComponentA()
     )
