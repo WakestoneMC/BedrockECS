@@ -68,7 +68,8 @@ class GameHandler(
             // AvailableCommandsPacket TODO: send available commands
             // AdventureSettingsPacket TODO: specify adventure settings
             conn.sendPacket(computeBiomeDefinitionListPacket())
-            conn.sendPacket(computeAvailableEntityIdentifiersPacket()) // CreativeContentPacket TODO: send creative content
+            conn.sendPacket(computeAvailableEntityIdentifiersPacket())
+            conn.sendPacket(computeCreativeContentPacket())
             // CraftingDataPacket TODO: send crafting data content
 
             // game state //
@@ -124,6 +125,30 @@ class GameHandler(
                 actionUpdateExchange.onDisconnected(conn)
             }
         }
+    }
+
+    private fun computeCreativeContentPacket(): CreativeContentPacket {
+        val content = CreativeContentPacket().apply {
+            val idl = mutableListOf<ItemData>()
+            val stream = this.javaClass.classLoader.getResourceAsStream("creative_content.json")!!
+            stream.use {
+                val element = Json.parseToJsonElement(stream.readAllBytes().decodeToString())
+                (element as JsonArray).forEach { entry ->
+                    val d = entry as JsonObject
+                    val item = ItemData.builder().apply {
+                        id((d["id"] as JsonPrimitive).int)
+                        count((d["count"] as JsonPrimitive).int)
+                        damage((d["damage"] as JsonPrimitive).int)
+                        usingNetId((d["usingNetId"] as JsonPrimitive).content.toBoolean())
+                        netId((d["netId"] as JsonPrimitive).int)
+                        blockRuntimeId((d["blockRuntimeId"] as JsonPrimitive).int)
+                    }.build()
+                    idl.add(item)
+                }
+            }
+            contents = idl.toTypedArray()
+        }
+        return content
     }
 
     private suspend fun computeStartGamePacket(
