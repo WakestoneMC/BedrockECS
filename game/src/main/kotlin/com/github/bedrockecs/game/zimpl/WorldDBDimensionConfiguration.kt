@@ -9,7 +9,7 @@ import com.github.bedrockecs.game.zimpl.db.world.WorldDBImpl
 import org.springframework.context.annotation.Bean
 
 @DimensionConfiguration
-class WorldDBDimensionServerConfiguration {
+class WorldDBDimensionConfiguration {
     @Bean
     fun worldDB(
         evb: EventBus,

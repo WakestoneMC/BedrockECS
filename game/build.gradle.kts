@@ -6,4 +6,6 @@ dependencies {
 
     // ECS library
     api("com.badlogicgames.ashley:ashley:1.7.4")
+
+    api(project(":threading"))
 }

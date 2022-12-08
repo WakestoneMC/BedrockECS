@@ -23,7 +23,7 @@ class DimensionServerImpl(
     companion object {
         val INTRINSIC_GAME_CONFIGS: List<Class<*>> = listOf(
             EventBusDimensionConfiguration::class.java,
-            WorldDBDimensionServerConfiguration::class.java,
+            WorldDBDimensionConfiguration::class.java,
             EntityDBDimensionConfiguration::class.java,
             InvItemDBDimensionConfiguration::class.java,
             ChunkLoadingGameConfiguration::class.java,
