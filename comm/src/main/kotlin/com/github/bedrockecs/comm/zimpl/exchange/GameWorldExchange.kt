@@ -61,6 +61,12 @@ class GameWorldExchange(
         var sentInventories: Boolean = false
     )
 
+    // additional player position query, TODO: move this to somewhere more else //
+
+    fun lastPositionForPlayer(uuid: UUID): FloatBlockPosition? {
+        return sessions[uuid]?.lastPosition!!
+    }
+
     // WorldHandler side //
 
     suspend fun onConnection(connection: NetworkConnection) {
